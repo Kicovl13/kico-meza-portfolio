@@ -1,33 +1,33 @@
-# Kico Meza — Developer Portfolio
+# Federico Meza — Portafolio de desarrollador
 
-Dark, modern personal portfolio for **Federico Meza (Kico Meza)** — Full Stack / Backend Software Developer.
+Portafolio personal oscuro y moderno de **Federico Meza** — Desarrollador de Software Full Stack / Backend.
 
-Built with Next.js (App Router), TypeScript, Tailwind CSS, shadcn/ui, Lucide React, and Framer Motion.
+Hecho con Next.js (App Router), TypeScript, Tailwind CSS, shadcn/ui, Lucide React y Framer Motion.
 
-## Stack highlights
+## Stack destacado
 
 - Laravel, Node.js, Angular, Docker, Python
-- Tools: macOS, Cursor IDE, Claude Code, Agentic Workflows
+- Herramientas: macOS, Cursor IDE, Claude Code, flujos agénticos
 
-## Run locally
+## Ejecutar en local
 
 ```bash
 npm install
 npm run dev -- --port 4321 --hostname 127.0.0.1
 ```
 
-Open [http://127.0.0.1:4321](http://127.0.0.1:4321).
+Abre [http://127.0.0.1:4321](http://127.0.0.1:4321).
 
 ## Scripts
 
-| Command        | Description              |
-| -------------- | ------------------------ |
-| `npm run dev`  | Start development server |
-| `npm run build`| Production build         |
-| `npm run start`| Serve production build   |
-| `npm run lint` | Run ESLint               |
+| Comando         | Descripción                         |
+| --------------- | ----------------------------------- |
+| `npm run dev`   | Servidor de desarrollo              |
+| `npm run build` | Build de producción                 |
+| `npm run start` | Servir el build de producción       |
+| `npm run lint`  | Ejecutar ESLint                     |
 
-## Notes
+## Notas
 
-- Contact form opens a `mailto:` draft (no backend).
-- GitHub / LinkedIn links are placeholders — replace in `src/lib/data.ts`.
+- El formulario de contacto abre un borrador `mailto:` (sin backend).
+- Los enlaces de GitHub / LinkedIn son placeholders — cámbialos en `src/lib/data.ts`.

@@ -57,7 +57,7 @@ export function Hero() {
             nativeButton={false}
             render={<a href="#projects" />}
           >
-            View Work / Projects
+            Ver trabajo / Proyectos
             <ArrowDownRight data-icon="inline-end" />
           </Button>
           <Button
@@ -68,7 +68,7 @@ export function Hero() {
             render={<a href="#contact" />}
           >
             <Mail data-icon="inline-start" />
-            Contact Me
+            Contáctame
           </Button>
         </motion.div>
 

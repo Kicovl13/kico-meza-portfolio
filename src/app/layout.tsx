@@ -20,13 +20,13 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Kico Meza — Full Stack / Backend Developer",
+  title: "Federico Meza — Desarrollador Full Stack / Backend",
   description:
-    "Federico (Kico) Meza builds robust backend architecture, modern web apps, and automated trading systems with Laravel, Node.js, Angular, Docker, and Python.",
+    "Federico Meza diseña arquitectura backend sólida, aplicaciones web modernas y sistemas de trading automatizados con Laravel, Node.js, Angular, Docker y Python.",
   openGraph: {
-    title: "Kico Meza — Full Stack / Backend Developer",
+    title: "Federico Meza — Desarrollador Full Stack / Backend",
     description:
-      "Robust backend architecture, modern web apps, and automated systems.",
+      "Arquitectura backend sólida, aplicaciones web modernas y sistemas automatizados.",
     type: "website",
   },
 };
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      lang="en"
+      lang="es"
       className={`dark ${outfit.variable} ${syne.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">{children}</body>

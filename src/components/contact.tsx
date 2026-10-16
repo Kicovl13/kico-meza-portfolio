@@ -20,9 +20,11 @@ export function Contact() {
     const email = String(data.get("email") || "").trim();
     const message = String(data.get("message") || "").trim();
 
-    const subject = encodeURIComponent(`Portfolio inquiry from ${name || "visitor"}`);
+    const subject = encodeURIComponent(
+      `Consulta de portafolio de ${name || "visitante"}`,
+    );
     const body = encodeURIComponent(
-      `Name: ${name}\nEmail: ${email}\n\n${message}`,
+      `Nombre: ${name}\nEmail: ${email}\n\n${message}`,
     );
     window.location.href = `mailto:${site.email}?subject=${subject}&body=${body}`;
     setStatus("sent");
@@ -41,18 +43,18 @@ export function Contact() {
             transition={{ duration: 0.45 }}
           >
             <p className="font-mono text-xs uppercase tracking-[0.2em] text-primary">
-              Contact
+              Contacto
             </p>
             <h2
               className="mt-3 text-3xl tracking-tight text-foreground sm:text-4xl"
               style={{ fontWeight: 700 }}
             >
-              Let&apos;s build something solid
+              Construyamos algo sólido
             </h2>
             <p className="mt-3 max-w-md text-muted-foreground">
-              Open to backend systems, full-stack product work, and automation
-              projects. Reach out directly or use the form — it opens your email
-              client, no backend required.
+              Abierto a sistemas backend, trabajo full-stack y proyectos de
+              automatización. Escríbeme directamente o usa el formulario: abre
+              tu cliente de correo, sin backend.
             </p>
 
             <div className="mt-8 flex flex-col gap-3">
@@ -94,11 +96,11 @@ export function Contact() {
           >
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
+                <Label htmlFor="name">Nombre</Label>
                 <Input
                   id="name"
                   name="name"
-                  placeholder="Your name"
+                  placeholder="Tu nombre"
                   required
                   className="h-10 bg-background/40"
                 />
@@ -109,18 +111,18 @@ export function Contact() {
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="you@company.com"
+                  placeholder="tu@empresa.com"
                   required
                   className="h-10 bg-background/40"
                 />
               </div>
             </div>
             <div className="mt-4 space-y-2">
-              <Label htmlFor="message">Message</Label>
+              <Label htmlFor="message">Mensaje</Label>
               <Textarea
                 id="message"
                 name="message"
-                placeholder="What are you building?"
+                placeholder="¿Qué estás construyendo?"
                 required
                 rows={5}
                 className="resize-none bg-background/40"
@@ -128,12 +130,12 @@ export function Contact() {
             </div>
             <div className="mt-5 flex flex-wrap items-center gap-3">
               <Button type="submit" size="lg" className="h-11 px-5">
-                Send message
+                Enviar mensaje
                 <Send data-icon="inline-end" />
               </Button>
               {status === "sent" && (
                 <p className="text-sm text-primary">
-                  Opening your mail client…
+                  Abriendo tu cliente de correo…
                 </p>
               )}
             </div>

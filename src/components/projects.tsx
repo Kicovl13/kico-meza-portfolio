@@ -17,17 +17,17 @@ export function Projects() {
           transition={{ duration: 0.45 }}
         >
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-primary">
-            Selected work
+            Trabajo seleccionado
           </p>
           <h2
             className="mt-3 text-3xl tracking-tight text-foreground sm:text-4xl"
             style={{ fontWeight: 700 }}
           >
-            Projects
+            Proyectos
           </h2>
           <p className="mt-3 max-w-xl text-muted-foreground">
-            Systems that combine backend reliability, automation, and clear
-            product interfaces.
+            Sistemas que combinan backend fiable, automatización e interfaces de
+            producto claras.
           </p>
         </motion.div>
 
@@ -89,7 +89,7 @@ export function Projects() {
                     />
                   }
                 >
-                  Live
+                  En vivo
                   <ExternalLink data-icon="inline-end" />
                 </Button>
               </div>

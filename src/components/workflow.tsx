@@ -23,17 +23,17 @@ export function Workflow() {
           className="max-w-2xl"
         >
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-primary">
-            How I work
+            Cómo trabajo
           </p>
           <h2
             className="mt-3 text-3xl tracking-tight text-foreground sm:text-4xl"
             style={{ fontWeight: 700 }}
           >
-            Experience / Workflow
+            Experiencia / Flujo de trabajo
           </h2>
           <p className="mt-3 text-muted-foreground">
-            Practical habits that keep shipping fast: clean code, containers,
-            automation, and AI-native tooling.
+            Hábitos prácticos para entregar rápido: código limpio, contenedores,
+            automatización y herramientas nativas de IA.
           </p>
         </motion.div>
 

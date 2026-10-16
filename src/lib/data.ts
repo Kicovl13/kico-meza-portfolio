@@ -1,13 +1,13 @@
 export const site = {
   name: "Federico Meza",
-  brand: "Kico Meza",
-  role: "Full Stack / Backend Software Developer",
-  email: "hello@kicomeza.dev",
+  brand: "Federico Meza",
+  role: "Desarrollador de Software Full Stack / Backend",
+  email: "hello@federicomeza.dev",
   github: "https://github.com/",
   linkedin: "https://linkedin.com/in/",
-  headline: "Hi, I'm Kico Meza",
+  headline: "Hola, soy Federico Meza",
   subtitle:
-    "I design robust backend architecture, modern web apps, and automated systems — from Laravel APIs to Python trading bots.",
+    "Diseño arquitectura backend sólida, aplicaciones web modernas y sistemas automatizados — desde APIs en Laravel hasta bots de trading en Python.",
 };
 
 export const heroStack = [
@@ -35,34 +35,34 @@ export const skillGroups = [
     icon: "container" as const,
   },
   {
-    title: "AI & Tools",
-    items: ["Cursor", "Claude Code", "Agentic Systems", "MCP"],
+    title: "IA y herramientas",
+    items: ["Cursor", "Claude Code", "Sistemas agénticos", "MCP"],
     icon: "sparkles" as const,
   },
 ] as const;
 
 export const projects = [
   {
-    title: "High-Frequency Automated Trading Bot",
+    title: "Bot de trading automatizado de alta frecuencia",
     description:
-      "Python trading system wired to financial APIs with CRSI/LRC signal logic, custom structured logging, and disciplined risk controls for live market sessions.",
-    tags: ["Python", "Financial APIs", "CRSI/LRC", "Custom Logging"],
+      "Sistema de trading en Python conectado a APIs financieras con lógica de señales CRSI/LRC, logging estructurado y controles de riesgo para sesiones en vivo.",
+    tags: ["Python", "APIs financieras", "CRSI/LRC", "Logging"],
     github: "https://github.com/",
     live: "#",
   },
   {
-    title: "Enterprise Web Application",
+    title: "Aplicación web empresarial",
     description:
-      "Full-stack business platform with Laravel services, Node.js workers, and Dockerized environments for reliable deploys across development and production.",
+      "Plataforma full-stack con servicios Laravel, workers en Node.js y entornos Dockerizados para despliegues fiables en desarrollo y producción.",
     tags: ["Laravel", "Node.js", "Docker"],
     github: "https://github.com/",
     live: "#",
   },
   {
-    title: "Modern Frontend Dashboards",
+    title: "Dashboards frontend modernos",
     description:
-      "Angular dashboards that surface live API data with clear information hierarchy, fast interactions, and integrations tailored to operational workflows.",
-    tags: ["Angular", "API Integrations"],
+      "Dashboards en Angular que muestran datos de APIs en tiempo real, con jerarquía clara, interacciones rápidas e integraciones orientadas a flujos operativos.",
+    tags: ["Angular", "Integraciones API"],
     github: "https://github.com/",
     live: "#",
   },
@@ -70,27 +70,27 @@ export const projects = [
 
 export const workflow = [
   {
-    title: "Clean, maintainable code",
+    title: "Código limpio y mantenible",
     description:
-      "Readable structure, clear boundaries, and APIs that stay easy to extend as products grow.",
+      "Estructura legible, límites claros y APIs fáciles de extender a medida que el producto crece.",
     icon: "code" as const,
   },
   {
-    title: "Dockerized environments",
+    title: "Entornos Dockerizados",
     description:
-      "Reproducible local and production setups so every teammate ships from the same baseline.",
+      "Setups reproducibles en local y producción para que todo el equipo parta de la misma base.",
     icon: "box" as const,
   },
   {
-    title: "Automated workflows",
+    title: "Flujos automatizados",
     description:
-      "Scripts, pipelines, and agentic loops that cut busywork and keep delivery consistent.",
+      "Scripts, pipelines y bucles agénticos que reducen trabajo repetitivo y mantienen una entrega consistente.",
     icon: "workflow" as const,
   },
   {
-    title: "AI-driven tooling",
+    title: "Herramientas impulsadas por IA",
     description:
-      "Cursor, Claude Code, and MCP-backed workflows to move faster without sacrificing quality.",
+      "Cursor, Claude Code y flujos con MCP para avanzar más rápido sin sacrificar calidad.",
     icon: "bot" as const,
   },
 ] as const;

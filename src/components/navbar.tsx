@@ -8,9 +8,9 @@ import { cn } from "cn";
 
 const links = [
   { href: "#stack", label: "Stack" },
-  { href: "#projects", label: "Projects" },
-  { href: "#workflow", label: "Workflow" },
-  { href: "#contact", label: "Contact" },
+  { href: "#projects", label: "Proyectos" },
+  { href: "#workflow", label: "Flujo" },
+  { href: "#contact", label: "Contacto" },
 ];
 
 export function Navbar() {
@@ -58,7 +58,7 @@ export function Navbar() {
             nativeButton={false}
             render={<a href="#contact" />}
           >
-            Hire me
+            Contáctame
           </Button>
         </div>
 
@@ -67,7 +67,7 @@ export function Navbar() {
           size="icon"
           className="md:hidden"
           onClick={() => setOpen((v) => !v)}
-          aria-label={open ? "Close menu" : "Open menu"}
+          aria-label={open ? "Cerrar menú" : "Abrir menú"}
         >
           {open ? <X /> : <Menu />}
         </Button>
