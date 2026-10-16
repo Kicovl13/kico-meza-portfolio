@@ -1,9 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ExternalLink, FolderGit2 } from "lucide-react";
 import { projects } from "@/lib/data";
-import { Button } from "@/components/ui/button";
 
 export function Projects() {
   return (
@@ -26,12 +24,12 @@ export function Projects() {
             Proyectos
           </h2>
           <p className="mt-3 max-w-xl text-muted-foreground">
-            Sistemas que combinan backend fiable, automatización e interfaces de
-            producto claras.
+            Sistemas que construí en empresas: el problema, mi papel y con qué
+            quedó operando.
           </p>
         </motion.div>
 
-        <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-12 grid gap-5 lg:grid-cols-3">
           {projects.map((project, index) => (
             <motion.article
               key={project.title}
@@ -42,15 +40,27 @@ export function Projects() {
               className="group flex flex-col rounded-2xl border border-border/70 bg-card/60 p-6 transition-colors hover:border-primary/35"
             >
               <div className="mb-4 h-1 w-12 rounded-full bg-primary/70 transition-all group-hover:w-16" />
+              <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-primary">
+                {project.period}
+              </p>
               <h3
-                className="text-xl leading-snug tracking-tight text-foreground"
+                className="mt-2 text-xl leading-snug tracking-tight text-foreground"
                 style={{ fontWeight: 700 }}
               >
                 {project.title}
               </h3>
-              <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground">
+              <p className="mt-1 text-sm text-foreground/80">{project.role}</p>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 {project.description}
               </p>
+              <ul className="mt-4 flex flex-1 flex-col gap-2 text-sm leading-relaxed text-muted-foreground">
+                {project.points.map((point) => (
+                  <li key={point} className="flex gap-2">
+                    <span className="mt-2 size-1 shrink-0 rounded-full bg-primary" />
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
               <div className="mt-5 flex flex-wrap gap-2">
                 {project.tags.map((tag) => (
                   <span
@@ -60,38 +70,6 @@ export function Projects() {
                     {tag}
                   </span>
                 ))}
-              </div>
-              <div className="mt-6 flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  nativeButton={false}
-                  render={
-                    <a
-                      href={project.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    />
-                  }
-                >
-                  <FolderGit2 data-icon="inline-start" />
-                  GitHub
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  nativeButton={false}
-                  render={
-                    <a
-                      href={project.live}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    />
-                  }
-                >
-                  En vivo
-                  <ExternalLink data-icon="inline-end" />
-                </Button>
               </div>
             </motion.article>
           ))}

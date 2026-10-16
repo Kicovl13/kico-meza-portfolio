@@ -9,7 +9,7 @@ import { cn } from "cn";
 const links = [
   { href: "#stack", label: "Stack" },
   { href: "#projects", label: "Proyectos" },
-  { href: "#workflow", label: "Flujo" },
+  { href: "#experience", label: "Experiencia" },
   { href: "#contact", label: "Contacto" },
 ];
 

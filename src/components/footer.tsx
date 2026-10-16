@@ -7,7 +7,9 @@ export function Footer() {
         <p className="font-[family-name:var(--font-syne)] tracking-tight text-foreground/90">
           © 2026 {site.brand}
         </p>
-        <p>{site.role}</p>
+        <p>
+          {site.role} · {site.location}
+        </p>
       </div>
     </footer>
   );

@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { motion } from "framer-motion";
-import { FolderGit2, Link2, Mail, Send } from "lucide-react";
+import { Link2, Mail, MapPin, Phone, Send } from "lucide-react";
 import { site } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,9 +52,9 @@ export function Contact() {
               Construyamos algo sólido
             </h2>
             <p className="mt-3 max-w-md text-muted-foreground">
-              Abierto a sistemas backend, trabajo full-stack y proyectos de
-              automatización. Escríbeme directamente o usa el formulario: abre
-              tu cliente de correo, sin backend.
+              Abierto a roles full stack y backend, en empresa o por proyecto.
+              Escríbeme directo o usa el formulario: abre tu correo con el
+              mensaje listo.
             </p>
 
             <div className="mt-8 flex flex-col gap-3">
@@ -66,13 +66,11 @@ export function Contact() {
                 {site.email}
               </a>
               <a
-                href={site.github}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={site.phoneHref}
                 className="inline-flex items-center gap-3 rounded-xl border border-border/70 bg-card/40 px-4 py-3 text-sm text-foreground transition-colors hover:border-primary/40"
               >
-                <FolderGit2 className="size-4 text-primary" />
-                GitHub
+                <Phone className="size-4 text-primary" />
+                {site.phone}
               </a>
               <a
                 href={site.linkedin}
@@ -83,6 +81,10 @@ export function Contact() {
                 <Link2 className="size-4 text-primary" />
                 LinkedIn
               </a>
+              <p className="inline-flex items-center gap-3 px-4 py-1 text-sm text-muted-foreground">
+                <MapPin className="size-4 text-primary" />
+                {site.location}
+              </p>
             </div>
           </motion.div>
 

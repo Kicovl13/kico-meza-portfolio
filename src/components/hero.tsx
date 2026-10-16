@@ -9,7 +9,7 @@ export function Hero() {
   return (
     <section
       id="top"
-      className="relative flex min-h-[100svh] flex-col justify-end overflow-hidden pb-16 pt-28 sm:pb-20 sm:pt-32"
+      className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden pb-16 pt-24 sm:pb-20"
     >
       <div className="pointer-events-none absolute inset-0 grid-atmosphere" />
       <div className="pointer-events-none absolute inset-0 dot-pattern opacity-40" />
@@ -24,6 +24,9 @@ export function Hero() {
           className="mb-4 font-mono text-xs uppercase tracking-[0.24em] text-primary sm:text-sm"
         >
           {site.role}
+          <span className="mt-2 block normal-case tracking-normal text-muted-foreground">
+            {site.location}
+          </span>
         </motion.p>
 
         <motion.h1
@@ -57,7 +60,7 @@ export function Hero() {
             nativeButton={false}
             render={<a href="#projects" />}
           >
-            Ver trabajo / Proyectos
+            Ver proyectos
             <ArrowDownRight data-icon="inline-end" />
           </Button>
           <Button

@@ -1,14 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Boxes, LayoutDashboard, Server, Sparkles } from "lucide-react";
+import { Boxes, Database, LayoutDashboard, Server } from "lucide-react";
 import { skillGroups } from "@/lib/data";
 
 const icons = {
   server: Server,
   layout: LayoutDashboard,
+  database: Database,
   container: Boxes,
-  sparkles: Sparkles,
 };
 
 export function TechStack() {
@@ -31,8 +31,8 @@ export function TechStack() {
             Stack tecnológico y habilidades
           </h2>
           <p className="mt-3 max-w-xl text-muted-foreground">
-            Un kit enfocado en sistemas backend, interfaces web, entrega con
-            contenedores y desarrollo asistido por IA.
+            Lo que uso para construir sistemas de negocio: backend, interfaces,
+            datos y despliegue.
           </p>
         </motion.div>
 

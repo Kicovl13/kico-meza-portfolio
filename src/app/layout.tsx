@@ -20,13 +20,13 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Federico Meza — Desarrollador Full Stack / Backend",
+  title: "Federico Meza — Ingeniero en Sistemas · Full Stack",
   description:
-    "Federico Meza diseña arquitectura backend sólida, aplicaciones web modernas y sistemas de trading automatizados con Laravel, Node.js, Angular, Docker y Python.",
+    "Federico Meza, ingeniero en sistemas en Zapopan. Construye CRMs, plataformas de negocio y APIs con Laravel, Node.js, TypeScript, Angular y MySQL.",
   openGraph: {
-    title: "Federico Meza — Desarrollador Full Stack / Backend",
+    title: "Federico Meza — Ingeniero en Sistemas · Full Stack",
     description:
-      "Arquitectura backend sólida, aplicaciones web modernas y sistemas automatizados.",
+      "CRMs, plataformas de negocio y APIs con Laravel, Node.js, TypeScript y Angular.",
     type: "website",
   },
 };
