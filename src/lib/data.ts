@@ -172,7 +172,8 @@ export interface MvcShowcase {
   };
   keyFeatures: string[];
   dockerStack: string[];
-  demoType: "cobranza" | "arrendamiento" | "whatsapp" | "legal" | "municipal";
+  demoType: "cobranza" | "arrendamiento" | "whatsapp" | "legal" | "municipal" | "sysadmin" | "leex" | "rootwork";
+  demoUrl: string;
 }
 
 export const mvcShowcases: MvcShowcase[] = [
@@ -224,6 +225,7 @@ export const mvcShowcases: MvcShowcase[] = [
     ],
     dockerStack: ["php:8.3-fpm", "mysql:8.4", "redis:7-alpine", "nginx:alpine"],
     demoType: "cobranza",
+    demoUrl: "/demos/cobranza",
   },
   {
     id: "gestor-arrendamiento",
@@ -273,6 +275,7 @@ export const mvcShowcases: MvcShowcase[] = [
     ],
     dockerStack: ["php:8.3-fpm", "mariadb:11", "nginx:alpine"],
     demoType: "arrendamiento",
+    demoUrl: "/demos/leex",
   },
   {
     id: "bot-whatsapp-citas",
@@ -321,6 +324,7 @@ export const mvcShowcases: MvcShowcase[] = [
     ],
     dockerStack: ["node:20-alpine", "pm2", "baileys-session-storage"],
     demoType: "whatsapp",
+    demoUrl: "/demos/whatsapp-bot",
   },
   {
     id: "despacho-legal",
@@ -369,6 +373,7 @@ export const mvcShowcases: MvcShowcase[] = [
     ],
     dockerStack: ["node:20-alpine", "nginx:alpine (web build)"],
     demoType: "legal",
+    demoUrl: "/demos/legalflow",
   },
   {
     id: "municipal-government",
@@ -417,5 +422,135 @@ export const mvcShowcases: MvcShowcase[] = [
     ],
     dockerStack: ["node:22-alpine", "standalone nextjs"],
     demoType: "municipal",
+    demoUrl: "/demos/municipal",
+  },
+  {
+    id: "sysadministrador",
+    title: "SysAdministrador · CRM & ERP Operativo",
+    repoName: "sysadministrador",
+    githubUrl: "https://github.com/Kicovl13/sysadministrador",
+    isPrivate: true,
+    tagline: "Sistema Integral de Administración con PHP, MySQL y Bootstrap",
+    category: "CRM & ERP",
+    stack: ["PHP", "MySQL", "Bootstrap", "JavaScript", "Laravel"],
+    description:
+      "CRM y ERP operativo para gestión de clientes, empleados, facturación, nómina, reportes y auditoría. Construido sobre arquitectura MVC con autenticación por roles y módulos independientes.",
+    metrics: [
+      { label: "Módulos", value: "8+ Activos" },
+      { label: "Roles", value: "Multi-Rol" },
+      { label: "Reportes", value: "Exportables" },
+    ],
+    mvcArchitecture: {
+      model: [
+        "Entidades: Cliente, Empleado, Factura, Pago, NominaEntry, AuditLog",
+        "Relaciones uno-a-muchos con integridad referencial en MySQL",
+        "Soft deletes y timestamps para auditoría completa de cambios",
+      ],
+      controller: [
+        "ClienteController, EmpleadoController, FacturacionController, NominaController",
+        "Middleware de autenticación y autorización por rol (admin, supervisor, operador)",
+        "Exportación de reportes a PDF y Excel desde controladores dedicados",
+      ],
+      view: [
+        "Dashboards con métricas clave por módulo en Bootstrap 5",
+        "Tablas paginadas con búsqueda en tiempo real y filtros avanzados",
+        "Formularios reactivos con validación server-side y feedback visual",
+      ],
+    },
+    keyFeatures: [
+      "Gestión completa de clientes con historial de interacciones",
+      "Nómina automatizada con cálculo de deducciones e IMSS",
+      "Facturación con generación de CFDI y seguimiento de cobros",
+      "Panel de auditoría con bitácora de acciones por usuario",
+    ],
+    dockerStack: ["php:8.2-fpm", "mysql:8", "nginx:alpine"],
+    demoType: "sysadmin",
+    demoUrl: "/demos/sysadmin",
+  },
+  {
+    id: "leex-saas",
+    title: "Leex SaaS · Plataforma de Arrendamiento",
+    repoName: "leex-saas",
+    githubUrl: "https://github.com/Kicovl13/leex-saas",
+    isPrivate: false,
+    tagline: "SaaS Multiempresa para Administración de Bienes Raíces",
+    category: "PropTech & SaaS",
+    stack: ["Laravel", "PHP", "MySQL", "Livewire", "Tailwind CSS", "Alpine.js"],
+    description:
+      "Plataforma SaaS multiempresa para la administración integral de propiedades en arrendamiento: contratos, pagos recurrentes, estados de cuenta, mantenimientos y comunicación con inquilinos.",
+    metrics: [
+      { label: "Modelo", value: "Multi-Tenant" },
+      { label: "Pagos", value: "Recurrentes" },
+      { label: "Propiedades", value: "Ilimitadas" },
+    ],
+    mvcArchitecture: {
+      model: [
+        "Entidades: Property, Unit, LeaseContract, Tenant, RecurringCharge, MaintenanceRequest",
+        "Multi-tenancy con aislamiento por empresa usando Tenant middleware",
+        "Ciclo de facturación mensual automatizado con cálculo de penalizaciones",
+      ],
+      controller: [
+        "PropertyController, ContractController, PaymentController, MaintenanceController",
+        "Job scheduler para generación automática de cargos mensuales",
+        "Notificaciones por email a inquilinos con estados de cuenta adjuntos",
+      ],
+      view: [
+        "Panel de propietario con ocupación, ingresos y alertas en Livewire",
+        "Portal del inquilino para ver estado de cuenta y subir comprobantes",
+        "Módulo de mantenimiento con seguimiento de solicitudes y prioridades",
+      ],
+    },
+    keyFeatures: [
+      "Contratos digitales con vigencias, renovaciones y terminaciones",
+      "Cargos recurrentes automáticos: renta, mantenimiento, servicios",
+      "Portal de inquilino para pagos y solicitudes de mantenimiento",
+      "Reportes financieros por propiedad, unidad y período",
+    ],
+    dockerStack: ["php:8.3-fpm", "mysql:8", "redis:alpine", "nginx:alpine"],
+    demoType: "leex",
+    demoUrl: "/demos/leex",
+  },
+  {
+    id: "rootwork",
+    title: "RootWork · Gestión de Proyectos & Freelancers",
+    repoName: "rootwork",
+    githubUrl: "https://github.com/Kicovl13/rootwork",
+    isPrivate: true,
+    tagline: "Plataforma de Administración de Proyectos con Node.js y TypeScript",
+    category: "Project Management & SaaS",
+    stack: ["Node.js", "TypeScript", "Express", "MySQL", "Angular", "Docker"],
+    description:
+      "Plataforma de gestión de proyectos para equipos y freelancers: tablero Kanban, seguimiento de tiempo, asignación de tareas, entregables y facturación de horas trabajadas por proyecto.",
+    metrics: [
+      { label: "Kanban", value: "Drag & Drop" },
+      { label: "Time Track", value: "Por Tarea" },
+      { label: "Facturación", value: "Automática" },
+    ],
+    mvcArchitecture: {
+      model: [
+        "Entidades: Project, Task, TimeEntry, Team, Deliverable, Invoice",
+        "Estados de tarea: Backlog → En Progreso → Revisión → Completada",
+        "Relaciones de dependencia entre tareas y cálculo de ruta crítica",
+      ],
+      controller: [
+        "ProjectController, TaskController, TimeTrackingController, InvoiceController",
+        "WebSocket para actualizaciones en tiempo real del tablero Kanban",
+        "API REST documentada con Swagger para integración con clientes externos",
+      ],
+      view: [
+        "Tablero Kanban interactivo con drag-and-drop en Angular",
+        "Timer de seguimiento de tiempo integrado en cada tarjeta de tarea",
+        "Dashboard de rentabilidad: horas estimadas vs reales por proyecto",
+      ],
+    },
+    keyFeatures: [
+      "Kanban visual con columnas configurables y límites WIP",
+      "Registro de tiempo por tarea con inicio/pausa/stop",
+      "Facturación automática de horas al cierre del período",
+      "Asignación de colaboradores con control de permisos por proyecto",
+    ],
+    dockerStack: ["node:20-alpine", "mysql:8", "nginx:alpine"],
+    demoType: "rootwork",
+    demoUrl: "/demos/rootwork",
   },
 ];

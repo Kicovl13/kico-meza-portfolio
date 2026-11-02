@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, Sparkles, X } from "lucide-react";
 import { site } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { cn } from "cn";
+import Link from "next/link";
 
 const links = [
   { href: "#stack", label: "Stack" },
@@ -52,6 +53,14 @@ export function Navbar() {
               {link.label}
             </a>
           ))}
+          <Link
+            href="/demos"
+            className="ml-2 flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-all"
+            style={{ background: "rgba(96,165,250,0.12)", color: "#60a5fa", border: "1px solid rgba(96,165,250,0.25)" }}
+          >
+            <Sparkles size={12} />
+            Demos
+          </Link>
           <Button
             size="sm"
             className="ml-2"
@@ -86,6 +95,15 @@ export function Navbar() {
                 {link.label}
               </a>
             ))}
+            <Link
+              href="/demos"
+              onClick={() => setOpen(false)}
+              className="rounded-md px-3 py-3 text-sm font-medium flex items-center gap-2"
+              style={{ color: "#60a5fa" }}
+            >
+              <Sparkles size={13} />
+              Demos Interactivos
+            </Link>
           </div>
         </div>
       )}
