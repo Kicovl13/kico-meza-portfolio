@@ -153,3 +153,269 @@ export const extras = [
   "Español nativo · Inglés intermedio",
   "Certificación en ciberseguridad · Google, 2023",
 ] as const;
+
+export interface MvcShowcase {
+  id: string;
+  title: string;
+  repoName: string;
+  githubUrl: string;
+  isPrivate: boolean;
+  tagline: string;
+  category: string;
+  stack: string[];
+  description: string;
+  metrics: { label: string; value: string }[];
+  mvcArchitecture: {
+    model: string[];
+    controller: string[];
+    view: string[];
+  };
+  keyFeatures: string[];
+  dockerStack: string[];
+  demoType: "cobranza" | "arrendamiento" | "whatsapp" | "legal" | "municipal";
+}
+
+export const mvcShowcases: MvcShowcase[] = [
+  {
+    id: "cobranza-b2b",
+    title: "Cobranza B2B & Conciliación PPD/REP",
+    repoName: "cobranza",
+    githubUrl: "https://github.com/Kicovl13/cobranza",
+    isPrivate: true,
+    tagline: "SaaS Multiempresa en Laravel 13, MySQL 8.4 y Livewire 4",
+    category: "Fintech B2B & Fiscal SAT",
+    stack: [
+      "Laravel 13",
+      "PHP 8.3",
+      "MySQL 8.4 LTS",
+      "Livewire 4",
+      "Redis",
+      "Docker",
+    ],
+    description:
+      "SaaS comercial multiempresa para automatizar la cobranza B2B en México y conciliar comprobantes de pago (PPD) con Complementos de Recepción de Pagos (REP), estados de cuenta y trazabilidad financiera.",
+    metrics: [
+      { label: "Trazabilidad", value: "100% Audit" },
+      { label: "Conciliación", value: "PPD / REP" },
+      { label: "Motor", value: "Laravel 13" },
+    ],
+    mvcArchitecture: {
+      model: [
+        "Entidades: Invoice (CFDI PPD), PaymentReceipt (REP), Customer, BankMovement, AuditEntry",
+        "Aislamiento multiempresa estricto mediante Tenant Scopes y UUIDs",
+        "Diseño con idempotencia en importaciones para evitar duplicidad de comprobantes",
+      ],
+      controller: [
+        "ReconciliationController, CFDIParserController, BankMatchingController",
+        "Validación con FormRequests asegurando sumatorias e importes fiscales",
+        "Jobs asíncronos en colas de Laravel/Redis para procesamiento batch de XMLs",
+      ],
+      view: [
+        "Tablero de cuentas por cobrar en Livewire 4 y Bootstrap 5",
+        "Buscador instantáneo de facturas y vinculación drag-and-drop con REP",
+        "Semáforos de saldos insolutos y reportes fiscales exportables",
+      ],
+    },
+    keyFeatures: [
+      "Conciliación de pagos PPD con Complementos de Pago REP",
+      "Importación masiva de CFDI con verificación de integridad",
+      "Trazabilidad y auditoría de notas de crédito y ajustes",
+      "Monolito modular con soporte multiempresa en base de datos",
+    ],
+    dockerStack: ["php:8.3-fpm", "mysql:8.4", "redis:7-alpine", "nginx:alpine"],
+    demoType: "cobranza",
+  },
+  {
+    id: "gestor-arrendamiento",
+    title: "Gestor de Micro-Arrendamientos de Plazas",
+    repoName: "arrendamiento",
+    githubUrl: "https://github.com/Kicovl13/arrendamiento",
+    isPrivate: true,
+    tagline: "Consola Operativa para Plazas Comerciales con Control de Mora",
+    category: "Real Estate & ERP",
+    stack: [
+      "PHP",
+      "Laravel",
+      "MySQL",
+      "Docker",
+      "REST APIs",
+      "Tailwind CSS",
+    ],
+    description:
+      "Consola operativa diseñada para administradores de plazas comerciales: en segundos permite ver saldos vencidos, contratos por vencer, cálculo automático de moratorios y validación de transferencias bancarias.",
+    metrics: [
+      { label: "Locales/Islas", value: "Multi-Unidad" },
+      { label: "Cálculo Mora", value: "Automático" },
+      { label: "Validación", value: "1-Clic" },
+    ],
+    mvcArchitecture: {
+      model: [
+        "Entidades: CommercialUnit (Local/Isla), LeaseContract, Tenant, PaymentEvidence, PenaltyRule",
+        "Cálculo matemático de mora compuesto diario y periodo de gracia",
+        "Relaciones polimórficas para comprobantes de pago y auditoría",
+      ],
+      controller: [
+        "PlazaDashboardController, LeaseContractController, PaymentValidationController",
+        "Motor de cálculo de penalizaciones por incumplimiento de contrato",
+        "Servicios de notificación automática a arrendatarios vía correo/SMS",
+      ],
+      view: [
+        "Consola visual de la plaza: mapa de ocupación y semáforo de cobranza",
+        "Visor rápido de comprobantes de pago con botones de Aprobación/Rechazo",
+        "Detalle de estado de cuenta mensual por arrendatario",
+      ],
+    },
+    keyFeatures: [
+      "Monitoreo en vivo de saldo vencido vs recuperado en la plaza",
+      "Reglas configurables de penalización y moratorios por día de atraso",
+      "Validación ágil de transferencias con previsualización de comprobantes",
+      "Fichas completas de contratos, depósitos en garantía y vigencias",
+    ],
+    dockerStack: ["php:8.3-fpm", "mariadb:11", "nginx:alpine"],
+    demoType: "arrendamiento",
+  },
+  {
+    id: "bot-whatsapp-citas",
+    title: "Bot de WhatsApp para Citas & Google Calendar",
+    repoName: "bot-whatsapp-citas",
+    githubUrl: "https://github.com/Kicovl13/bot-whatsapp-citas",
+    isPrivate: false,
+    tagline: "Automatización de Agenda con Baileys, Chrono NLP y Google APIs",
+    category: "Automatización & Asistente",
+    stack: [
+      "Node.js",
+      "Baileys (@whiskeysockets/baileys)",
+      "Google Calendar API",
+      "Google Sheets API",
+      "chrono-node",
+    ],
+    description:
+      "Bot conversacional conectado a WhatsApp que comprende solicitudes de citas en lenguaje natural, consulta disponibilidad en Google Calendar, reserva el evento y sincroniza el registro en Google Sheets.",
+    metrics: [
+      { label: "Disponibilidad", value: "24/7 Auto" },
+      { label: "NLP Fechas", value: "chrono-node" },
+      { label: "Sincronización", value: "Google APIs" },
+    ],
+    mvcArchitecture: {
+      model: [
+        "Entidades: UserSession, AppointmentSlot, CalendarEvent, BusinessHours",
+        "Gestor de sesiones persistentes con MultiFileAuthState en Baileys",
+        "Estructura de Google Sheets como base de datos ligera para respaldo",
+      ],
+      controller: [
+        "WhatsAppMessageHandler, CalendarSyncController, SlotAvailabilityService",
+        "Parser de lenguaje natural con chrono-node para extraer fechas ('mañana a las 4pm')",
+        "Filtros de bloqueo para transferir a asesor humano si el cliente lo solicita",
+      ],
+      view: [
+        "Mensajes interactivos con formato nativo de WhatsApp (emojis, listas y negritas)",
+        "Confirmación de cita con enlace directo al evento de Google Calendar",
+        "Alertas automáticas al WhatsApp del administrador ante nuevas reservas",
+      ],
+    },
+    keyFeatures: [
+      "Interpretación inteligente de fechas en español sin comandos rígidos",
+      "Prevención de empalmes con consulta en tiempo real a Google Calendar",
+      "Registro automático de paciente/cliente en Google Sheets",
+      "Detección de palabras de transferencia para atención con asesor humano",
+    ],
+    dockerStack: ["node:20-alpine", "pm2", "baileys-session-storage"],
+    demoType: "whatsapp",
+  },
+  {
+    id: "despacho-legal",
+    title: "LegalFlow · Gestión de Despachos & Juicios",
+    repoName: "despacho-legal",
+    githubUrl: "https://github.com/Kicovl13/despacho-legal",
+    isPrivate: true,
+    tagline: "App Web y Móvil con Angular 20, Ionic 8 y Capacitor 7",
+    category: "LegalTech & Móvil",
+    stack: [
+      "Angular 20",
+      "Ionic 8",
+      "Capacitor 7",
+      "TypeScript",
+      "RxJS / Signals",
+    ],
+    description:
+      "Aplicación multiplataforma para abogados y despachos jurídicos: control de expedientes judiciales, términos procesales con cuenta regresiva, audiencias, clientes y directorio de juzgados.",
+    metrics: [
+      { label: "Multiplataforma", value: "Web / iOS / Android" },
+      { label: "Framework", value: "Angular 20 + Ionic" },
+      { label: "Términos", value: "Alertas Activas" },
+    ],
+    mvcArchitecture: {
+      model: [
+        "Entidades: CaseFile (Expediente), CourtHearing, LegalDeadline, Client, Court",
+        "Modelos fuertemente tipados en TypeScript con validación de estados procesales",
+        "Almacenamiento offline-first con Capacitor Storage para juzgados sin señal",
+      ],
+      controller: [
+        "CaseService, DeadlineCalculatorService, HearingSchedulerController",
+        "Lógica de cálculo de días hábiles judiciales excluyendo festivos",
+        "Integración nativa con Capacitor Haptics y notificaciones push de audiencias",
+      ],
+      view: [
+        "Componentes Ionic 8 optimizados con diseño nativo de iOS y Android",
+        "Semáforo de términos procesales urgentes (Rojo <48h, Amarillo <5 días)",
+        "Expediente digital con visualizador de acuerdos y acuerdos del boletín judicial",
+      ],
+    },
+    keyFeatures: [
+      "Seguimiento de juicios civiles, mercantiles y laborales por número de expediente",
+      "Temporizador de términos procesales para contestaciones y amparos",
+      "Agenda de audiencias con juzgado, sala y juez asignado",
+      "Empaquetado listo para App Store y Google Play mediante Capacitor",
+    ],
+    dockerStack: ["node:20-alpine", "nginx:alpine (web build)"],
+    demoType: "legal",
+  },
+  {
+    id: "municipal-government",
+    title: "Portal de Trámites & Atención Ciudadana",
+    repoName: "municipal-government-landing-page",
+    githubUrl: "https://github.com/Kicovl13/municipal-government-landing-page",
+    isPrivate: true,
+    tagline: "Ventanilla Única Digital con Next.js, TypeScript y Tailwind CSS",
+    category: "GovTech & Servicios Web",
+    stack: [
+      "Next.js",
+      "TypeScript",
+      "Tailwind CSS",
+      "Shadcn UI",
+      "Lucide React",
+    ],
+    description:
+      "Portal gubernamental para reporte de incidencias en servicios públicos (baches, luminarias, agua), consulta de trámites con folio digital y transparencia municipal.",
+    metrics: [
+      { label: "Trámites Digitales", value: "Ventanilla Única" },
+      { label: "Folios", value: "Rastreo 24/7" },
+      { label: "Diseño", value: "Accesible WCAG" },
+    ],
+    mvcArchitecture: {
+      model: [
+        "Entidades: CitizenReport, ServiceCategory, MunicipalOffice, TrackingStatus",
+        "Esquemas Zod para validación de formularios de reporte e identidades",
+        "Generador de folio hash único no secuencial para privacidad ciudadana",
+      ],
+      controller: [
+        "ReportSubmissionController, StatusLookupHandler, NotificationService",
+        "Ruteo de dependencias automáticas (Obras Públicas, Alumbrado, Parques)",
+        "API REST para consumo desde aplicaciones móviles ciudadanas",
+      ],
+      view: [
+        "Interfaz pública optimizada para accesibilidad móvil y bajo consumo de datos",
+        "Módulo de rastreo en vivo de folio con barra de progreso de atención",
+        "Catálogo interactivo de trámites municipales con requisitos desglosados",
+      ],
+    },
+    keyFeatures: [
+      "Levantamiento de reportes ciudadanos con geolocalización y foto",
+      "Consulta instantánea del estatus de folio de trámite",
+      "Directorio municipal interactivo con dependencias y horarios",
+      "Arquitectura Server Components en Next.js para carga ultra veloz",
+    ],
+    dockerStack: ["node:22-alpine", "standalone nextjs"],
+    demoType: "municipal",
+  },
+];

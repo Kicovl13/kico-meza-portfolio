@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { education, experience, extras, heroStack, projects, site, skillGroups } from "@/lib/data";
+import { education, experience, extras, heroStack, mvcShowcases, projects, site, skillGroups } from "@/lib/data";
 
 interface ChatMessage {
   role: "user" | "assistant" | "system";
@@ -25,7 +25,18 @@ STACK TECNOLÓGICO:
 - Datos & Mobile: ${skillGroups.find((g) => g.title === "Datos y móvil")?.items.join(", ") || ""}
 - DevOps & Entrega: ${skillGroups.find((g) => g.title === "Entrega")?.items.join(", ") || ""}
 
-PROYECTOS CLAVE:
+4 SISTEMAS MVC DE ALTO IMPACTO (CON DEMOS INTERACTIVOS):
+${mvcShowcases
+  .map(
+    (s, i) => `${i + 1}. ${s.title} (${s.category})
+   - Arquitectura: Modelo (${s.mvcArchitecture.model[0]}), Controlador (${s.mvcArchitecture.controller[0]}), Vista (${s.mvcArchitecture.view[0]})
+   - Stack: ${s.stack.join(", ")} | Docker: ${s.dockerStack.join(", ")}
+   - Métricas: ${s.metrics.map((m) => `${m.label}: ${m.value}`).join(" | ")}
+   - Funcionalidades: ${s.keyFeatures.join("; ")}`
+  )
+  .join("\n\n")}
+
+PROYECTOS CLAVE EN EMPRESAS:
 ${projects
   .map(
     (p, i) => `${i + 1}. ${p.title} (${p.period}) - ${p.role}:

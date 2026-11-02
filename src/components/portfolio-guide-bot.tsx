@@ -11,7 +11,6 @@ import {
   ChevronRight,
   Code2,
   Compass,
-  CornerDownLeft,
   Layers,
   Mail,
   RotateCcw,
@@ -144,6 +143,7 @@ export function PortfolioGuideBot() {
   const [showInvite, setShowInvite] = useState(false);
   const [activeTab, setActiveTab] = useState<"tour" | "chat">("tour");
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const msgCounterRef = useRef(1);
 
   // Chat State
   const [chatInput, setChatInput] = useState("");
@@ -247,8 +247,9 @@ export function PortfolioGuideBot() {
     const text = (textToSend ?? chatInput).trim();
     if (!text || isLoading) return;
 
+    msgCounterRef.current += 1;
     const userMessage: ChatMessage = {
-      id: `user-${Date.now()}`,
+      id: `user-${msgCounterRef.current}`,
       role: "user",
       content: text,
     };
@@ -275,7 +276,7 @@ export function PortfolioGuideBot() {
 
       // Check for navigation action tags like [ACTION:NAVIGATE:#projects]
       const actionMatch = rawReply.match(/\[ACTION:NAVIGATE:(#[a-z0-9_-]+)\]/i);
-      let cleanReply = rawReply.replace(/\[ACTION:NAVIGATE:#[a-z0-9_-]+\]/gi, "").trim();
+      const cleanReply = rawReply.replace(/\[ACTION:NAVIGATE:#[a-z0-9_-]+\]/gi, "").trim();
 
       let targetId: string | undefined;
       let targetLabel: string | undefined;
@@ -286,8 +287,9 @@ export function PortfolioGuideBot() {
         highlightSection(targetId);
       }
 
+      msgCounterRef.current += 1;
       const botMessage: ChatMessage = {
-        id: `bot-${Date.now()}`,
+        id: `bot-${msgCounterRef.current}`,
         role: "assistant",
         content: cleanReply,
         actionTarget: targetId,
@@ -297,10 +299,11 @@ export function PortfolioGuideBot() {
       setMessages((prev) => [...prev, botMessage]);
     } catch (err) {
       console.error("Error al consultar KicoBot:", err);
+      msgCounterRef.current += 1;
       setMessages((prev) => [
         ...prev,
         {
-          id: `bot-${Date.now()}`,
+          id: `bot-${msgCounterRef.current}`,
           role: "assistant",
           content:
             "Disculpa, hubo un detalle de conexión. Puedes contactar a Federico directamente por correo a " +
