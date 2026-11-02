@@ -2,6 +2,7 @@ export const site = {
   name: "Federico Meza",
   brand: "Federico Meza",
   role: "Ingeniero en Sistemas · Full Stack",
+  age: 29,
   location: "Zapopan, Jalisco",
   email: "federicojmr13@gmail.com",
   phone: "+52 33 2026 8920",

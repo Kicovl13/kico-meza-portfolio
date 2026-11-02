@@ -92,12 +92,15 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans scroll-smooth;
   }
+
   h1,
   h2,
   h3,
@@ -128,5 +131,36 @@
   .dot-pattern {
     background-image: radial-gradient(oklch(0.92 0.02 160 / 8%) 1px, transparent 1px);
     background-size: 24px 24px;
+  }
+
+  .tour-highlight {
+    position: relative;
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .tour-highlight::after {
+    content: "";
+    position: absolute;
+    inset: -8px;
+    border-radius: 28px;
+    border: 2px solid oklch(0.78 0.17 155 / 80%);
+    box-shadow: 0 0 40px oklch(0.78 0.17 155 / 35%), inset 0 0 20px oklch(0.78 0.17 155 / 10%);
+    pointer-events: none;
+    animation: tour-pulse-ring 2.2s ease-in-out infinite;
+    z-index: 20;
+  }
+
+  @keyframes tour-pulse-ring {
+
+    0%,
+    100% {
+      opacity: 0.9;
+      transform: scale(1);
+    }
+
+    50% {
+      opacity: 0.4;
+      transform: scale(1.005);
+    }
   }
 }

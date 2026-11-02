@@ -2,6 +2,7 @@ import { Contact } from "@/components/contact";
 import { Footer } from "@/components/footer";
 import { Hero } from "@/components/hero";
 import { Navbar } from "@/components/navbar";
+import { PortfolioGuideBot } from "@/components/portfolio-guide-bot";
 import { Projects } from "@/components/projects";
 import { TechStack } from "@/components/tech-stack";
 import { Workflow } from "@/components/workflow";
@@ -18,6 +19,7 @@ export default function Home() {
         <Contact />
       </main>
       <Footer />
+      <PortfolioGuideBot />
     </>
   );
 }
