@@ -46,20 +46,20 @@ export function Projects() {
             <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#f4f4f2] leading-[1.12] sm:leading-[1.08]">
               {lang === "es" ? (
                 <>
-                  Sistemas donde un error <br />
-                  <span className="dim">se nota y se paga.</span>
+                  Sistemas transaccionales <br />
+                  <span className="dim">donde el margen de error es cero.</span>
                 </>
               ) : (
                 <>
-                  Systems where failure <br />
-                  <span className="dim">is not an option.</span>
+                  Transactional systems <br />
+                  <span className="dim">where error margin is zero.</span>
                 </>
               )}
             </h2>
             <p className="mt-4 sm:mt-5 text-sm sm:text-base md:text-lg leading-relaxed text-[#9a9aa2]">
               {lang === "es"
-                ? "Plataformas de conciliación fiscal SAT, dispersión de nómina, ERPs comerciales y aplicaciones de misión crítica. Cada sistema cuenta con una demostración interactiva en vivo."
-                : "Mission-critical platforms spanning SAT tax compliance, automated payroll, enterprise ERPs, and real-time operations. Each system features an interactive live demo."}
+                ? "Plataformas de conciliación fiscal SAT, nómina algorítmica de ley, ERPs corporativos y arquitecturas multi-tenant. Cada sistema cuenta con lógica empresarial real, visor de arquitectura y demostración interactiva en vivo."
+                : "Production systems spanning SAT fiscal compliance, statutory payroll engines, multi-tenant ERPs, and real-time operations. Each platform features authentic domain logic, architecture breakdown, and interactive live demos."}
             </p>
           </div>
 
@@ -68,7 +68,7 @@ export function Projects() {
             className="btn-dh-ghost btn-dh-sm self-start md:self-auto shrink-0 flex items-center gap-2"
           >
             <Sparkles size={14} className="text-[#99ff99]" />
-            <span>{lang === "es" ? "Hub de 5 Demos en Vivo" : "5 Live Demos Hub"}</span>
+            <span>{lang === "es" ? "Explorar 5 Demos en Vivo" : "Explore 5 Live Demos"}</span>
             <ArrowRight size={14} />
           </Link>
         </div>
@@ -103,13 +103,13 @@ export function Projects() {
               >
                 <div>
                   {/* Category & Status */}
-                  <div className="flex items-center justify-between gap-3 mb-4 sm:mb-5">
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-4 sm:mb-5">
                     <span className="font-mono text-[10px] sm:text-[11px] font-bold tracking-[0.16em] uppercase text-[#99ff99]">
                       {showcase.category}
                     </span>
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono text-[#a9bdd1] bg-white/[0.04] border border-white/[0.1]">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-medium text-[#f4f4f2] bg-white/[0.05] border border-white/[0.12]">
                       <span className="size-1.5 rounded-full bg-[#99ff99] animate-pulse" />
-                      <span>{lang === "es" ? "Demo Activa" : "Live Demo"}</span>
+                      <span>{showcase.systemStatus}</span>
                     </span>
                   </div>
 
@@ -117,13 +117,27 @@ export function Projects() {
                   <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-[#f4f4f2] mb-1">
                     {showcase.title}
                   </h3>
-                  <p className="font-mono text-xs text-[#a9bdd1] mb-3 sm:mb-4">
+                  <p className="font-mono text-xs text-[#a9bdd1] mb-3">
                     {showcase.tagline}
                   </p>
 
-                  <p className="text-xs sm:text-sm leading-relaxed text-[#9a9aa2] mb-5 sm:mb-6">
-                    {showcase.description}
-                  </p>
+                  {/* Role Badge */}
+                  <div className="mb-4 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#a9bdd1]/10 border border-[#a9bdd1]/20 text-[11px] font-mono text-[#a9bdd1]">
+                    <span className="text-[#99ff99] font-bold">★ Rol:</span>
+                    <span className="font-semibold text-[#f4f4f2]">
+                      {showcase.projectPresentation.myRole.split(":")[0]}
+                    </span>
+                  </div>
+
+                  {/* Problem Solved Preview */}
+                  <div className="mb-4 sm:mb-5 rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 text-xs leading-relaxed">
+                    <span className="font-mono text-[10px] uppercase font-bold text-[#a9bdd1] block mb-1">
+                      {lang === "es" ? "Problema que resuelve:" : "Problem Solved:"}
+                    </span>
+                    <p className="line-clamp-2 text-[#9a9aa2]">
+                      {showcase.projectPresentation.problem}
+                    </p>
+                  </div>
 
                   {/* Key Metrics */}
                   <div className="grid grid-cols-3 gap-1.5 sm:gap-2 p-2.5 sm:p-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-center mb-5 sm:mb-6">
@@ -167,16 +181,16 @@ export function Projects() {
                     <button
                       type="button"
                       onClick={() => setSelectedMvc(showcase)}
-                      className="btn-dh-ghost btn-dh-sm text-xs cursor-pointer flex-1 sm:flex-initial text-center justify-center"
+                      className="btn-dh-ghost btn-dh-sm text-xs cursor-pointer flex-1 sm:flex-initial text-center justify-center flex items-center gap-1.5"
                     >
-                      {lang === "es" ? "Arquitectura" : "Architecture"}
+                      <span>{lang === "es" ? "Ficha Técnica (5 Puntos)" : "Tech Specs (5 Points)"}</span>
                     </button>
                     <Link
                       href={showcase.demoUrl}
                       className="btn-dh-light btn-dh-sm text-xs font-bold flex-1 sm:flex-initial text-center justify-center flex items-center gap-1.5"
                     >
                       <Sparkles size={13} />
-                      <span>{lang === "es" ? "Abrir Demo" : "Open Demo"}</span>
+                      <span>{lang === "es" ? "Probar Demo en Vivo" : "Test Live Demo"}</span>
                     </Link>
                   </div>
                 </div>

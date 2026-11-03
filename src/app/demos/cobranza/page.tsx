@@ -45,6 +45,10 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
+import { DemoSystemHeader } from "@/components/demos/demo-system-header";
+import { mvcShowcases } from "@/lib/data";
+
+const cobranzaProject = mvcShowcases.find((s) => s.id === "cobranza-b2b")!;
 
 interface FacturaPPD {
   id: string;
@@ -413,30 +417,8 @@ export default function CobranzaPage() {
         )}
       </AnimatePresence>
 
-      {/* Top Ledger Strip */}
-      <div className="h-10 bg-[#0c121e] border-b border-slate-800/80 px-4 flex items-center justify-between text-xs font-mono text-slate-400">
-        <div className="flex items-center gap-4">
-          <Link
-            href="/demos"
-            className="flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 font-semibold transition"
-          >
-            <ArrowLeft className="size-3.5" />
-            <span>Hub de Proyectos</span>
-          </Link>
-          <span className="text-slate-700">|</span>
-          <span className="flex items-center gap-2">
-            <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
-            <strong className="text-slate-200">COBRANZA B2B</strong> · SAT CFDI 4.0 & Complementos REP
-          </span>
-        </div>
-        <div className="flex items-center gap-4">
-          <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] text-emerald-400/90 bg-emerald-950/40 border border-emerald-800/40 px-2 py-0.5 rounded">
-            <ShieldCheck className="size-3" />
-            Webhooks SAT: En Línea
-          </span>
-          <span className="text-slate-500 text-[11px]">Ejercicio Fiscal 2026</span>
-        </div>
-      </div>
+      {/* Top Application Header with Ficha Técnica (5 Puntos) */}
+      <DemoSystemHeader project={cobranzaProject} />
 
       <div className="flex-1 flex overflow-hidden">
         {/* Left Dark Sidebar with Financial Corporate Identity */}

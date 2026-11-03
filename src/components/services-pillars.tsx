@@ -49,16 +49,16 @@ export function ServicesPillars() {
       <div className="wrap">
         {/* Section Header estilo danhermes.dev */}
         <div className="max-w-[840px] mb-12 sm:mb-16 md:mb-20">
-          <p className="eyebrow">{lang === "es" ? "Qué hago" : "What I do"}</p>
+          <p className="eyebrow">{lang === "es" ? "Especialidades de Ingeniería" : "Engineering Specialties"}</p>
           <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#f4f4f2] leading-[1.12] sm:leading-[1.08]">
             {lang === "es"
-              ? "Un solo ingeniero para toda la arquitectura."
-              : "Unified engineering ownership from backend to UI."}
+              ? "Propiedad técnica unificada: del modelado al despliegue."
+              : "Unified technical ownership: from modeling to deployment."}
           </h2>
           <p className="mt-4 sm:mt-6 text-sm sm:text-base md:text-lg leading-relaxed text-[#9a9aa2] max-w-[680px]">
             {lang === "es"
-              ? "Sin pasar el proyecto de mano en mano. La misma persona que diseña la arquitectura de base de datos escribe la API, programa la interfaz reactiva y la deja funcionando en producción."
-              : "No handing projects off across silos. The same engineer who models relational schemas builds the API, crafts the reactive interface, and deploys it live on your server."}
+              ? "Sin traspasos fragmentados entre silos. El mismo ingeniero senior que modela la base de datos relacional y programa la API transaccional, construye la interfaz reactiva y asegura la infraestructura en producción."
+              : "No fragmented handoffs across silos. The same senior engineer who models relational schemas and writes transactional APIs builds the reactive UI and maintains infrastructure in production."}
           </p>
         </div>
 

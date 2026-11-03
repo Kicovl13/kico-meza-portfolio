@@ -93,12 +93,16 @@ export function Hero() {
       <div className="relative z-10 mx-auto w-full max-w-[1040px] px-4 sm:px-6 text-center">
         {/* Badge with pulsing neon green dot */}
         <div className="mb-6 sm:mb-8 inline-block max-w-full">
-          <p className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-[10px] sm:text-xs font-semibold uppercase tracking-[0.16em] sm:tracking-[0.32em] text-[#9a9aa2]">
+          <p className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-[10px] sm:text-xs font-semibold uppercase tracking-[0.16em] sm:tracking-[0.24em] text-[#9a9aa2]">
             <span className="relative flex size-2 shrink-0">
               <span className="absolute inline-flex h-full w-full animate-pulse-dot rounded-full bg-[#99ff99] opacity-75" />
               <span className="relative inline-flex size-2 rounded-full bg-[#99ff99] shadow-[0_0_9px_rgba(153,255,153,0.7)]" />
             </span>
-            <span className="truncate">{lang === "es" ? "Desarrollador web full stack & Líder Técnico" : "Senior Full Stack Engineer & Tech Lead"}</span>
+            <span className="truncate">
+              {lang === "es"
+                ? "Senior Software Engineer & Tech Lead · +7 Años en Producción"
+                : "Senior Software Engineer & Tech Lead · 7+ Years in Production"}
+            </span>
           </p>
         </div>
 
@@ -106,14 +110,14 @@ export function Hero() {
         <h1 className="text-3xl xs:text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-[-0.03em] sm:tracking-[-0.045em] leading-[1.06] sm:leading-[1.02] text-[#f4f4f2] text-balance">
           {lang === "es" ? (
             <>
-              <span>Código que sostiene</span>
+              <span>Arquitectura sólida para</span>
               <br />
               <span>sistemas </span>
               <span className="dim">críticos.</span>
             </>
           ) : (
             <>
-              <span>Architecture behind</span>
+              <span>Robust architecture for</span>
               <br />
               <span>critical </span>
               <span className="dim">systems.</span>
@@ -122,23 +126,23 @@ export function Hero() {
         </h1>
 
         {/* Lead paragraph */}
-        <p className="mt-5 sm:mt-8 max-w-[660px] mx-auto text-sm sm:text-base md:text-lg leading-relaxed text-[#9a9aa2] text-pretty px-2">
+        <p className="mt-5 sm:mt-8 max-w-[700px] mx-auto text-sm sm:text-base md:text-lg leading-relaxed text-[#9a9aa2] text-pretty px-2">
           {lang === "es"
-            ? "Del diseño de arquitectura al servidor en producción. Laravel, Node.js, TypeScript y Angular bajo una sola responsabilidad técnica, para plataformas empresariales que no se pueden permitir fallar."
-            : "From system architecture to production servers. Laravel, Node.js, TypeScript, and Angular under unified technical ownership, for enterprise platforms that cannot afford downtime."}
+            ? "Senior Software Engineer & Tech Lead con +7 años diseñando plataformas transaccionales, ERPs multiempresa y cumplimiento fiscal SAT CFDI 4.0. Responsabilidad técnica integral: del modelado de datos y microservicios en Laravel y Node.js al despliegue en producción sin caídas."
+            : "Senior Software Engineer & Tech Lead with 7+ years architecting transactional platforms, multi-tenant ERPs, and Mexican SAT CFDI 4.0 fiscal compliance. Unified technical ownership: from data modeling and microservices in Laravel and Node.js to zero-downtime production deployments."}
         </p>
 
         {/* Call to Action Buttons (Full width on mobile, inline on desktop) */}
         <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-4 max-w-sm sm:max-w-none mx-auto">
           <a href="#contacto" className="btn-dh-light text-center justify-center">
-            {lang === "es" ? "Hablemos de tu proyecto" : "Let's talk about your project"}
+            {lang === "es" ? "Contactar para proyecto o vacante" : "Let's talk about your project"}
           </a>
           <a href="#proyectos" className="btn-dh-ghost text-center justify-center">
-            {lang === "es" ? "Ver sistemas en vivo" : "Explore live systems"}
+            {lang === "es" ? "Explorar sistemas y código" : "Explore systems & code"}
           </a>
           <Link href="/cv" className="btn-dh-ghost flex items-center justify-center gap-2">
             <FileText size={15} className="text-[#99ff99]" />
-            <span>{lang === "es" ? "Ver CV Ejecutivo" : "Executive Resume"}</span>
+            <span>{lang === "es" ? "Ver CV Ejecutivo (PDF)" : "Executive Resume (PDF)"}</span>
           </Link>
         </div>
 

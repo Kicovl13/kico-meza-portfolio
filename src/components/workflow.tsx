@@ -10,70 +10,70 @@ export function Workflow() {
 
   const careerRoles = [
     {
-      role: lang === "es" ? "Full Stack Developer" : "Senior Full Stack Developer",
+      role: lang === "es" ? "Senior Full Stack Developer" : "Senior Full Stack Developer",
       company: "Administración de Servicios Start",
-      place: lang === "es" ? "Remoto · Jalisco" : "Remote · Mexico",
+      place: lang === "es" ? "Remoto · Jalisco, México" : "Remote · Mexico",
       period: "Oct 2024 — Oct 2026",
       badge: lang === "es" ? "Arquitectura & APIs" : "Architecture & APIs",
       description:
         lang === "es"
-          ? "Diseño y desarrollo de servicios web modulares de alto tráfico, APIs REST seguras y microservicios contenerizados en Docker con frontend en Angular."
-          : "Architected high-throughput modular web services, secure REST APIs, and Dockerized microservices paired with reactive Angular frontends.",
+          ? "Diseño y desarrollo de microservicios contenerizados en Docker, APIs RESTful de alto throughput y colas asíncronas con Redis para plataformas empresariales integradas con Angular."
+          : "Architected high-throughput modular web services, secure REST APIs, and Dockerized microservices paired with reactive Angular frontends and Redis queues.",
       achievements: [
         lang === "es"
-          ? "Desarrollo de servicios escalables con Laravel, Node.js y TypeScript integrados con Angular."
-          : "Delivered scalable microservices with Laravel, Node.js, and TypeScript integrated with Angular.",
+          ? "Servicios modulares con Laravel 13, Node.js y TypeScript integrados con colas Redis para procesamiento batch."
+          : "Engineered scalable microservices with Laravel 13, Node.js, and TypeScript integrated with async Redis queues.",
         lang === "es"
-          ? "Estandarización de entornos mediante Docker para despliegues reproducibles sin discrepancias."
-          : "Standardized environments with Docker for predictable, reproducible production deployments.",
+          ? "Optimización profunda de consultas SQL complejas en MySQL 8.4 LTS reduciendo latencias hasta un 75% en reportes críticos."
+          : "Deep SQL query and indexing optimization on MySQL 8.4 LTS, reducing latency by up to 75% on critical business reports.",
         lang === "es"
-          ? "Optimización de consultas SQL complejas en bases de datos relacionales MySQL."
-          : "Optimized complex SQL queries and automated business-critical accounting workflows.",
+          ? "Estandarización de ciclos de despliegue reproducible en producción con Docker y Linux."
+          : "Standardized predictable production deployment workflows with Docker containers and Linux environments.",
       ],
-      stack: ["Laravel 13", "Node.js", "TypeScript", "Angular", "Docker", "MySQL"],
+      stack: ["Laravel 13", "Node.js", "TypeScript", "Angular 20", "Docker", "MySQL 8.4", "Redis"],
     },
     {
-      role: lang === "es" ? "Gerente del Área de Sistemas" : "Engineering / Systems Manager",
+      role: lang === "es" ? "Gerente del Área de Sistemas / Tech Lead" : "Engineering / Systems Manager & Tech Lead",
       company: "26 Grados S.A. de C.V.",
       place: "Zapopan, Jalisco",
       period: "Ene 2021 — Abr 2024",
       badge: lang === "es" ? "Liderazgo Técnico" : "Technical Leadership",
       description:
         lang === "es"
-          ? "Dirección estratégica del departamento de tecnología y arquitectura del sistema integral ERP/CRM, coordinando desarrolladores backend, frontend y móvil."
-          : "Strategic leadership of the engineering department and core ERP/CRM architecture, managing backend, frontend, and mobile engineers.",
+          ? "Dirección técnica y arquitectónica del ecosistema integral ERP/CRM corporativo: finanzas, facturación, control de accesos, auditoría y aplicaciones móviles nativas sincronizadas."
+          : "Strategic leadership of the engineering department and core ERP/CRM architecture, managing backend, frontend, and native mobile engineers.",
       achievements: [
         lang === "es"
-          ? "Lideré el equipo de desarrollo y definí la arquitectura integral: finanzas, CRM, reservas y auditoría."
-          : "Led engineering team and defined company-wide architecture: finance, CRM, bookings, and audit logs.",
+          ? "Lideré al equipo de ingeniería (backend, frontend, iOS/Swift y Android/Kotlin) bajo una sola fuente de verdad relacional."
+          : "Directed cross-functional engineering team (backend, frontend, iOS/Swift, Android/Kotlin) backed by unified DB.",
         lang === "es"
-          ? "Supervisé el desarrollo sincronizado de aplicaciones móviles nativas en Swift (iOS) y Kotlin (Android)."
-          : "Managed synchronized native mobile apps in Swift (iOS) and Kotlin (Android) backed by unified DB.",
+          ? "Diseño del módulo financiero con conciliación de cobranza, emisión de CFDI y bitácoras inmutables de auditoría forense."
+          : "Architected core financial module: accounts receivable reconciliation, electronic invoicing, and tamper-evident audit trails.",
         lang === "es"
-          ? "Garantía de alta disponibilidad y soporte directo a la dirección general en decisiones de infraestructura."
-          : "Guaranteed high availability and provided direct counsel to executive leadership on tech strategy.",
+          ? "Garantía de alta disponibilidad (99.9% uptime) y asesoría técnica directa al consejo directivo en infraestructura cloud."
+          : "Guaranteed 99.9% uptime and provided direct counsel to executive leadership on cloud infrastructure and data security.",
       ],
       stack: ["Node.js", "TypeScript", "Express", "MySQL", "Swift", "Kotlin", "Docker"],
     },
     {
-      role: lang === "es" ? "Desarrollador de Software" : "Software Engineer",
+      role: lang === "es" ? "Software Engineer / Lead de Migración" : "Software Engineer / Migration Lead",
       company: "Administración de Integrantes",
       place: "Zapopan, Jalisco",
       period: "Ene 2019 — Dic 2021",
       badge: lang === "es" ? "Migración de Misión Crítica" : "Mission-Critical Migration",
       description:
         lang === "es"
-          ? "Liderazgo en la modernización tecnológica y migración completa de los sistemas operativos y de nómina de la empresa desde Informix 4GL hacia arquitectura web moderna."
+          ? "Liderazgo técnico en la modernización tecnológica y migración completa de misión crítica de los sistemas operativos y de nómina de la empresa desde Informix 4GL hacia arquitectura web moderna con cero caídas."
           : "Spearheaded technical modernization and zero-downtime migration of company operational and payroll systems from Informix 4GL to modern web stack.",
       achievements: [
         lang === "es"
-          ? "Migración exitosa desde Informix 4GL sin interrupción de la operación diaria del negocio ni pérdidas de datos."
+          ? "Migración exitosa desde Informix 4GL hacia MySQL y arquitectura web sin un solo minuto de interrupción operativa ni pérdida de datos."
           : "Executed zero-downtime migration from legacy Informix 4GL with zero data loss and uninterrupted operations.",
         lang === "es"
-          ? "Desarrollo de módulos de cálculo de nómina, facturación electrónica, roles y pasarelas de pago."
-          : "Engineered payroll engines, electronic invoicing, role-based security, and payment gateways.",
+          ? "Diseño y programación del motor de cálculo de nómina de ley con retenciones fiscales (ISR) y cuotas obrero-patronales (IMSS)."
+          : "Engineered automated payroll math engine, statutory tax withholding (IMSS/ISR), and payment gateway integrations.",
         lang === "es"
-          ? "Implementación de bitácoras de auditoría y controles de seguridad para prevención de fraudes contables."
+          ? "Implementación de bitácoras de auditoría forense y controles de seguridad para prevención de fraudes contables."
           : "Implemented tamper-evident security audit trails and accounting controls preventing unauthorized alterations.",
       ],
       stack: ["PHP", "MySQL", "JavaScript", "Bootstrap", "Informix 4GL"],
@@ -86,7 +86,7 @@ export function Workflow() {
       <section id="trayectoria" className="py-16 sm:py-24 lg:py-32 relative border-t border-white/[0.08]">
         <div className="wrap">
           <div className="max-w-[840px] mb-12 sm:mb-16 md:mb-20">
-            <p className="eyebrow">{lang === "es" ? "Trayectoria" : "Career Track"}</p>
+            <p className="eyebrow">{lang === "es" ? "Trayectoria Profesional" : "Career Track Record"}</p>
             <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#f4f4f2] leading-[1.12] sm:leading-[1.08]">
               {lang === "es"
                 ? "Experiencia en producción y liderazgo de equipos."
@@ -94,8 +94,8 @@ export function Workflow() {
             </h2>
             <p className="mt-4 sm:mt-5 text-sm sm:text-base md:text-lg leading-relaxed text-[#9a9aa2] max-w-[680px]">
               {lang === "es"
-                ? "Más de 7 años diseñando e implementando sistemas de misión crítica, dirigiendo equipos técnicos y asegurando continuidad operativa en sectores inmobiliario, financiero y corporativo."
-                : "Over 7 years architecting mission-critical platforms, directing engineering teams, and ensuring operational continuity across real estate, financial, and corporate domains."}
+                ? "Más de 7 años asumiendo responsabilidad técnica integral: dirigiendo equipos multidisciplinarios de ingeniería, diseñando esquemas de datos relacionales y modernizando sistemas core sin un solo segundo de corte operativo."
+                : "Over 7 years owning unified technical responsibility: leading cross-functional engineering teams, architecting relational data schemas, and modernizing legacy codebases with zero downtime."}
             </p>
           </div>
 
@@ -172,12 +172,12 @@ export function Workflow() {
                 {lang === "es" ? (
                   <>
                     Detrás de FEDERICOMEZA.DEV <br />
-                    <span className="dim">hay un ingeniero.</span>
+                    <span className="dim">hay un ingeniero senior.</span>
                   </>
                 ) : (
                   <>
                     Behind FEDERICOMEZA.DEV <br />
-                    <span className="dim">is an engineer.</span>
+                    <span className="dim">is a senior engineer.</span>
                   </>
                 )}
               </h2>
@@ -187,14 +187,14 @@ export function Workflow() {
                   {lang === "es" ? (
                     <>
                       Me llamo <strong className="text-[#f4f4f2]">Federico Meza</strong> y soy{" "}
-                      <strong className="text-[#f4f4f2]">ingeniero de software full stack y líder técnico</strong>.
-                      Diseño la arquitectura, programo el backend y pongo sistemas críticos en producción.
+                      <strong className="text-[#f4f4f2]">Senior Software Engineer & Tech Lead</strong>.
+                      Diseño la arquitectura de bases de datos, programo el backend transaccional y pongo sistemas críticos en producción.
                     </>
                   ) : (
                     <>
                       My name is <strong className="text-[#f4f4f2]">Federico Meza</strong>, and I am a{" "}
-                      <strong className="text-[#f4f4f2]">senior full stack software engineer and tech lead</strong>.
-                      I design system architecture, build secure backends, and deliver critical platforms to production.
+                      <strong className="text-[#f4f4f2]">Senior Software Engineer & Tech Lead</strong>.
+                      I design relational data architectures, engineer secure backends, and deliver mission-critical platforms to production.
                     </>
                   )}
                 </p>
@@ -202,22 +202,22 @@ export function Workflow() {
                 <p>
                   {lang === "es" ? (
                     <>
-                      He sido <strong>Gerente del Área de Sistemas en 26 Grados</strong> dirigiendo equipos multidisciplinarios,
-                      he liderado la modernización de sistemas heredados de <strong>Informix 4GL a Web sin un solo segundo de inactividad</strong>,
-                      y he construido plataformas con <strong>cumplimiento fiscal SAT CFDI 4.0</strong> y nómina de ley.
+                      He sido <strong>Gerente del Área de Sistemas en 26 Grados</strong> dirigiendo equipos multidisciplinarios de ingeniería,
+                      he liderado la modernización de sistemas de misión crítica de <strong>Informix 4GL a Web sin un solo segundo de inactividad operativa</strong>,
+                      y he construido plataformas empresariales con estricto <strong>cumplimiento fiscal SAT CFDI 4.0</strong>, conciliación SPEI y nómina de ley.
                     </>
                   ) : (
                     <>
                       I have served as <strong>Systems / Engineering Manager at 26 Grados</strong> directing cross-functional teams,
-                      led zero-downtime migrations from legacy <strong>Informix 4GL to modern web</strong> architectures, and engineered platforms with strict <strong>Mexican SAT CFDI 4.0 fiscal compliance</strong>.
+                      led zero-downtime legacy migrations from <strong>Informix 4GL to modern web</strong> architectures, and engineered platforms with strict <strong>Mexican SAT CFDI 4.0 fiscal compliance</strong>, SPEI reconciliation, and statutory payroll.
                     </>
                   )}
                 </p>
 
                 <p>
                   {lang === "es"
-                    ? "Ahí aprendí que un buen software no solo se ve bien: aguanta la concurrencia, garantiza que el dinero concilie al centavo y es fácil de mantener a lo largo de los años."
-                    : "I learned that reliable software doesn't just look clean: it survives high traffic, reconciles every single dollar to the penny, and remains maintainable across years."}
+                    ? "Mi criterio técnico es simple: un buen software no solo se ve limpio; resiste alta concurrencia, garantiza que el dinero y los comprobantes fiscales concilien al centavo, y se mantiene predecible y robusto con los años."
+                    : "My engineering philosophy is straightforward: reliable software doesn't just look polished; it survives high traffic, reconciles every dollar and tax stamp to the penny, and remains predictable and robust over years."}
                 </p>
               </div>
 

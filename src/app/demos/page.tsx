@@ -1,301 +1,241 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
   ArrowRight,
   Building2,
+  CheckCircle2,
+  Cpu,
   ExternalLink,
+  FileText,
   Landmark,
   LayoutGrid,
   MessageCircle,
+  Play,
   Scale,
   Sparkles,
+  UserCheck,
   Users,
   Zap,
 } from "lucide-react";
 import Link from "next/link";
+import { mvcShowcases, type MvcShowcase } from "@/lib/data";
 
-const demos = [
-  {
-    id: "cobranza",
-    href: "/demos/cobranza",
-    icon: Landmark,
-    color: "#10b981",
-    border: "rgba(16,185,129,0.3)",
-    label: "Cobranza B2B · Conciliación PPD/REP",
-    category: "Fintech & Fiscal SAT",
-    description:
-      "SaaS de cuentas por cobrar, conciliación de depósitos bancarios SPEI con facturas PPD y timbrado automático de complementos REP.",
-    features: ["Conciliación PPD / REP", "Match de depósitos SPEI", "Semáforo de mora"],
-    stack: ["Laravel 13", "Livewire 4", "MySQL 8.4"],
-  },
-  {
-    id: "sysadmin",
-    href: "/demos/sysadmin",
-    icon: Users,
-    color: "#22c55e",
-    border: "rgba(34,197,94,0.3)",
-    label: "SysAdministrador · CRM/ERP",
-    category: "CRM & ERP",
-    description:
-      "Sistema integral con módulos de clientes, empleados, nómina con cálculo IMSS/ISR, facturación y bitácora de auditoría.",
-    features: ["CRUD de clientes", "Cálculo nómina IMSS/ISR", "Bitácora de auditoría"],
-    stack: ["PHP", "Laravel", "MySQL"],
-  },
-  {
-    id: "leex",
-    href: "/demos/leex",
-    icon: Building2,
-    color: "#f97316",
-    border: "rgba(249,115,22,0.3)",
-    label: "Leex SaaS · Arrendamiento",
-    category: "PropTech & SaaS",
-    description:
-      "Administración de propiedades en arrendamiento: contratos, pagos con validación de comprobantes y solicitudes de mantenimiento.",
-    features: ["Mapa de unidades", "Validación pagos 1-clic", "Solicitudes mantenimiento"],
-    stack: ["Laravel", "Livewire", "Tailwind CSS"],
-  },
-  {
-    id: "legalflow",
-    href: "/demos/legalflow",
-    icon: Scale,
-    color: "#a855f7",
-    border: "rgba(168,85,247,0.3)",
-    label: "LegalFlow · Expedientes",
-    category: "LegalTech",
-    description:
-      "Sistema de gestión para despachos jurídicos. Términos procesales con cuenta regresiva, audiencias y acuerdos judiciales.",
-    features: ["Términos con countdown", "Semáforo de urgencias", "Historial de acuerdos"],
-    stack: ["Angular 20", "Ionic 8", "TypeScript"],
-  },
-  {
-    id: "rootwork",
-    href: "/demos/rootwork",
-    icon: LayoutGrid,
-    color: "#60a5fa",
-    border: "rgba(96,165,250,0.3)",
-    label: "RootWork · Project Manager",
-    category: "Project Management",
-    description:
-      "Tablero Kanban drag-and-drop, seguimiento de tiempo con timer en vivo, presupuesto por proyecto y facturación de horas.",
-    features: ["Kanban drag-and-drop", "Timer en vivo", "Facturación de horas"],
-    stack: ["Node.js", "TypeScript", "Angular"],
-  },
-  {
-    id: "whatsapp-bot",
-    href: "/demos/whatsapp-bot",
-    icon: MessageCircle,
-    color: "#25d366",
-    border: "rgba(37,211,102,0.3)",
-    label: "Bot de Citas · WhatsApp",
-    category: "Automatización",
-    description:
-      "Simulador del bot conversacional que agenda citas sin intervención humana. NLP para fechas y slots de disponibilidad.",
-    features: ["Flujo conversacional", "Slots de disponibilidad", "Transferencia a asesor"],
-    stack: ["Node.js", "Baileys", "Google Calendar API"],
-  },
-];
+const iconMap: Record<string, any> = {
+  "cobranza-b2b": Landmark,
+  "bot-whatsapp-citas": MessageCircle,
+  "despacho-legal": Scale,
+  "sysadministrador": Users,
+  "leex-saas": Building2,
+  "rootwork": LayoutGrid,
+};
 
 export default function DemosIndex() {
+  const [filter, setFilter] = useState<string>("all");
+
+  const filtered = mvcShowcases.filter((s) => {
+    if (filter === "all") return true;
+    if (filter === "produccion") return s.statusType === "produccion";
+    if (filter === "mvp") return s.statusType === "mvp";
+    if (filter === "laravel") return s.stack.some((x) => x.toLowerCase().includes("laravel"));
+    if (filter === "node") return s.stack.some((x) => x.toLowerCase().includes("node"));
+    return true;
+  });
+
   return (
-    <div
-      className="min-h-screen"
-      style={{
-        background:
-          "linear-gradient(135deg, #0a0f1e 0%, #0f172a 50%, #0c1220 100%)",
-      }}
-    >
-      {/* Header */}
-      <header
-        className="sticky top-0 z-50"
-        style={{
-          background: "rgba(10,15,30,0.95)",
-          borderBottom: "1px solid rgba(255,255,255,0.07)",
-          backdropFilter: "blur(16px)",
-        }}
-      >
-        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center gap-4">
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-sm"
-            style={{ color: "rgba(255,255,255,0.5)" }}
-          >
-            <ArrowLeft size={16} />
-            Portafolio
-          </Link>
-          <div className="h-4 w-px" style={{ background: "rgba(255,255,255,0.15)" }} />
-          <div className="flex items-center gap-2">
-            <Sparkles size={14} style={{ color: "#60a5fa" }} />
-            <span className="text-white font-semibold text-sm">Demos Interactivos</span>
+    <div className="min-h-screen bg-[#060608] text-[#f4f4f2] selection:bg-[#99ff99]/30 selection:text-[#99ff99]">
+      {/* Top Application Header */}
+      <header className="sticky top-0 z-50 border-b border-white/[0.08] bg-[#060608]/95 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-xs font-mono text-[#9a9aa2] hover:text-[#f4f4f2] transition py-1 px-2.5 rounded-lg border border-white/[0.1] bg-white/[0.03]"
+            >
+              <ArrowLeft size={14} />
+              <span>Portafolio Principal</span>
+            </Link>
+            <div className="h-4 w-px bg-white/[0.12]" />
+            <div className="flex items-center gap-2">
+              <Sparkles size={14} className="text-[#99ff99]" />
+              <span className="text-xs sm:text-sm font-bold tracking-tight text-[#f4f4f2]">
+                Catálogo de Sistemas & Demos
+              </span>
+            </div>
           </div>
+
+          <Link
+            href="/cv"
+            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-mono text-[#a9bdd1] hover:text-white transition"
+          >
+            <FileText size={13} className="text-[#99ff99]" />
+            <span>Ver CV Ejecutivo (PDF)</span>
+          </Link>
         </div>
       </header>
 
-      <div className="max-w-5xl mx-auto px-4 py-12">
-        {/* Hero */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-14"
-        >
-          <div
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-5 text-xs font-medium"
-            style={{
-              background: "rgba(96,165,250,0.12)",
-              color: "#60a5fa",
-              border: "1px solid rgba(96,165,250,0.25)",
-            }}
-          >
-            <Zap size={11} />
-            Plataformas en Vivo · Demostraciones Interactivas
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+        {/* Hero Section */}
+        <div className="max-w-3xl mb-12 sm:mb-16">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-4 text-xs font-mono font-medium border border-[#99ff99]/30 bg-[#99ff99]/10 text-[#99ff99]">
+            <span className="size-1.5 rounded-full bg-[#99ff99] animate-pulse" />
+            <span>Demostraciones Interactivas de Software</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-white mb-4 tracking-tight">
-            Sistemas Empresariales en
-            <span
-              className="ml-3"
-              style={{
-                background: "linear-gradient(135deg, #60a5fa, #a855f7)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              Acción
-            </span>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#f4f4f2] leading-[1.12]">
+            Sistemas reales con flujos de producción,{" "}
+            <span className="text-[#9a9aa2]">no solo pantallas de prueba.</span>
           </h1>
-          <p
-            className="text-base sm:text-lg max-w-2xl mx-auto leading-relaxed"
-            style={{ color: "rgba(255,255,255,0.65)" }}
-          >
-            Demostraciones interactivas de sistemas desarrollados y llevados a producción. Cada plataforma
-            permite interactuar con los flujos de negocio, reglas fiscales y paneles de control operativos.
+          <p className="mt-4 text-sm sm:text-base leading-relaxed text-[#9a9aa2]">
+            Cada sistema a continuación representa una arquitectura construida para resolver un problema de negocio real: conciliación fiscal SAT, cálculo de nómina de ley, expedientes judiciales con términos por días hábiles, arrendamiento inmobiliario multi-tenant y bots desatendidos con NLP.
           </p>
-        </motion.div>
 
-        {/* Demo cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {demos.map((demo, i) => (
-            <motion.div
-              key={demo.id}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-            >
-              <Link href={demo.href} className="block group h-full">
-                <motion.div
-                  whileHover={{ y: -6, scale: 1.01 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className="h-full rounded-2xl p-6 flex flex-col relative overflow-hidden"
-                  style={{
-                    background: "rgba(255,255,255,0.04)",
-                    border: `1px solid ${demo.border}`,
-                  }}
-                >
-                  {/* Glow bg */}
-                  <div
-                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                    style={{
-                      background: `radial-gradient(ellipse at top left, ${demo.color}15, transparent 70%)`,
-                    }}
-                  />
+          {/* Filter Pills */}
+          <div className="mt-8 flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
+            {[
+              { id: "all", label: "Todos los Sistemas" },
+              { id: "produccion", label: "Sistemas en Producción" },
+              { id: "mvp", label: "MVPs & Prototipos" },
+              { id: "laravel", label: "Laravel & PHP" },
+              { id: "node", label: "Node.js & TS" },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setFilter(tab.id)}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-mono transition cursor-pointer whitespace-nowrap shrink-0 ${
+                  filter === tab.id
+                    ? "bg-[#f4f4f2] text-[#060608] font-bold"
+                    : "text-[#9a9aa2] border border-white/[0.1] bg-white/[0.02] hover:text-[#f4f4f2] hover:border-white/[0.2]"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
 
-                  {/* Category */}
-                  <div className="flex items-center justify-between mb-5 relative z-10">
-                    <span
-                      className="text-xs px-2.5 py-1 rounded-full font-medium"
-                      style={{
-                        background: `${demo.color}18`,
-                        color: demo.color,
-                        border: `1px solid ${demo.color}33`,
-                      }}
-                    >
-                      {demo.category}
+        {/* Systems Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filtered.map((showcase) => {
+            const Icon = iconMap[showcase.id] || Sparkles;
+            return (
+              <article
+                key={showcase.id}
+                className="glass-dh p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:border-white/[0.22] group relative overflow-hidden"
+              >
+                {/* Accent top gradient glow */}
+                <div
+                  className="absolute top-0 inset-x-0 h-1 opacity-80"
+                  style={{ backgroundColor: showcase.brandTheme.primary }}
+                />
+
+                <div>
+                  {/* Category & Status */}
+                  <div className="flex items-center justify-between gap-2 mb-4">
+                    <span className="font-mono text-[10px] uppercase font-bold tracking-wider text-[#99ff99]">
+                      {showcase.category}
                     </span>
-                    <ExternalLink
-                      size={14}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity"
-                      style={{ color: demo.color }}
-                    />
+                    <span
+                      className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono border ${showcase.brandTheme.badge}`}
+                    >
+                      <span className="size-1 rounded-full bg-current animate-pulse" />
+                      <span>{showcase.systemStatus.split("·")[0]}</span>
+                    </span>
                   </div>
 
-                  {/* Icon */}
-                  <div
-                    className="w-14 h-14 rounded-2xl flex items-center justify-center mb-5 relative z-10"
-                    style={{
-                      background: `${demo.color}18`,
-                      border: `1px solid ${demo.color}33`,
-                    }}
-                  >
-                    <demo.icon size={26} style={{ color: demo.color }} />
+                  {/* Icon & Title */}
+                  <div className="flex items-start gap-3 mb-3">
+                    <div
+                      className="size-10 rounded-xl flex items-center justify-center shrink-0 border border-white/[0.1] bg-white/[0.03]"
+                      style={{ color: showcase.brandTheme.primary }}
+                    >
+                      <Icon size={20} />
+                    </div>
+                    <div>
+                      <h2 className="text-lg font-bold text-[#f4f4f2] leading-snug group-hover:text-white transition">
+                        {showcase.title}
+                      </h2>
+                      <p className="font-mono text-[11px] text-[#a9bdd1] mt-0.5">
+                        {showcase.tagline.split("con")[0]}
+                      </p>
+                    </div>
                   </div>
 
-                  {/* Content */}
-                  <h2 className="text-white font-bold text-lg mb-2 relative z-10">
-                    {demo.label}
-                  </h2>
-                  <p
-                    className="text-sm flex-1 mb-5 leading-relaxed relative z-10"
-                    style={{ color: "rgba(255,255,255,0.55)" }}
-                  >
-                    {demo.description}
-                  </p>
+                  {/* Federico's Role Badge */}
+                  <div className="mb-4 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#a9bdd1]/10 border border-[#a9bdd1]/20 text-[11px] font-mono text-[#a9bdd1]">
+                    <UserCheck size={12} className="text-[#99ff99]" />
+                    <span className="font-semibold text-[#f4f4f2] truncate">
+                      {showcase.projectPresentation.myRole.split(":")[0]}
+                    </span>
+                  </div>
 
-                  {/* Features */}
-                  <div className="space-y-1.5 mb-5 relative z-10">
-                    {demo.features.map((f) => (
-                      <div key={f} className="flex items-center gap-2">
-                        <div
-                          className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                          style={{ background: demo.color }}
-                        />
-                        <p className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>
-                          {f}
-                        </p>
+                  {/* 1. Problema que resuelve */}
+                  <div className="mb-4 rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 text-xs leading-relaxed">
+                    <span className="font-mono text-[10px] uppercase font-bold text-amber-400 block mb-1">
+                      1. Problema que resuelve:
+                    </span>
+                    <p className="text-[#9a9aa2] line-clamp-3">
+                      {showcase.projectPresentation.problem}
+                    </p>
+                  </div>
+
+                  {/* 5. Qué puedes probar */}
+                  <div className="mb-4 rounded-xl border border-[#99ff99]/15 bg-[#99ff99]/[0.02] p-3 text-xs leading-relaxed">
+                    <span className="font-mono text-[10px] uppercase font-bold text-[#99ff99] block mb-1 flex items-center gap-1">
+                      <Play size={10} />
+                      <span>Qué probar en el demo:</span>
+                    </span>
+                    <p className="text-[#c6c6ce] line-clamp-2">
+                      {showcase.projectPresentation.interactiveGuide[0]}
+                    </p>
+                  </div>
+
+                  {/* Key Metrics */}
+                  <div className="grid grid-cols-3 gap-1.5 p-2 rounded-lg bg-black/40 border border-white/[0.06] text-center mb-4">
+                    {showcase.metrics.map((m) => (
+                      <div key={m.label}>
+                        <p className="font-mono text-xs font-bold text-[#f4f4f2]">{m.value}</p>
+                        <p className="text-[9px] text-[#6e6e76] truncate">{m.label}</p>
                       </div>
                     ))}
                   </div>
+                </div>
 
-                  {/* Stack tags */}
-                  <div className="flex flex-wrap gap-1.5 mb-5 relative z-10">
-                    {demo.stack.map((s) => (
+                {/* Footer with Stack and Primary CTA */}
+                <div className="pt-4 border-t border-white/[0.08] flex items-center justify-between gap-3">
+                  <div className="flex flex-wrap gap-1">
+                    {showcase.stack.slice(0, 2).map((s) => (
                       <span
                         key={s}
-                        className="text-xs px-2 py-0.5 rounded-md"
-                        style={{
-                          background: "rgba(255,255,255,0.07)",
-                          color: "rgba(255,255,255,0.5)",
-                          border: "1px solid rgba(255,255,255,0.1)",
-                        }}
+                        className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.03] border border-white/[0.08] text-[#9a9aa2]"
                       >
                         {s}
                       </span>
                     ))}
                   </div>
 
-                  {/* CTA */}
-                  <div
-                    className="flex items-center gap-2 text-sm font-semibold relative z-10 group-hover:gap-3 transition-all"
-                    style={{ color: demo.color }}
+                  <Link
+                    href={showcase.demoUrl}
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-[#99ff99] hover:text-white transition group-hover:translate-x-0.5 shrink-0"
                   >
-                    Abrir Demo <ArrowRight size={15} />
-                  </div>
-                </motion.div>
-              </Link>
-            </motion.div>
-          ))}
+                    <span>Probar Demo</span>
+                    <ArrowRight size={13} />
+                  </Link>
+                </div>
+              </article>
+            );
+          })}
         </div>
 
-        {/* Footer note */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="text-center mt-12 text-sm"
-          style={{ color: "rgba(255,255,255,0.25)" }}
-        >
-          Todos los demos son funcionales con datos de muestra · Sin backend real necesario
-        </motion.p>
-      </div>
+        {/* Recruiter Assurance Note */}
+        <div className="mt-16 p-6 rounded-2xl border border-white/[0.08] bg-white/[0.02] text-center max-w-2xl mx-auto">
+          <p className="text-xs sm:text-sm text-[#9a9aa2] leading-relaxed">
+            <strong className="text-[#f4f4f2]">Nota de confidencialidad y datos:</strong> Todas las demostraciones emplean información simulada con personas morales y físicas ficticias. Ningún dato real de clientes, sellos privados o RFCs reales se exponen en este entorno.
+          </p>
+        </div>
+      </main>
     </div>
   );
 }

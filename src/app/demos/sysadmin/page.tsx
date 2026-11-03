@@ -43,6 +43,10 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
+import { DemoSystemHeader } from "@/components/demos/demo-system-header";
+import { mvcShowcases } from "@/lib/data";
+
+const sysadminProject = mvcShowcases.find((s) => s.id === "sysadministrador")!;
 
 type ERPModule = "dashboard" | "clientes" | "empleados" | "nomina" | "auditoria";
 
@@ -153,30 +157,8 @@ export default function SysAdminPage() {
 
   return (
     <div className="min-h-screen bg-[#0f172a] text-slate-200 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
-      {/* Top Bar Banner / Breadcrumb */}
-      <div className="bg-[#1e293b] border-b border-slate-700/80 px-4 py-2 flex items-center justify-between text-xs font-mono">
-        <div className="flex items-center gap-3">
-          <Link
-            href="/demos"
-            className="flex items-center gap-1 text-blue-400 hover:text-blue-300 font-semibold transition"
-          >
-            <ArrowLeft className="size-3.5" />
-            <span>Volver a Portafolio</span>
-          </Link>
-          <span className="text-slate-600">|</span>
-          <span className="flex items-center gap-2">
-            <Shield className="size-3.5 text-blue-400" />
-            <span className="text-slate-300 font-bold">SysAdministrador Enterprise v4.5</span>
-            <span className="bg-blue-900/60 text-blue-300 border border-blue-700/50 px-2 py-0.2 rounded text-[10px]">
-              ERP Empresarial · Laravel & MySQL
-            </span>
-          </span>
-        </div>
-        <div className="flex items-center gap-4 text-slate-400 text-[11px]">
-          <span>Licencia: Corporativa</span>
-          <span className="text-emerald-400 font-semibold">● Servidor Activo (Linux)</span>
-        </div>
-      </div>
+      {/* Top Application Header with Ficha Técnica (5 Puntos) */}
+      <DemoSystemHeader project={sysadminProject} />
 
       <div className="flex-1 flex overflow-hidden">
         {/* Left Classic ERP Sidebar */}

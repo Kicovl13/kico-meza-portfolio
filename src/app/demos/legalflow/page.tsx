@@ -38,6 +38,10 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
+import { DemoSystemHeader } from "@/components/demos/demo-system-header";
+import { mvcShowcases } from "@/lib/data";
+
+const legalProject = mvcShowcases.find((s) => s.id === "despacho-legal")!;
 
 interface JuicioExpediente {
   id: string;
@@ -186,26 +190,17 @@ export default function LegalFlowPage() {
 
   return (
     <div className="min-h-screen bg-[#1a050d] text-rose-100 flex flex-col font-sans selection:bg-rose-600 selection:text-white">
-      {/* Top Judicial Strip */}
-      <div className="h-11 bg-[#2b0815] border-b border-rose-900/60 px-4 flex items-center justify-between text-xs font-mono">
-        <div className="flex items-center gap-3">
-          <Link
-            href="/demos"
-            className="flex items-center gap-1.5 text-rose-300 hover:text-white font-semibold transition"
-          >
-            <ArrowLeft className="size-3.5" />
-            <span>Portafolio</span>
-          </Link>
-          <span className="text-rose-800">|</span>
-          <div className="flex items-center gap-2">
-            <Scale className="size-3.5 text-amber-400" />
-            <strong className="text-rose-100 font-serif tracking-wide">LEGALFLOW</strong>
-            <span className="text-rose-400/80">· Gestión de Juicios & Términos Procesales</span>
-          </div>
-        </div>
+      {/* Top Application Header with Ficha Técnica (5 Puntos) */}
+      <DemoSystemHeader project={legalProject} />
 
-        {/* View Mode Switcher (Ionic Mobile Simulator vs Desktop Table) */}
+      {/* Sub-toolbar with View Switcher */}
+      <div className="bg-[#240612] border-b border-rose-900/60 px-4 py-2 flex items-center justify-between text-xs">
+        <div className="flex items-center gap-2 font-mono text-[11px] text-rose-300">
+          <Scale className="size-3.5 text-amber-400" />
+          <span>Simulador de Entorno Judicial (GDL / CDMX)</span>
+        </div>
         <div className="flex items-center gap-2">
+          <span className="text-[11px] font-mono text-rose-400 hidden sm:inline">Modo de Vista:</span>
           <div className="flex items-center rounded-lg border border-rose-800/80 bg-rose-950/60 p-0.5 text-xs">
             <button
               onClick={() => setViewMode("mobile")}

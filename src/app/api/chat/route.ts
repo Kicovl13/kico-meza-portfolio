@@ -20,10 +20,7 @@ INFORMACIÓN COMPLETA DE FEDERICO MEZA:
 
 STACK TECNOLÓGICO:
 - Stack principal: ${heroStack.join(", ")}
-- Backend: ${skillGroups.find((g) => g.title === "Backend")?.items.join(", ") || ""}
-- Frontend: ${skillGroups.find((g) => g.title === "Frontend")?.items.join(", ") || ""}
-- Datos & Mobile: ${skillGroups.find((g) => g.title === "Datos y móvil")?.items.join(", ") || ""}
-- DevOps & Entrega: ${skillGroups.find((g) => g.title === "Entrega")?.items.join(", ") || ""}
+${skillGroups.map((g) => `- ${g.title}: ${g.items.join(", ")}`).join("\n")}
 
 SISTEMAS EMPRESARIALES DE ALTO IMPACTO (CON DEMOS INTERACTIVOS):
 ${mvcShowcases

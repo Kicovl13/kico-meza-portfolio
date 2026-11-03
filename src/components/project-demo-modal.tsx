@@ -4,21 +4,29 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Activity,
+  AlertCircle,
   ArrowRight,
   Boxes,
   Check,
   CheckCircle2,
   Code2,
   Container,
+  Cpu,
   Database,
   ExternalLink,
+  FileText,
   Layers,
   Phone,
+  Play,
   Send,
   Server,
+  ShieldCheck,
+  Sparkles,
   Terminal,
+  UserCheck,
   X,
 } from "lucide-react";
+import Link from "next/link";
 import { type MvcShowcase } from "@/lib/data";
 
 function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -35,7 +43,7 @@ interface ProjectDemoModalProps {
 }
 
 export function ProjectDemoModal({ project, onClose }: ProjectDemoModalProps) {
-  const [activeTab, setActiveTab] = useState<"demo" | "mvc" | "docker">("demo");
+  const [activeTab, setActiveTab] = useState<"ficha" | "demo" | "mvc" | "docker">("ficha");
 
   // State 1: Cobranza PPD/REP
   const [cobranzaInvoices, setCobranzaInvoices] = useState([
@@ -308,32 +316,44 @@ export function ProjectDemoModal({ project, onClose }: ProjectDemoModalProps) {
             <div className="mt-5 flex gap-2 border-b border-border/50 pb-1 overflow-x-auto no-scrollbar">
               <button
                 type="button"
+                onClick={() => setActiveTab("ficha")}
+                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors shrink-0 ${
+                  activeTab === "ficha"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                }`}
+              >
+                <FileText className="size-3.5" />
+                Ficha Técnica (5 Puntos)
+              </button>
+              <button
+                type="button"
                 onClick={() => setActiveTab("demo")}
-                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
+                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors shrink-0 ${
                   activeTab === "demo"
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
                 }`}
               >
                 <Activity className="size-3.5" />
-                Simulador Interactivo
+                Simulador Rápido
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab("mvc")}
-                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
+                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors shrink-0 ${
                   activeTab === "mvc"
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
                 }`}
               >
                 <Code2 className="size-3.5" />
-                Arquitectura & Dominio
+                Arquitectura MVC & Capas
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab("docker")}
-                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
+                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors shrink-0 ${
                   activeTab === "docker"
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
@@ -347,6 +367,142 @@ export function ProjectDemoModal({ project, onClose }: ProjectDemoModalProps) {
 
           {/* Modal Body */}
           <div className="flex-1 overflow-y-auto p-5 sm:p-6 scrollbar-thin">
+            {activeTab === "ficha" && (
+              <div className="space-y-6">
+                {/* CTA to full interactive demo */}
+                <div className="rounded-2xl border border-primary/30 bg-primary/10 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="font-mono text-xs font-bold uppercase tracking-wider text-primary">
+                        {project.systemStatus}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-sm font-semibold text-foreground">
+                      Demostración de software interactiva disponible
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Diseñado con datos ficticios realistas, flujos transaccionales y adaptabilidad móvil.
+                    </p>
+                  </div>
+                  <Link
+                    href={project.demoUrl}
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs font-bold text-primary-foreground shadow-lg hover:opacity-95 transition shrink-0"
+                  >
+                    <Sparkles size={14} />
+                    <span>Abrir Demo en Pantalla Completa</span>
+                    <ArrowRight size={14} />
+                  </Link>
+                </div>
+
+                {/* 1. Qué problema resuelve */}
+                <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 sm:p-5">
+                  <div className="flex items-center gap-2 text-amber-400 mb-2">
+                    <AlertCircle className="size-4 shrink-0" />
+                    <h4 className="text-xs font-mono font-bold tracking-wider uppercase">
+                      1. Problema que resuelve en el negocio
+                    </h4>
+                  </div>
+                  <p className="text-xs sm:text-sm text-foreground/90 leading-relaxed">
+                    {project.projectPresentation.problem}
+                  </p>
+                </div>
+
+                {/* 2. Qué hace el sistema */}
+                <div className="rounded-xl border border-border/80 bg-background/50 p-4 sm:p-5">
+                  <div className="flex items-center gap-2 text-foreground mb-2">
+                    <CheckCircle2 className="size-4 text-emerald-400 shrink-0" />
+                    <h4 className="text-xs font-mono font-bold tracking-wider uppercase text-muted-foreground">
+                      2. Qué hace el sistema y cómo opera
+                    </h4>
+                  </div>
+                  <p className="text-xs sm:text-sm text-foreground/90 leading-relaxed">
+                    {project.projectPresentation.overview}
+                  </p>
+                  <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 pt-3 border-t border-border/40">
+                    {project.keyFeatures.map((feat) => (
+                      <div key={feat} className="flex items-start gap-2 text-xs text-muted-foreground">
+                        <span className="text-emerald-400 font-bold">•</span>
+                        <span>{feat}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 3. Qué tecnologías utiliza */}
+                <div className="rounded-xl border border-border/80 bg-background/50 p-4 sm:p-5">
+                  <div className="flex items-center gap-2 text-foreground mb-2">
+                    <Cpu className="size-4 text-sky-400 shrink-0" />
+                    <h4 className="text-xs font-mono font-bold tracking-wider uppercase text-muted-foreground">
+                      3. Tecnologías y arquitectura implementada
+                    </h4>
+                  </div>
+                  <p className="text-xs sm:text-sm text-foreground/90 leading-relaxed mb-3">
+                    {project.projectPresentation.techArchitecture}
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {project.stack.map((t) => (
+                      <span
+                        key={t}
+                        className="px-2.5 py-1 rounded-full text-[11px] font-mono font-medium bg-muted border border-border text-foreground"
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 4. Qué responsabilidad tuviste en su desarrollo */}
+                <div className="rounded-xl border border-sky-500/20 bg-sky-500/5 p-4 sm:p-5">
+                  <div className="flex items-center gap-2 text-sky-400 mb-2">
+                    <UserCheck className="size-4 shrink-0" />
+                    <h4 className="text-xs font-mono font-bold tracking-wider uppercase">
+                      4. Responsabilidad y rol de Federico Meza
+                    </h4>
+                  </div>
+                  <p className="text-xs sm:text-sm text-foreground/90 leading-relaxed">
+                    {project.projectPresentation.myRole}
+                  </p>
+                </div>
+
+                {/* 5. Qué funcionalidades puede probar el visitante */}
+                <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4 sm:p-5">
+                  <div className="flex items-center justify-between gap-2 text-emerald-400 mb-3">
+                    <div className="flex items-center gap-2">
+                      <Play className="size-4 shrink-0" />
+                      <h4 className="text-xs font-mono font-bold tracking-wider uppercase">
+                        5. Guía de qué probar en esta demostración
+                      </h4>
+                    </div>
+                    <span className="text-[10px] font-mono text-emerald-400/80">Checklist interactivo</span>
+                  </div>
+                  <div className="space-y-2.5">
+                    {project.projectPresentation.interactiveGuide.map((step, idx) => (
+                      <div
+                        key={step}
+                        className="flex items-start gap-3 rounded-lg border border-emerald-500/10 bg-background/40 p-2.5 text-xs text-foreground/90"
+                      >
+                        <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 font-mono text-[10px] font-bold text-emerald-400">
+                          {idx + 1}
+                        </span>
+                        <span className="leading-relaxed">{step}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-4 pt-3 border-t border-emerald-500/20 flex justify-end">
+                    <Link
+                      href={project.demoUrl}
+                      className="inline-flex items-center gap-2 text-xs font-bold text-emerald-400 hover:text-emerald-300 transition"
+                    >
+                      <span>Ir a la demostración interactiva completa</span>
+                      <ArrowRight size={13} />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {activeTab === "demo" && (
               <div className="space-y-4">
                 {/* 1. COBRANZA B2B DEMO */}

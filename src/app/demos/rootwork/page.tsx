@@ -35,6 +35,10 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
+import { DemoSystemHeader } from "@/components/demos/demo-system-header";
+import { mvcShowcases } from "@/lib/data";
+
+const rootworkProject = mvcShowcases.find((s) => s.id === "rootwork")!;
 
 type TaskStatus = "backlog" | "in_progress" | "review" | "done";
 
@@ -203,31 +207,8 @@ export default function RootWorkPage() {
 
   return (
     <div className="min-h-screen bg-[#090a0f] text-slate-100 flex flex-col font-sans selection:bg-indigo-500/30 selection:text-indigo-200">
-      {/* Top Banner */}
-      <div className="h-11 bg-[#0f1118] border-b border-white/[0.08] px-4 flex items-center justify-between text-xs font-mono">
-        <div className="flex items-center gap-3">
-          <Link
-            href="/demos"
-            className="flex items-center gap-1.5 text-indigo-400 hover:text-indigo-300 font-semibold transition"
-          >
-            <ArrowLeft className="size-3.5" />
-            <span>Portafolio</span>
-          </Link>
-          <span className="text-slate-800">|</span>
-          <div className="flex items-center gap-2">
-            <span className="size-2 rounded-full bg-indigo-500 animate-pulse" />
-            <strong className="text-white font-mono tracking-tight">ROOTWORK</strong>
-            <span className="text-slate-500">· Linear-style Project & Time Tracker</span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-4 text-slate-400 text-[11px]">
-          <span className="hidden sm:inline">Stack: Node.js · TypeScript · Angular</span>
-          <span className="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2 py-0.5 rounded font-mono">
-            Sprint Activo #42
-          </span>
-        </div>
-      </div>
+      {/* Top Application Header with Ficha Técnica (5 Puntos) */}
+      <DemoSystemHeader project={rootworkProject} />
 
       {/* Toggl-Style Live Time Tracker Bar */}
       <div className="bg-[#12141e] border-b border-white/[0.08] px-4 sm:px-6 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md">

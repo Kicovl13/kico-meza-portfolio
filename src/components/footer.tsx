@@ -20,8 +20,8 @@ export function Footer() {
             </a>
             <p className="text-xs sm:text-sm text-[#6e6e76] max-w-sm">
               {lang === "es"
-                ? "Ingeniería de software full stack · Backend · Bases de datos · Fiscal SAT · DevOps"
-                : "Full stack software engineering · Backend · Relational Databases · Tax Compliance · DevOps"}
+                ? "Senior Software Engineer & Tech Lead · Arquitectura backend, bases de datos transaccionales y plataformas críticas."
+                : "Senior Software Engineer & Tech Lead · Backend architecture, transactional data & mission-critical systems."}
             </p>
           </div>
 

@@ -16,40 +16,42 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FEDERICOMEZA.DEV · Ingeniero Full Stack & Líder Técnico",
+  title: "Federico Meza · Senior Software Engineer & Tech Lead",
   description:
-    "Del diseño de arquitectura al servidor en producción. Desarrollo web full stack y plataformas empresariales críticas con Laravel, Node.js, TypeScript y Angular.",
+    "+7 años de experiencia diseñando y liderando sistemas transaccionales críticos, ERPs multi-tenant, motores de cumplimiento fiscal SAT CFDI 4.0 y arquitecturas distribuidas con cero margen de error.",
   keywords: [
     "Federico Meza",
-    "Ingeniero Full Stack",
+    "Senior Software Engineer",
     "Tech Lead",
+    "Full Stack Engineer",
+    "Arquitectura de Software",
     "Laravel",
     "Node.js",
     "TypeScript",
-    "Angular",
-    "Zapopan",
-    "Jalisco",
-    "Sistemas ERP",
-    "Plataformas Críticas",
-    "CFDI 4.0 SAT",
+    "PostgreSQL",
     "Docker",
-    "Arquitectura de Software",
+    "CFDI 4.0 SAT",
+    "Sistemas ERP",
+    "Fintech",
+    "Zapopan",
+    "Guadalajara",
+    "Jalisco",
   ],
   authors: [{ name: "Federico Meza", url: "https://github.com/Kicovl13" }],
   creator: "Federico Meza",
   openGraph: {
-    title: "FEDERICOMEZA.DEV · Ingeniero Full Stack & Líder Técnico",
+    title: "Federico Meza · Senior Software Engineer & Tech Lead",
     description:
-      "Del diseño de arquitectura al servidor en producción. Desarrollo web full stack para empresas y plataformas que no pueden fallar.",
+      "Arquitectura sólida para sistemas críticos. +7 años en producción liderando plataformas ERP, facturación SAT y arquitecturas resilientes.",
     siteName: "FEDERICOMEZA.DEV",
     locale: "es_MX",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "FEDERICOMEZA.DEV · Ingeniero Full Stack & Líder Técnico",
+    title: "Federico Meza · Senior Software Engineer & Tech Lead",
     description:
-      "ERPs, CRMs, facturación fiscal SAT y APIs escalables a producción con Laravel, Node.js, TypeScript y Angular.",
+      "Sistemas transaccionales de misión crítica, facturación SAT CFDI 4.0 y arquitecturas escalables con Laravel, TypeScript, Node.js y PostgreSQL.",
   },
 };
 

@@ -48,21 +48,21 @@ export function Contact() {
           <h2 className="text-2xl xs:text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-[#f4f4f2] leading-[1.1] sm:leading-[1.08] mb-4 sm:mb-6">
             {lang === "es" ? (
               <>
-                ¿Tienes un proyecto o vacante? <br />
+                ¿Tienes un sistema crítico por construir o liderar? <br />
                 <span className="dim">Hablemos.</span>
               </>
             ) : (
               <>
-                Have a project or lead role? <br />
+                Have a critical system to build or lead? <br />
                 <span className="dim">Let&apos;s talk.</span>
               </>
             )}
           </h2>
 
-          <p className="text-sm sm:text-base md:text-lg leading-relaxed text-[#9a9aa2] max-w-[620px] mx-auto mb-8 sm:mb-10 px-2">
+          <p className="text-sm sm:text-base md:text-lg leading-relaxed text-[#9a9aa2] max-w-[660px] mx-auto mb-8 sm:mb-10 px-2">
             {lang === "es"
-              ? "Cuéntame sobre el reto técnico, el sistema que necesitas construir o la posición y te respondo con una propuesta clara."
-              : "Tell me about the engineering challenge, the platform you need to build, or the role, and I will reply promptly."}
+              ? "Disponible para roles de Senior Software Engineer, Tech Lead o consultoría de arquitectura en proyectos de alta complejidad técnica. Escríbeme y analicemos tu necesidad técnica con una propuesta concreta."
+              : "Available for Senior Software Engineer, Tech Lead roles, or software architecture advisory for complex technical platforms. Reach out and let's discuss your requirements with a clear roadmap."}
           </p>
 
           {/* Direct CTA Buttons (Stacked on mobile, inline on sm+) */}
@@ -84,7 +84,7 @@ export function Contact() {
               className="btn-dh-ghost flex items-center justify-center gap-2.5 text-[#99ff99] border-[#99ff99]/30 hover:border-[#99ff99]"
             >
               <MessageCircle size={18} />
-              <span>WhatsApp Directo</span>
+              <span>{lang === "es" ? "WhatsApp Directo" : "Direct WhatsApp"}</span>
             </a>
 
             {/* Copy Button */}
@@ -103,7 +103,7 @@ export function Contact() {
               ) : (
                 <>
                   <Copy size={16} />
-                  <span>{lang === "es" ? "Copiar correo" : "Copy email"}</span>
+                  <span>{lang === "es" ? "Copiar correo directo" : "Copy direct email"}</span>
                 </>
               )}
             </button>

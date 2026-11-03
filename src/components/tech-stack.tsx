@@ -11,32 +11,32 @@ export function TechStack() {
       title: "Backend & Arquitectura",
       desc:
         lang === "es"
-          ? "Servicios robustos, microservicios, APIs de alto rendimiento y lógica empresarial."
-          : "Robust services, microservices, high-throughput APIs, and domain logic.",
+          ? "Arquitectura orientada a dominio, microservicios, APIs REST de alto throughput y colas asíncronas con Redis."
+          : "Domain-driven architecture, microservices, high-throughput REST APIs, and async Redis queues.",
       tags: ["Laravel 13", "PHP 8.3+", "Node.js", "Express", "TypeScript", "REST APIs", "Redis"],
     },
     {
       title: "Frontend & Aplicaciones Móvil",
       desc:
         lang === "es"
-          ? "Interfaces reactivas, componentes reutilizables y aplicaciones móviles fluidas."
-          : "Reactive web interfaces, reusable component libraries, and fluid mobile applications.",
+          ? "Interfaces reactivas, componentes modulares y aplicaciones móviles fluidas con Angular 20, Next.js y Capacitor."
+          : "Reactive interfaces, modular components, and smooth cross-platform mobile apps with Angular 20, Next.js, and Capacitor.",
       tags: ["Angular 20", "Next.js", "React", "Ionic 8", "Capacitor 7", "Tailwind CSS", "Livewire 4"],
     },
     {
       title: "Bases de Datos & Consistencia",
       desc:
         lang === "es"
-          ? "Modelado relacional, optimización de consultas SQL, transacciones ACID e integridad."
-          : "Relational modeling, SQL indexing, ACID transactional integrity, and legacy migrations.",
+          ? "Modelado relacional, consultas SQL optimizadas, transacciones ACID estrictas y particionamiento multi-tenant."
+          : "Relational data modeling, optimized SQL indexing, strict ACID transactions, and multi-tenant partitioning.",
       tags: ["MySQL 8.4 LTS", "MariaDB", "Oracle DB", "Optimización SQL", "Transacciones ACID", "Redis"],
     },
     {
       title: "DevOps & Ciberseguridad",
       desc:
         lang === "es"
-          ? "Contenedores Docker, administración de servidores Linux y protección de datos."
-          : "Docker containers, Linux administration, CI/CD pipelines, and Google-certified security.",
+          ? "Contenedores Docker predecibles, administración de servidores Linux y estándares de seguridad certificados por Google."
+          : "Predictable Docker containers, Linux server administration, CI/CD, and Google-certified security.",
       tags: ["Docker", "Linux Servers", "Google Cybersecurity", "OAuth2 / JWT", "CI/CD", "SAT CFDI 4.0"],
     },
   ];

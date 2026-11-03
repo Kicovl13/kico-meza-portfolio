@@ -41,6 +41,10 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
+import { DemoSystemHeader } from "@/components/demos/demo-system-header";
+import { mvcShowcases } from "@/lib/data";
+
+const leexProject = mvcShowcases.find((s) => s.id === "leex-saas")!;
 
 interface Unit {
   id: string;
@@ -136,31 +140,8 @@ export default function LeexSaaSPage() {
         )}
       </AnimatePresence>
 
-      {/* Top Banner */}
-      <header className="h-12 bg-[#1c1917] border-b border-stone-800 px-4 sm:px-6 flex items-center justify-between text-xs">
-        <div className="flex items-center gap-3">
-          <Link
-            href="/demos"
-            className="flex items-center gap-1.5 text-orange-400 hover:text-orange-300 font-semibold transition"
-          >
-            <ArrowLeft className="size-3.5" />
-            <span>Hub de Demos</span>
-          </Link>
-          <span className="text-stone-700">|</span>
-          <div className="flex items-center gap-2">
-            <span className="size-2 rounded-full bg-orange-500" />
-            <strong className="text-stone-100 font-mono tracking-tight">LEEX SAAS</strong>
-            <span className="text-stone-400">· Plataforma de Arrendamiento & PropTech</span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-4 text-stone-400 text-[11px] font-mono">
-          <span className="hidden sm:inline">Multi-Tenant · Livewire 4 + Tailwind</span>
-          <span className="bg-orange-500/10 text-orange-400 border border-orange-500/30 px-2 py-0.5 rounded">
-            Versión Producción
-          </span>
-        </div>
-      </header>
+      {/* Top Application Header with Ficha Técnica (5 Puntos) */}
+      <DemoSystemHeader project={leexProject} />
 
       {/* PropTech Property Bar */}
       <div className="bg-[#141210] border-b border-stone-800/80 px-4 sm:px-6 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
