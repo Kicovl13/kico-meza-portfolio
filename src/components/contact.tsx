@@ -1,16 +1,21 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { motion } from "framer-motion";
-import { Link2, Mail, MapPin, Phone, Send } from "lucide-react";
+import { Check, Copy, ExternalLink, Mail, MessageCircle, Phone, Send } from "lucide-react";
 import { site } from "@/lib/data";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { useLanguage } from "@/context/language-context";
 
 export function Contact() {
+  const { lang } = useLanguage();
+  const [copiedEmail, setCopiedEmail] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const [status, setStatus] = useState<"idle" | "sent">("idle");
+
+  const copyEmail = () => {
+    navigator.clipboard.writeText(site.email);
+    setCopiedEmail(true);
+    setTimeout(() => setCopiedEmail(false), 2500);
+  };
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -20,128 +25,183 @@ export function Contact() {
     const email = String(data.get("email") || "").trim();
     const message = String(data.get("message") || "").trim();
 
-    const subject = encodeURIComponent(
-      `Consulta de portafolio de ${name || "visitante"}`,
-    );
+    const subject = encodeURIComponent(`Consulta técnica / vacante de ${name || "Visitante"}`);
     const body = encodeURIComponent(
-      `Nombre: ${name}\nEmail: ${email}\n\n${message}`,
+      `Nombre: ${name}\nEmail: ${email}\n\nMensaje:\n${message}`
     );
     window.location.href = `mailto:${site.email}?subject=${subject}&body=${body}`;
     setStatus("sent");
-    form.reset();
   }
 
   return (
-    <section id="contact" className="relative scroll-mt-24 py-20 sm:py-28">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr]">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.45 }}
-          >
-            <p className="font-mono text-xs uppercase tracking-[0.2em] text-primary">
-              Contacto
-            </p>
-            <h2
-              className="mt-3 text-3xl tracking-tight text-foreground sm:text-4xl"
-              style={{ fontWeight: 700 }}
+    <section id="contacto" className="py-16 sm:py-24 lg:py-32 relative border-t border-white/[0.08]">
+      <div className="wrap">
+        {/* Final Card estilo danhermes.dev */}
+        <div className="glass-dh p-6 sm:p-12 lg:p-16 text-center max-w-[920px] mx-auto rounded-2xl sm:rounded-3xl relative overflow-hidden">
+          {/* Subtle glow */}
+          <div className="pointer-events-none absolute -top-24 inset-x-0 mx-auto w-96 h-48 bg-[#99ff99]/10 rounded-full blur-3xl" />
+
+          <p className="eyebrow justify-center mb-5 sm:mb-6">
+            {lang === "es" ? "Contacto" : "Contact"}
+          </p>
+
+          <h2 className="text-2xl xs:text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-[#f4f4f2] leading-[1.1] sm:leading-[1.08] mb-4 sm:mb-6">
+            {lang === "es" ? (
+              <>
+                ¿Tienes un proyecto o vacante? <br />
+                <span className="dim">Hablemos.</span>
+              </>
+            ) : (
+              <>
+                Have a project or lead role? <br />
+                <span className="dim">Let&apos;s talk.</span>
+              </>
+            )}
+          </h2>
+
+          <p className="text-sm sm:text-base md:text-lg leading-relaxed text-[#9a9aa2] max-w-[620px] mx-auto mb-8 sm:mb-10 px-2">
+            {lang === "es"
+              ? "Cuéntame sobre el reto técnico, el sistema que necesitas construir o la posición y te respondo con una propuesta clara."
+              : "Tell me about the engineering challenge, the platform you need to build, or the role, and I will reply promptly."}
+          </p>
+
+          {/* Direct CTA Buttons (Stacked on mobile, inline on sm+) */}
+          <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-4 max-w-sm sm:max-w-none mx-auto mb-8 sm:mb-10">
+            {/* Primary Email */}
+            <a
+              href={`mailto:${site.email}`}
+              className="btn-dh-light flex items-center justify-center gap-2.5"
             >
-              Construyamos algo sólido
-            </h2>
-            <p className="mt-3 max-w-md text-muted-foreground">
-              Abierto a roles full stack y backend, en empresa o por proyecto.
-              Escríbeme directo o usa el formulario: abre tu correo con el
-              mensaje listo.
-            </p>
+              <Mail size={18} />
+              <span>{site.email}</span>
+            </a>
 
-            <div className="mt-8 flex flex-col gap-3">
-              <a
-                href={`mailto:${site.email}`}
-                className="inline-flex items-center gap-3 rounded-xl border border-border/70 bg-card/40 px-4 py-3 text-sm text-foreground transition-colors hover:border-primary/40"
-              >
-                <Mail className="size-4 text-primary" />
-                {site.email}
-              </a>
-              <a
-                href={site.phoneHref}
-                className="inline-flex items-center gap-3 rounded-xl border border-border/70 bg-card/40 px-4 py-3 text-sm text-foreground transition-colors hover:border-primary/40"
-              >
-                <Phone className="size-4 text-primary" />
-                {site.phone}
-              </a>
-              <a
-                href={site.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-3 rounded-xl border border-border/70 bg-card/40 px-4 py-3 text-sm text-foreground transition-colors hover:border-primary/40"
-              >
-                <Link2 className="size-4 text-primary" />
-                LinkedIn
-              </a>
-              <p className="inline-flex items-center gap-3 px-4 py-1 text-sm text-muted-foreground">
-                <MapPin className="size-4 text-primary" />
-                {site.location}
-              </p>
-            </div>
-          </motion.div>
+            {/* Direct WhatsApp */}
+            <a
+              href={site.whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-dh-ghost flex items-center justify-center gap-2.5 text-[#99ff99] border-[#99ff99]/30 hover:border-[#99ff99]"
+            >
+              <MessageCircle size={18} />
+              <span>WhatsApp Directo</span>
+            </a>
 
-          <motion.form
-            onSubmit={onSubmit}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.5, delay: 0.08 }}
-            className="glass rounded-2xl p-6 sm:p-8"
-          >
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="name">Nombre</Label>
-                <Input
-                  id="name"
+            {/* Copy Button */}
+            <button
+              type="button"
+              onClick={copyEmail}
+              className="btn-dh-ghost flex items-center justify-center gap-2 cursor-pointer"
+            >
+              {copiedEmail ? (
+                <>
+                  <Check size={16} className="text-[#99ff99]" />
+                  <span className="text-[#99ff99] font-mono text-xs">
+                    {lang === "es" ? "Copiado" : "Copied"}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <Copy size={16} />
+                  <span>{lang === "es" ? "Copiar correo" : "Copy email"}</span>
+                </>
+              )}
+            </button>
+          </div>
+
+          {/* Quick contact list */}
+          <div className="pt-6 sm:pt-8 border-t border-white/[0.08] flex flex-col sm:flex-row flex-wrap justify-center items-center gap-3 sm:gap-8 text-xs sm:text-sm font-mono text-[#9a9aa2]">
+            <a
+              href={site.phoneHref}
+              className="hover:text-[#f4f4f2] transition-colors flex items-center gap-1.5"
+            >
+              <Phone size={14} className="text-[#99ff99]" />
+              <span>{site.phone}</span>
+            </a>
+            <span className="hidden sm:inline text-white/20">·</span>
+            <a
+              href={site.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-[#f4f4f2] transition-colors"
+            >
+              linkedin.com/in/federico-meza
+            </a>
+            <span className="hidden sm:inline text-white/20">·</span>
+            <a
+              href={site.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-[#f4f4f2] transition-colors"
+            >
+              github.com/Kicovl13
+            </a>
+          </div>
+
+          {/* Toggle form button */}
+          <div className="mt-6 sm:mt-8">
+            <button
+              type="button"
+              onClick={() => setShowForm((v) => !v)}
+              className="text-xs text-[#6e6e76] hover:text-[#f4f4f2] underline underline-offset-4 cursor-pointer transition"
+            >
+              {showForm
+                ? (lang === "es" ? "Ocultar formulario de mensaje" : "Hide message form")
+                : (lang === "es" ? "¿Prefieres enviar un mensaje directo desde aquí?" : "Prefer sending a message from here?")}
+            </button>
+          </div>
+
+          {/* Embedded Form if opened */}
+          {showForm && (
+            <form onSubmit={onSubmit} className="mt-6 sm:mt-8 text-left max-w-lg mx-auto space-y-4 pt-6 border-t border-white/[0.08]">
+              <div>
+                <label className="block text-xs font-mono text-[#9a9aa2] mb-1">
+                  {lang === "es" ? "Tu Nombre / Empresa:" : "Your Name / Company:"}
+                </label>
+                <input
                   name="name"
-                  placeholder="Tu nombre"
                   required
-                  className="h-10 bg-background/40"
+                  placeholder={lang === "es" ? "Ej. Ing. Laura Gómez" : "E.g. Laura Gomez"}
+                  className="w-full h-11 px-4 rounded-xl bg-white/[0.04] border border-white/[0.12] text-base sm:text-sm text-[#f4f4f2] focus:outline-none focus:border-[#99ff99]"
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
+              <div>
+                <label className="block text-xs font-mono text-[#9a9aa2] mb-1">
+                  {lang === "es" ? "Tu Correo Electrónico:" : "Your Email:"}
+                </label>
+                <input
                   name="email"
                   type="email"
-                  placeholder="tu@empresa.com"
                   required
-                  className="h-10 bg-background/40"
+                  placeholder="laura@empresa.com"
+                  className="w-full h-11 px-4 rounded-xl bg-white/[0.04] border border-white/[0.12] text-base sm:text-sm text-[#f4f4f2] focus:outline-none focus:border-[#99ff99]"
                 />
               </div>
-            </div>
-            <div className="mt-4 space-y-2">
-              <Label htmlFor="message">Mensaje</Label>
-              <Textarea
-                id="message"
-                name="message"
-                placeholder="¿Qué estás construyendo?"
-                required
-                rows={5}
-                className="resize-none bg-background/40"
-              />
-            </div>
-            <div className="mt-5 flex flex-wrap items-center gap-3">
-              <Button type="submit" size="lg" className="h-11 px-5">
-                Enviar mensaje
-                <Send data-icon="inline-end" />
-              </Button>
-              {status === "sent" && (
-                <p className="text-sm text-primary">
-                  Abriendo tu cliente de correo…
-                </p>
-              )}
-            </div>
-          </motion.form>
+              <div>
+                <label className="block text-xs font-mono text-[#9a9aa2] mb-1">
+                  {lang === "es" ? "Detalles del Proyecto o Vacante:" : "Project or Role Details:"}
+                </label>
+                <textarea
+                  name="message"
+                  required
+                  rows={4}
+                  placeholder={lang === "es" ? "Cuéntame sobre el stack, el reto de negocio o el equipo..." : "Tell me about the stack, business challenge, or team..."}
+                  className="w-full p-4 rounded-xl bg-white/[0.04] border border-white/[0.12] text-base sm:text-sm text-[#f4f4f2] focus:outline-none focus:border-[#99ff99] resize-none"
+                />
+              </div>
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+                <button type="submit" className="btn-dh-light btn-dh-sm w-full sm:w-auto">
+                  <span>{lang === "es" ? "Enviar Mensaje" : "Send Message"}</span>
+                  <Send size={14} />
+                </button>
+                {status === "sent" && (
+                  <span className="text-xs text-[#99ff99] font-mono">
+                    {lang === "es" ? "Abriendo cliente de correo..." : "Opening email client..."}
+                  </span>
+                )}
+              </div>
+            </form>
+          )}
         </div>
       </div>
     </section>

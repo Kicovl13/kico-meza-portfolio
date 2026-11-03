@@ -1,16 +1,12 @@
 import type { Metadata } from "next";
-import { JetBrains_Mono, Outfit, Syne } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { LanguageProvider } from "@/context/language-context";
 
-const outfit = Outfit({
-  variable: "--font-outfit",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-});
-
-const syne = Syne({
-  variable: "--font-syne",
-  subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -20,14 +16,40 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Federico Meza — Ingeniero en Sistemas · Full Stack",
+  title: "FEDERICOMEZA.DEV · Ingeniero Full Stack & Líder Técnico",
   description:
-    "Federico Meza, ingeniero en sistemas en Zapopan. Construye CRMs, plataformas de negocio y APIs con Laravel, Node.js, TypeScript, Angular y MySQL.",
+    "Del diseño de arquitectura al servidor en producción. Desarrollo web full stack y plataformas empresariales críticas con Laravel, Node.js, TypeScript y Angular.",
+  keywords: [
+    "Federico Meza",
+    "Ingeniero Full Stack",
+    "Tech Lead",
+    "Laravel",
+    "Node.js",
+    "TypeScript",
+    "Angular",
+    "Zapopan",
+    "Jalisco",
+    "Sistemas ERP",
+    "Plataformas Críticas",
+    "CFDI 4.0 SAT",
+    "Docker",
+    "Arquitectura de Software",
+  ],
+  authors: [{ name: "Federico Meza", url: "https://github.com/Kicovl13" }],
+  creator: "Federico Meza",
   openGraph: {
-    title: "Federico Meza — Ingeniero en Sistemas · Full Stack",
+    title: "FEDERICOMEZA.DEV · Ingeniero Full Stack & Líder Técnico",
     description:
-      "CRMs, plataformas de negocio y APIs con Laravel, Node.js, TypeScript y Angular.",
+      "Del diseño de arquitectura al servidor en producción. Desarrollo web full stack para empresas y plataformas que no pueden fallar.",
+    siteName: "FEDERICOMEZA.DEV",
+    locale: "es_MX",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "FEDERICOMEZA.DEV · Ingeniero Full Stack & Líder Técnico",
+    description:
+      "ERPs, CRMs, facturación fiscal SAT y APIs escalables a producción con Laravel, Node.js, TypeScript y Angular.",
   },
 };
 
@@ -35,9 +57,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="es"
-      className={`dark ${outfit.variable} ${syne.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`dark ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-sans">{children}</body>
+      <body className="min-h-full flex flex-col font-sans bg-[#060608] text-[#f4f4f2]">
+        <LanguageProvider>{children}</LanguageProvider>
+      </body>
     </html>
   );
 }

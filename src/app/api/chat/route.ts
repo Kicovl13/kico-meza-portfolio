@@ -25,11 +25,11 @@ STACK TECNOLÓGICO:
 - Datos & Mobile: ${skillGroups.find((g) => g.title === "Datos y móvil")?.items.join(", ") || ""}
 - DevOps & Entrega: ${skillGroups.find((g) => g.title === "Entrega")?.items.join(", ") || ""}
 
-4 SISTEMAS MVC DE ALTO IMPACTO (CON DEMOS INTERACTIVOS):
+SISTEMAS EMPRESARIALES DE ALTO IMPACTO (CON DEMOS INTERACTIVOS):
 ${mvcShowcases
   .map(
     (s, i) => `${i + 1}. ${s.title} (${s.category})
-   - Arquitectura: Modelo (${s.mvcArchitecture.model[0]}), Controlador (${s.mvcArchitecture.controller[0]}), Vista (${s.mvcArchitecture.view[0]})
+   - Arquitectura & Capas: Datos (${s.mvcArchitecture.model[0]}), Lógica (${s.mvcArchitecture.controller[0]}), Presentación (${s.mvcArchitecture.view[0]})
    - Stack: ${s.stack.join(", ")} | Docker: ${s.dockerStack.join(", ")}
    - Métricas: ${s.metrics.map((m) => `${m.label}: ${m.value}`).join(" | ")}
    - Funcionalidades: ${s.keyFeatures.join("; ")}`

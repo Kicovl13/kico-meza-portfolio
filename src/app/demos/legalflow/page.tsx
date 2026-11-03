@@ -1,410 +1,558 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   AlertCircle,
+  AlertTriangle,
   ArrowLeft,
-  BookOpen,
+  Bell,
+  Bookmark,
   Calendar,
   CheckCircle2,
+  ChevronDown,
   ChevronRight,
   Clock,
+  Compass,
+  FileCheck,
   FileText,
+  Filter,
   Gavel,
+  HelpCircle,
+  Hourglass,
+  Layers,
+  MapPin,
+  Maximize2,
+  Phone,
   Plus,
   Scale,
   Search,
+  Send,
+  ShieldAlert,
+  Smartphone,
+  Star,
+  Tablet,
+  Tag,
   User,
   X,
+  Zap,
 } from "lucide-react";
 import Link from "next/link";
 
-type Tab = "expedientes" | "audiencias" | "terminos";
-type Stage = "list" | "detail";
-
-interface Deadline {
-  label: string;
-  daysLeft: number;
-  type: "amparo" | "contestacion" | "recurso" | "prueba";
-}
-
-interface Hearing {
-  date: string;
-  time: string;
-  sala: string;
-  juez: string;
-  type: string;
-}
-
-interface CaseFile {
+interface JuicioExpediente {
   id: string;
-  numero: string;
-  tipo: string;
-  cliente: string;
+  numExpediente: string;
+  materia: "Mercantil" | "Civil" | "Laboral" | "Amparo";
   juzgado: string;
-  etapa: string;
-  urgencia: "alta" | "media" | "baja";
-  deadlines: Deadline[];
-  hearings: Hearing[];
-  acuerdos: string[];
+  actor: string;
+  demandado: string;
+  cuantia: number;
+  etapaProcesal: "Radicación" | "Emplazamiento" | "Pruebas" | "Alegatos" | "Sentencia";
+  terminoUrgente: {
+    concepto: string;
+    vencimiento: string;
+    horasRestantes: number;
+    severidad: "rojo" | "amarillo" | "verde";
+  } | null;
+  audienciaProxima: {
+    fecha: string;
+    tipo: string;
+    sala: string;
+  } | null;
+  acuerdosRecientes: {
+    fecha: string;
+    sintesis: string;
+  }[];
 }
 
-const typeColors: Record<string, string> = {
-  amparo: "#f97316",
-  contestacion: "#3b82f6",
-  recurso: "#a855f7",
-  prueba: "#22c55e",
-};
-
-const urgencyConfig = {
-  alta: { label: "Urgente", color: "#ef4444", bg: "rgba(239,68,68,0.12)" },
-  media: { label: "Próximo", color: "#f97316", bg: "rgba(249,115,22,0.12)" },
-  baja: { label: "Al día", color: "#22c55e", bg: "rgba(34,197,94,0.12)" },
-};
-
-const cases: CaseFile[] = [
+const expedientesData: JuicioExpediente[] = [
   {
-    id: "1",
-    numero: "842/2026",
-    tipo: "Civil · Divorcio necesario",
-    cliente: "Ramírez Gutiérrez, María Elena",
-    juzgado: "Juzgado 3° de lo Civil · Zapopan",
-    etapa: "Período probatorio",
-    urgencia: "alta",
-    deadlines: [
-      { label: "Ofrecimiento de pruebas", daysLeft: 2, type: "prueba" },
-      { label: "Contestación de demanda", daysLeft: 8, type: "contestacion" },
-      { label: "Recurso de apelación", daysLeft: 21, type: "recurso" },
-    ],
-    hearings: [
-      { date: "4 Nov 2026", time: "10:30", sala: "Sala B", juez: "Lic. García Morales", type: "Audiencia de Desahogo de Pruebas" },
-      { date: "19 Nov 2026", time: "9:00", sala: "Sala A", juez: "Lic. García Morales", type: "Audiencia Final" },
-    ],
-    acuerdos: [
-      "Acuerdo 28-Oct-2026: Se admitió la demanda y se citó a las partes",
-      "Acuerdo 15-Oct-2026: Se tuvo por recibida la contestación de demanda",
-      "Acuerdo 02-Oct-2026: Auto de radicación. Se integró el expediente.",
+    id: "EXP-801",
+    numExpediente: "1042/2026",
+    materia: "Mercantil",
+    juzgado: "Juzgado 3° de lo Mercantil GDL",
+    actor: "Distribuidora del Norte S.A.",
+    demandado: "Comercializadora Bajío S.A. de C.V.",
+    cuantia: 850000,
+    etapaProcesal: "Pruebas",
+    terminoUrgente: {
+      concepto: "Desahogo de Prueba Pericial Contable",
+      vencimiento: "04 Nov 2026 23:59",
+      horasRestantes: 28,
+      severidad: "rojo",
+    },
+    audienciaProxima: {
+      fecha: "12 Nov 10:30",
+      tipo: "Audiencia de Juicio Oral",
+      sala: "Sala de Juicios Orales 2",
+    },
+    acuerdosRecientes: [
+      { fecha: "31 Oct", sintesis: "Se tiene por rendido dictamen pericial en materia contable. Vista a las partes por 3 días." },
+      { fecha: "24 Oct", sintesis: "Auto que admite documentales supervenientes presentadas por la actora." },
     ],
   },
   {
-    id: "2",
-    numero: "1203/2026",
-    tipo: "Mercantil · Cobro de pesos",
-    cliente: "Distribuidora del Bajío S.A. de C.V.",
-    juzgado: "Juzgado 1° Mercantil · Guadalajara",
-    etapa: "Ejecución de sentencia",
-    urgencia: "media",
-    deadlines: [
-      { label: "Interposición de amparo", daysLeft: 12, type: "amparo" },
-      { label: "Liquidación de condena", daysLeft: 18, type: "contestacion" },
-    ],
-    hearings: [
-      { date: "14 Nov 2026", time: "11:00", sala: "Sala C", juez: "Lic. Torres Vargas", type: "Audiencia de Liquidación" },
-    ],
-    acuerdos: [
-      "Acuerdo 30-Oct-2026: Se dictó sentencia a favor del actor por $485,000 MXN.",
-      "Acuerdo 20-Oct-2026: Cierre de instrucción. Alegatos por escrito presentados.",
+    id: "EXP-802",
+    numExpediente: "450/2026-II",
+    materia: "Amparo",
+    juzgado: "Juzgado 2° de Distrito en Materia Administrativa",
+    actor: "Desarrollos Urbanos Providencia S.A.",
+    demandado: "Secretaría de Obras Públicas de Zapopan",
+    cuantia: 0,
+    etapaProcesal: "Alegatos",
+    terminoUrgente: {
+      concepto: "Contestación de Requerimiento de Informe Previo",
+      vencimiento: "06 Nov 2026 14:00",
+      horasRestantes: 72,
+      severidad: "amarillo",
+    },
+    audienciaProxima: {
+      fecha: "18 Nov 11:00",
+      tipo: "Audiencia Constitucional",
+      sala: "Juzgado Segundo de Distrito",
+    },
+    acuerdosRecientes: [
+      { fecha: "01 Nov", sintesis: "Se concede suspensión provisional para efecto de conservar el estado que guardan las cosas." },
     ],
   },
   {
-    id: "3",
-    numero: "377/2026",
-    tipo: "Laboral · Reinstalación",
-    cliente: "Acevedo Hernández, Juan Carlos",
-    juzgado: "Junta Local de Conciliación · Zapopan",
-    etapa: "Conciliación",
-    urgencia: "baja",
-    deadlines: [
-      { label: "Contestación de reconvención", daysLeft: 30, type: "contestacion" },
-      { label: "Exhibición de pruebas documentales", daysLeft: 45, type: "prueba" },
+    id: "EXP-803",
+    numExpediente: "789/2025",
+    materia: "Civil",
+    juzgado: "Juzgado 5° de lo Civil de Primera Instancia",
+    actor: "Familia Morales Gutiérrez",
+    demandado: "Constructora del Valle Residencial",
+    cuantia: 1450000,
+    etapaProcesal: "Sentencia",
+    terminoUrgente: null,
+    audienciaProxima: null,
+    acuerdosRecientes: [
+      { fecha: "28 Oct", sintesis: "Se turnan los autos al C. Juez para el dictado de la sentencia definitiva correspondiente." },
     ],
-    hearings: [
-      { date: "25 Nov 2026", time: "12:00", sala: "Sala 2", juez: "Conciliador Hdez.", type: "Junta de Conciliación" },
-    ],
-    acuerdos: [
-      "Acuerdo 27-Oct-2026: Se señaló fecha de conciliación para 25-Nov-2026.",
-      "Acuerdo 12-Oct-2026: Se radicó la demanda y se emplazó a la empresa.",
+  },
+  {
+    id: "EXP-804",
+    numExpediente: "112/2026",
+    materia: "Laboral",
+    juzgado: "Tribunal Laboral Federal de Asuntos Individuales",
+    actor: "Lic. Javier Orozco",
+    demandado: "Tecnología Logística S.A.",
+    cuantia: 320000,
+    etapaProcesal: "Emplazamiento",
+    terminoUrgente: {
+      concepto: "Manifestaciones a Contestación de Demanda",
+      vencimiento: "10 Nov 2026",
+      horasRestantes: 168,
+      severidad: "verde",
+    },
+    audienciaProxima: {
+      fecha: "24 Nov 09:30",
+      tipo: "Audiencia Preliminar",
+      sala: "Sala A Tribunal Laboral",
+    },
+    acuerdosRecientes: [
+      { fecha: "29 Oct", sintesis: "Se notifica contestación de demanda de la parte patronal. Se corre traslado." },
     ],
   },
 ];
 
-function DaysLeftBadge({ days }: { days: number }) {
-  const color = days <= 2 ? "#ef4444" : days <= 7 ? "#f97316" : "#22c55e";
-  const bg = days <= 2 ? "rgba(239,68,68,0.12)" : days <= 7 ? "rgba(249,115,22,0.12)" : "rgba(34,197,94,0.12)";
-  return (
-    <span className="text-xs px-2 py-0.5 rounded-full font-semibold" style={{ background: bg, color, border: `1px solid ${color}33` }}>
-      {days <= 0 ? "VENCIDO" : `${days}d`}
-    </span>
-  );
+function fmt(n: number) {
+  return `$${n.toLocaleString("es-MX")}`;
 }
 
-function CountdownClock({ days }: { days: number }) {
-  const hours = days * 24;
-  return (
-    <div className="flex gap-2">
-      {[{ v: Math.floor(days), u: "días" }, { v: hours % 24, u: "hrs" }].map((item) => (
-        <div key={item.u} className="text-center">
-          <div className="text-lg font-bold text-white px-3 py-1.5 rounded-lg" style={{ background: "rgba(255,255,255,0.08)" }}>
-            {String(item.v).padStart(2, "0")}
-          </div>
-          <p className="text-xs mt-1" style={{ color: "rgba(255,255,255,0.4)" }}>{item.u}</p>
-        </div>
-      ))}
-    </div>
-  );
-}
+export default function LegalFlowPage() {
+  const [viewMode, setViewMode] = useState<"mobile" | "desktop">("mobile");
+  const [activeSegment, setActiveSegment] = useState<"expedientes" | "terminos" | "audiencias">("expedientes");
+  const [expedientes, setExpedientes] = useState<JuicioExpediente[]>(expedientesData);
+  const [selectedExp, setSelectedExp] = useState<JuicioExpediente>(expedientesData[0]);
+  const [materiaFilter, setMateriaFilter] = useState<string>("Todas");
 
-export default function LegalFlowMvp() {
-  const [tab, setTab] = useState<Tab>("expedientes");
-  const [stage, setStage] = useState<Stage>("list");
-  const [selected, setSelected] = useState<CaseFile | null>(null);
-  const [search, setSearch] = useState("");
-  const [tick, setTick] = useState(0);
+  // Modal Nuevo Término
+  const [modalNuevoAcuerdo, setModalNuevoAcuerdo] = useState(false);
+  const [sintesisTexto, setSintesisTexto] = useState("");
 
-  useEffect(() => {
-    const interval = setInterval(() => setTick((t) => t + 1), 1000);
-    return () => clearInterval(interval);
-  }, []);
+  const terminosUrgentes = expedientes.filter(e => e.terminoUrgente !== null);
 
-  const filtered = cases.filter(
-    (c) =>
-      c.numero.toLowerCase().includes(search.toLowerCase()) ||
-      c.cliente.toLowerCase().includes(search.toLowerCase()) ||
-      c.tipo.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const allDeadlines = cases.flatMap((c) => c.deadlines.map((d) => ({ ...d, case: c }))).sort((a, b) => a.daysLeft - b.daysLeft);
-  const allHearings = cases.flatMap((c) => c.hearings.map((h) => ({ ...h, case: c }))).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const agregarAcuerdo = () => {
+    if (!sintesisTexto || !selectedExp) return;
+    const nuevo = { fecha: "Hoy", sintesis: sintesisTexto };
+    setExpedientes(prev =>
+      prev.map(e => (e.id === selectedExp.id ? { ...e, acuerdosRecientes: [nuevo, ...e.acuerdosRecientes] } : e))
+    );
+    setSelectedExp(prev => ({ ...prev, acuerdosRecientes: [nuevo, ...prev.acuerdosRecientes] }));
+    setModalNuevoAcuerdo(false);
+    setSintesisTexto("");
+  };
 
   return (
-    <div className="min-h-screen" style={{ background: "linear-gradient(135deg, #0c0f1a 0%, #111827 60%, #0a0f1e 100%)" }}>
-      {/* Header */}
-      <header className="sticky top-0 z-50" style={{ background: "rgba(10,15,30,0.95)", borderBottom: "1px solid rgba(255,255,255,0.07)", backdropFilter: "blur(16px)" }}>
-        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center gap-4">
-          <Link href="/" className="flex items-center gap-2 text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>
-            <ArrowLeft size={16} />
-            Portafolio
+    <div className="min-h-screen bg-[#1a050d] text-rose-100 flex flex-col font-sans selection:bg-rose-600 selection:text-white">
+      {/* Top Judicial Strip */}
+      <div className="h-11 bg-[#2b0815] border-b border-rose-900/60 px-4 flex items-center justify-between text-xs font-mono">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/demos"
+            className="flex items-center gap-1.5 text-rose-300 hover:text-white font-semibold transition"
+          >
+            <ArrowLeft className="size-3.5" />
+            <span>Portafolio</span>
           </Link>
-          <div className="flex items-center gap-3 ml-2">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #a855f7, #7c3aed)" }}>
-              <Scale size={16} className="text-white" />
-            </div>
-            <div>
-              <p className="text-white font-semibold text-sm leading-none">LegalFlow</p>
-              <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>Gestión de Expedientes Judiciales</p>
-            </div>
+          <span className="text-rose-800">|</span>
+          <div className="flex items-center gap-2">
+            <Scale className="size-3.5 text-amber-400" />
+            <strong className="text-rose-100 font-serif tracking-wide">LEGALFLOW</strong>
+            <span className="text-rose-400/80">· Gestión de Juicios & Términos Procesales</span>
           </div>
-          <span className="ml-auto text-xs px-2 py-1 rounded-full font-medium" style={{ background: "rgba(168,85,247,0.15)", color: "#c084fc", border: "1px solid rgba(168,85,247,0.3)" }}>
-            MVP Demo
-          </span>
         </div>
-      </header>
 
-      <div className="max-w-5xl mx-auto px-4 py-8">
-        {stage === "list" ? (
-          <>
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-4 mb-8">
-              {[
-                { label: "Expedientes", value: cases.length, icon: FileText, color: "#a855f7" },
-                { label: "Términos Activos", value: allDeadlines.length, icon: Clock, color: "#f97316" },
-                { label: "Próximas Audiencias", value: allHearings.length, icon: Calendar, color: "#3b82f6" },
-              ].map((s) => (
-                <div key={s.label} className="p-5 rounded-2xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                  <div className="flex items-center gap-2 mb-2">
-                    <s.icon size={14} style={{ color: s.color }} />
-                    <p className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>{s.label}</p>
-                  </div>
-                  <p className="text-3xl font-bold text-white">{s.value}</p>
-                </div>
-              ))}
+        {/* View Mode Switcher (Ionic Mobile Simulator vs Desktop Table) */}
+        <div className="flex items-center gap-2">
+          <div className="flex items-center rounded-lg border border-rose-800/80 bg-rose-950/60 p-0.5 text-xs">
+            <button
+              onClick={() => setViewMode("mobile")}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-md transition ${
+                viewMode === "mobile"
+                  ? "bg-rose-700 text-white font-bold shadow"
+                  : "text-rose-400 hover:text-white"
+              }`}
+            >
+              <Smartphone className="size-3" />
+              <span>Ionic App</span>
+            </button>
+            <button
+              onClick={() => setViewMode("desktop")}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-md transition ${
+                viewMode === "desktop"
+                  ? "bg-rose-700 text-white font-bold shadow"
+                  : "text-rose-400 hover:text-white"
+              }`}
+            >
+              <Tablet className="size-3" />
+              <span>Consola Despacho</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Judicial Area */}
+      <main className="flex-1 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+        {viewMode === "mobile" ? (
+          /* IONIC 8 MOBILE DEVICE CONTAINER */
+          <div className="w-full max-w-sm rounded-[40px] border-[6px] border-rose-950 bg-[#250713] shadow-2xl shadow-rose-950/80 overflow-hidden flex flex-col h-[740px] relative ring-1 ring-rose-800/50">
+            {/* iOS Dynamic Island & Status Bar */}
+            <div className="bg-[#1e050f] pt-3 pb-2 px-6 flex justify-between items-center text-[11px] font-mono text-rose-300 select-none">
+              <span>9:41</span>
+              <div className="w-20 h-4 bg-black rounded-full" />
+              <div className="flex items-center gap-1">
+                <span>5G</span>
+                <span className="text-xs">100%</span>
+              </div>
             </div>
 
-            {/* Tabs */}
-            <div className="flex gap-1 p-1 rounded-xl mb-6 w-fit" style={{ background: "rgba(255,255,255,0.06)" }}>
-              {(["expedientes", "audiencias", "terminos"] as Tab[]).map((t) => (
-                <button key={t} onClick={() => setTab(t)} className="px-4 py-2 rounded-lg text-sm font-medium capitalize transition-all" style={{ background: tab === t ? "rgba(168,85,247,0.25)" : "transparent", color: tab === t ? "#c084fc" : "rgba(255,255,255,0.5)", border: tab === t ? "1px solid rgba(168,85,247,0.4)" : "1px solid transparent" }}>
-                  {t === "expedientes" ? "Expedientes" : t === "audiencias" ? "Audiencias" : "Términos"}
-                </button>
-              ))}
-            </div>
-
-            <AnimatePresence mode="wait">
-              {/* EXPEDIENTES */}
-              {tab === "expedientes" && (
-                <motion.div key="exp" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <div className="relative mb-4">
-                    <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "rgba(255,255,255,0.4)" }} />
-                    <input
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                      placeholder="Buscar por expediente, cliente o tipo..."
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm outline-none"
-                      style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff" }}
-                    />
-                  </div>
-                  <div className="space-y-3">
-                    {filtered.map((c) => (
-                      <motion.button key={c.id} whileHover={{ x: 3 }} onClick={() => { setSelected(c); setStage("detail"); }} className="w-full p-4 rounded-2xl text-left flex items-center gap-4 group" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                        <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(168,85,247,0.15)", border: "1px solid rgba(168,85,247,0.25)" }}>
-                          <Gavel size={18} style={{ color: "#a855f7" }} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-0.5">
-                            <p className="text-white font-semibold text-sm">{c.numero}</p>
-                            <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: urgencyConfig[c.urgencia].bg, color: urgencyConfig[c.urgencia].color }}>
-                              {urgencyConfig[c.urgencia].label}
-                            </span>
-                          </div>
-                          <p className="text-xs truncate" style={{ color: "rgba(255,255,255,0.6)" }}>{c.tipo}</p>
-                          <p className="text-xs truncate mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>{c.cliente}</p>
-                        </div>
-                        <div className="text-right flex-shrink-0">
-                          <p className="text-xs mb-1" style={{ color: "rgba(255,255,255,0.4)" }}>{c.etapa}</p>
-                          <DaysLeftBadge days={c.deadlines[0]?.daysLeft ?? 99} />
-                        </div>
-                        <ChevronRight size={16} style={{ color: "rgba(255,255,255,0.3)" }} className="group-hover:translate-x-1 transition-transform" />
-                      </motion.button>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-
-              {/* AUDIENCIAS */}
-              {tab === "audiencias" && (
-                <motion.div key="aud" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-3">
-                  {allHearings.map((h, i) => (
-                    <motion.div key={i} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }} className="p-5 rounded-2xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-xl flex flex-col items-center justify-center flex-shrink-0" style={{ background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)" }}>
-                          <p className="text-xs font-bold" style={{ color: "#60a5fa" }}>{h.date.split(" ")[0]}</p>
-                          <p className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>{h.date.split(" ")[1]}</p>
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-white font-semibold">{h.type}</p>
-                          <p className="text-sm mt-1" style={{ color: "#60a5fa" }}>{h.case.numero} · {h.case.cliente.split(",")[0]}</p>
-                          <div className="flex gap-4 mt-2">
-                            <p className="text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>🕐 {h.time} · {h.sala}</p>
-                            <p className="text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>⚖️ {h.juez}</p>
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </motion.div>
-              )}
-
-              {/* TÉRMINOS */}
-              {tab === "terminos" && (
-                <motion.div key="ter" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-3">
-                  {allDeadlines.map((d, i) => (
-                    <motion.div key={i} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }} className="p-5 rounded-2xl" style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${d.daysLeft <= 2 ? "rgba(239,68,68,0.3)" : d.daysLeft <= 7 ? "rgba(249,115,22,0.2)" : "rgba(255,255,255,0.08)"}` }}>
-                      <div className="flex items-center justify-between gap-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: typeColors[d.type] }} />
-                          <div>
-                            <p className="text-white font-medium text-sm">{d.label}</p>
-                            <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>{d.case.numero} · {d.case.cliente.split(",")[0]}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <CountdownClock days={d.daysLeft} key={tick} />
-                          <DaysLeftBadge days={d.daysLeft} />
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </>
-        ) : (
-          /* DETAIL */
-          selected && (
-            <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }}>
-              <button onClick={() => setStage("list")} className="flex items-center gap-2 mb-6 text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>
-                <ArrowLeft size={16} /> Volver a expedientes
-              </button>
-              {/* Header del expediente */}
-              <div className="p-6 rounded-2xl mb-6" style={{ background: "rgba(168,85,247,0.08)", border: "1px solid rgba(168,85,247,0.25)" }}>
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-xs mb-1" style={{ color: "rgba(168,85,247,0.8)" }}>Expediente No.</p>
-                    <h2 className="text-3xl font-bold text-white mb-1">{selected.numero}</h2>
-                    <p style={{ color: "rgba(255,255,255,0.7)" }}>{selected.tipo}</p>
-                    <div className="flex items-center gap-2 mt-3">
-                      <User size={13} style={{ color: "rgba(255,255,255,0.4)" }} />
-                      <p className="text-sm" style={{ color: "rgba(255,255,255,0.6)" }}>{selected.cliente}</p>
-                    </div>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Gavel size={13} style={{ color: "rgba(255,255,255,0.4)" }} />
-                      <p className="text-sm" style={{ color: "rgba(255,255,255,0.6)" }}>{selected.juzgado}</p>
-                    </div>
-                  </div>
-                  <span className="text-sm px-3 py-1.5 rounded-full font-medium flex-shrink-0" style={{ background: urgencyConfig[selected.urgencia].bg, color: urgencyConfig[selected.urgencia].color, border: `1px solid ${urgencyConfig[selected.urgencia].color}44` }}>
-                    {urgencyConfig[selected.urgencia].label}
-                  </span>
+            {/* Ionic App Header */}
+            <div className="bg-gradient-to-r from-rose-900 to-[#3d091e] px-4 py-3 text-white border-b border-rose-800/60 shadow-md">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] uppercase tracking-widest text-amber-300 font-mono font-bold">
+                    Despacho Jurídico
+                  </p>
+                  <h2 className="text-base font-bold font-serif">LegalFlow Mobile</h2>
                 </div>
-                <div className="mt-4 px-3 py-2 rounded-lg inline-block" style={{ background: "rgba(255,255,255,0.06)" }}>
-                  <p className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>Etapa procesal: <span className="text-white font-medium">{selected.etapa}</span></p>
+                <div className="size-8 rounded-full bg-rose-950/60 border border-amber-400/40 flex items-center justify-center text-amber-400">
+                  <Gavel className="size-4" />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Términos */}
-                <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
-                  <div className="px-5 py-4" style={{ background: "rgba(255,255,255,0.05)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                    <h3 className="text-white font-semibold flex items-center gap-2"><Clock size={15} style={{ color: "#f97316" }} />Términos Procesales</h3>
+              {/* Ionic Segmented Control (ion-segment) */}
+              <div className="mt-3 flex rounded-xl bg-rose-950/80 p-0.5 text-xs font-mono">
+                {(["expedientes", "terminos", "audiencias"] as const).map(tab => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveSegment(tab)}
+                    className={`flex-1 py-1.5 text-center rounded-lg capitalize transition text-[11px] ${
+                      activeSegment === tab
+                        ? "bg-rose-700 text-white font-bold shadow"
+                        : "text-rose-300 hover:text-white"
+                    }`}
+                  >
+                    {tab === "expedientes" ? "Juicios" : tab === "terminos" ? "Términos" : "Citas"}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Ionic Content Scrollable Body */}
+            <div className="flex-1 overflow-y-auto p-3 space-y-3">
+              {activeSegment === "expedientes" && (
+                <div className="space-y-2.5">
+                  <div className="text-[11px] font-mono text-rose-400 flex justify-between px-1">
+                    <span>{expedientes.length} Expedientes en Trámite</span>
+                    <span className="text-amber-400">Jalisco / Federal</span>
                   </div>
-                  <div className="p-4 space-y-3">
-                    {selected.deadlines.map((d, i) => (
-                      <div key={i} className="flex items-center justify-between gap-3 p-3 rounded-xl" style={{ background: "rgba(255,255,255,0.04)" }}>
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full" style={{ background: typeColors[d.type] }} />
-                          <p className="text-sm text-white">{d.label}</p>
+
+                  {expedientes.map(exp => (
+                    <div
+                      key={exp.id}
+                      onClick={() => setSelectedExp(exp)}
+                      className={`p-3 rounded-2xl border transition-all cursor-pointer ${
+                        selectedExp.id === exp.id
+                          ? "bg-rose-900/40 border-amber-500/60 shadow-lg shadow-rose-950/60"
+                          : "bg-[#2d0817] border-rose-900/60 hover:border-rose-700"
+                      }`}
+                    >
+                      <div className="flex justify-between items-start mb-1">
+                        <span className="font-mono text-xs font-bold text-amber-300">
+                          {exp.numExpediente}
+                        </span>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-rose-950 text-rose-300 border border-rose-800">
+                          {exp.materia}
+                        </span>
+                      </div>
+
+                      <p className="text-xs font-bold text-white line-clamp-1">{exp.actor}</p>
+                      <p className="text-[11px] text-rose-300/80 line-clamp-1">vs {exp.demandado}</p>
+
+                      <div className="mt-2.5 pt-2 border-t border-rose-900/60 flex items-center justify-between text-[10px] font-mono">
+                        <span className="text-rose-400 truncate max-w-[170px]">{exp.juzgado}</span>
+                        <span className="font-bold text-amber-400 bg-rose-950 px-1.5 py-0.5 rounded">
+                          {exp.etapaProcesal}
+                        </span>
+                      </div>
+
+                      {exp.terminoUrgente && (
+                        <div className="mt-2 bg-rose-950/80 border border-rose-700/60 p-1.5 rounded-lg flex items-center gap-1.5 text-[10px] text-rose-200">
+                          <Hourglass className="size-3 text-amber-400 animate-spin" />
+                          <span className="truncate">{exp.terminoUrgente.concepto}</span>
+                          <strong className="text-amber-400 ml-auto shrink-0">
+                            {exp.terminoUrgente.horasRestantes}h
+                          </strong>
                         </div>
-                        <DaysLeftBadge days={d.daysLeft} />
-                      </div>
-                    ))}
-                  </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
+              )}
 
-                {/* Audiencias */}
-                <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
-                  <div className="px-5 py-4" style={{ background: "rgba(255,255,255,0.05)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                    <h3 className="text-white font-semibold flex items-center gap-2"><Calendar size={15} style={{ color: "#3b82f6" }} />Audiencias Programadas</h3>
+              {activeSegment === "terminos" && (
+                <div className="space-y-2.5">
+                  <div className="text-[11px] font-mono text-rose-400 px-1">
+                    Semáforo de Términos Procesales
                   </div>
-                  <div className="p-4 space-y-3">
-                    {selected.hearings.map((h, i) => (
-                      <div key={i} className="p-3 rounded-xl" style={{ background: "rgba(255,255,255,0.04)" }}>
-                        <p className="text-white text-sm font-medium">{h.type}</p>
-                        <p className="text-xs mt-1" style={{ color: "#60a5fa" }}>{h.date} · {h.time}</p>
-                        <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>{h.sala} · {h.juez}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
 
-                {/* Acuerdos */}
-                <div className="md:col-span-2 rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
-                  <div className="px-5 py-4" style={{ background: "rgba(255,255,255,0.05)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                    <h3 className="text-white font-semibold flex items-center gap-2"><BookOpen size={15} style={{ color: "#a855f7" }} />Acuerdos del Expediente</h3>
-                  </div>
-                  <div className="p-4 space-y-2">
-                    {selected.acuerdos.map((a, i) => (
-                      <div key={i} className="flex items-start gap-3 p-3 rounded-xl" style={{ background: "rgba(255,255,255,0.03)" }}>
-                        <div className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0" style={{ background: "#a855f7" }} />
-                        <p className="text-sm" style={{ color: "rgba(255,255,255,0.7)" }}>{a}</p>
+                  {terminosUrgentes.map(exp => (
+                    <div
+                      key={exp.id}
+                      className="p-3.5 rounded-2xl bg-gradient-to-br from-rose-950 to-[#2c0818] border border-rose-800 space-y-2"
+                    >
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="font-mono font-bold text-amber-300">{exp.numExpediente}</span>
+                        <span className="font-mono text-[10px] text-rose-400">{exp.materia}</span>
                       </div>
-                    ))}
-                  </div>
+
+                      <p className="text-xs font-semibold text-white">
+                        {exp.terminoUrgente?.concepto}
+                      </p>
+
+                      <div className="flex items-center justify-between pt-2 border-t border-rose-900 text-[11px] font-mono">
+                        <span className="text-rose-400">Vence: {exp.terminoUrgente?.vencimiento}</span>
+                        <span className="font-bold text-amber-400 flex items-center gap-1">
+                          <Clock className="size-3" />
+                          {exp.terminoUrgente?.horasRestantes} horas
+                        </span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
+              )}
+
+              {activeSegment === "audiencias" && (
+                <div className="space-y-2.5">
+                  <div className="text-[11px] font-mono text-rose-400 px-1">
+                    Agenda de Audiencias Judiciales
+                  </div>
+
+                  {expedientes.filter(e => e.audienciaProxima).map(exp => (
+                    <div
+                      key={exp.id}
+                      className="p-3.5 rounded-2xl bg-[#2d0817] border border-rose-800 space-y-2"
+                    >
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="font-mono font-bold text-amber-300">{exp.numExpediente}</span>
+                        <span className="font-mono text-[10px] text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded">
+                          {exp.audienciaProxima?.fecha}
+                        </span>
+                      </div>
+
+                      <p className="text-xs font-bold text-white">
+                        {exp.audienciaProxima?.tipo}
+                      </p>
+                      <p className="text-[11px] text-rose-300 flex items-center gap-1">
+                        <MapPin className="size-3 text-rose-400" />
+                        {exp.audienciaProxima?.sala}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Ionic Bottom Tab Bar (ion-tab-bar) */}
+            <div className="bg-[#1e050f] border-t border-rose-900/60 p-2 flex justify-around items-center text-xs font-mono text-rose-400">
+              <button
+                onClick={() => setActiveSegment("expedientes")}
+                className="flex flex-col items-center gap-0.5 text-amber-400"
+              >
+                <FileText className="size-4" />
+                <span className="text-[10px]">Juicios</span>
+              </button>
+              <button
+                onClick={() => setActiveSegment("terminos")}
+                className="flex flex-col items-center gap-0.5 hover:text-white"
+              >
+                <Clock className="size-4" />
+                <span className="text-[10px]">Términos</span>
+              </button>
+              <button
+                onClick={() => setModalNuevoAcuerdo(true)}
+                className="size-10 rounded-full bg-amber-500 hover:bg-amber-400 text-stone-900 flex items-center justify-center shadow-lg -mt-4 shadow-amber-950"
+              >
+                <Plus className="size-5" />
+              </button>
+              <button
+                onClick={() => setActiveSegment("audiencias")}
+                className="flex flex-col items-center gap-0.5 hover:text-white"
+              >
+                <Calendar className="size-4" />
+                <span className="text-[10px]">Agenda</span>
+              </button>
+              <button
+                onClick={() => alert(`Directorio de Juzgados de Jalisco y Salas Federales.`)}
+                className="flex flex-col items-center gap-0.5 hover:text-white"
+              >
+                <Compass className="size-4" />
+                <span className="text-[10px]">Juzgados</span>
+              </button>
+            </div>
+          </div>
+        ) : (
+          /* DESKTOP DESPACHO TABLE VIEW */
+          <div className="w-full max-w-5xl rounded-3xl border border-rose-900 bg-[#250713] p-6 shadow-2xl space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-rose-900">
+              <div>
+                <h2 className="text-xl font-bold font-serif text-white">Consola de Expedientes Judiciales</h2>
+                <p className="text-xs text-rose-400">Control de plazos, acuerdos del boletín judicial y audiencias.</p>
+              </div>
+
+              <button
+                onClick={() => setModalNuevoAcuerdo(true)}
+                className="inline-flex items-center gap-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-900 font-bold px-4 py-2 text-xs transition"
+              >
+                <Plus className="size-4" />
+                <span>Agregar Auto / Acuerdo</span>
+              </button>
+            </div>
+
+            <div className="overflow-x-auto rounded-2xl border border-rose-900 bg-[#1e050f]">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="border-b border-rose-900 bg-[#2a0816] font-mono text-[10px] text-rose-400 uppercase">
+                    <th className="py-3 px-4">Expediente</th>
+                    <th className="py-3 px-4">Partes Procesales</th>
+                    <th className="py-3 px-4">Juzgado</th>
+                    <th className="py-3 px-4">Etapa</th>
+                    <th className="py-3 px-4">Término Próximo</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-rose-950">
+                  {expedientes.map(exp => (
+                    <tr key={exp.id} className="hover:bg-rose-900/20 transition">
+                      <td className="py-3 px-4 font-mono font-bold text-amber-300">
+                        {exp.numExpediente}
+                        <div className="text-[10px] text-rose-400">{exp.materia}</div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="font-bold text-white">{exp.actor}</div>
+                        <div className="text-[11px] text-rose-400">vs {exp.demandado}</div>
+                      </td>
+                      <td className="py-3 px-4 text-rose-300 text-[11px]">{exp.juzgado}</td>
+                      <td className="py-3 px-4">
+                        <span className="font-mono text-[10px] bg-rose-950 text-amber-300 border border-rose-800 px-2 py-0.5 rounded">
+                          {exp.etapaProcesal}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4">
+                        {exp.terminoUrgente ? (
+                          <div className="font-mono text-xs text-rose-200">
+                            <strong>{exp.terminoUrgente.horasRestantes}h restantes</strong>
+                            <div className="text-[10px] text-rose-400">{exp.terminoUrgente.concepto}</div>
+                          </div>
+                        ) : (
+                          <span className="text-rose-500 font-mono text-[11px]">Sin término activo</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </main>
+
+      {/* MODAL AGREGAR ACUERDO DEL BOLETÍN */}
+      <AnimatePresence>
+        {modalNuevoAcuerdo && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-md rounded-3xl border border-rose-800 bg-[#250713] p-6 shadow-2xl relative text-rose-100"
+            >
+              <button
+                onClick={() => setModalNuevoAcuerdo(false)}
+                className="absolute top-5 right-5 text-rose-400 hover:text-white p-1"
+              >
+                <X className="size-5" />
+              </button>
+
+              <h3 className="text-base font-bold font-serif text-white mb-1">Registrar Acuerdo Judicial</h3>
+              <p className="text-xs text-rose-400 mb-4 font-mono">
+                Expediente: {selectedExp.numExpediente} · {selectedExp.juzgado}
+              </p>
+
+              <div className="space-y-3 text-xs">
+                <div>
+                  <label className="block text-rose-300 mb-1">Síntesis del Boletín Judicial:</label>
+                  <textarea
+                    rows={4}
+                    value={sintesisTexto}
+                    onChange={e => setSintesisTexto(e.target.value)}
+                    placeholder="Ej. Auto que tiene por admitidas las pruebas periciales ofrecidas y se requiere a la contraparte..."
+                    className="w-full bg-[#18040d] border border-rose-800 rounded-xl p-3 text-white focus:outline-none focus:border-amber-400 font-mono text-xs leading-relaxed"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-5 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setModalNuevoAcuerdo(false)}
+                  className="px-4 py-2 rounded-xl bg-rose-950 text-rose-300 font-semibold hover:bg-rose-900 transition"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onClick={agregarAcuerdo}
+                  className="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-900 font-bold shadow-md transition"
+                >
+                  Guardar en Expediente
+                </button>
               </div>
             </motion.div>
-          )
+          </div>
         )}
-      </div>
+      </AnimatePresence>
     </div>
   );
 }

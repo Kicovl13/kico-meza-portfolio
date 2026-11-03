@@ -329,7 +329,7 @@ export function PortfolioGuideBot() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 12, scale: 0.95 }}
             transition={{ duration: 0.35 }}
-            className="fixed bottom-24 right-5 z-50 max-w-xs rounded-2xl border border-primary/30 bg-card/95 p-4 shadow-2xl backdrop-blur-xl sm:right-7"
+            className="fixed bottom-20 sm:bottom-24 right-3 sm:right-7 z-50 w-[calc(100vw-1.5rem)] max-w-[340px] rounded-2xl border border-primary/30 bg-card/95 p-4 shadow-2xl backdrop-blur-xl"
           >
             <div className="flex items-start justify-between gap-2">
               <div className="flex items-center gap-2">
@@ -392,7 +392,7 @@ export function PortfolioGuideBot() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.96 }}
             transition={{ type: "spring", damping: 25, stiffness: 280 }}
-            className="fixed bottom-22 right-4 z-50 flex h-[580px] max-h-[82vh] w-[calc(100vw-2rem)] max-w-[420px] flex-col overflow-hidden rounded-3xl border border-primary/25 bg-card/95 shadow-2xl backdrop-blur-2xl sm:bottom-24 sm:right-6"
+            className="fixed bottom-18 right-3 z-50 flex h-[580px] max-h-[82vh] w-[calc(100vw-1.5rem)] max-w-[420px] flex-col overflow-hidden rounded-3xl border border-primary/25 bg-card/95 shadow-2xl backdrop-blur-2xl sm:bottom-24 sm:right-6"
             aria-label="Asistente de IA y recorrido del portafolio"
           >
             {/* Top Glow & Progress Bar (when in Tour mode) */}
@@ -711,7 +711,7 @@ export function PortfolioGuideBot() {
       </AnimatePresence>
 
       {/* Floating Trigger Button (Bottom Right) */}
-      <div className="fixed bottom-6 right-5 z-50 sm:right-7">
+      <div className="fixed bottom-4 right-3 z-50 sm:bottom-6 sm:right-7">
         <motion.button
           type="button"
           onClick={() => {

@@ -95,19 +95,6 @@ const demos = [
     features: ["Flujo conversacional", "Slots de disponibilidad", "Transferencia a asesor"],
     stack: ["Node.js", "Baileys", "Google Calendar API"],
   },
-  {
-    id: "municipal",
-    href: "/demos/municipal",
-    icon: Building2,
-    color: "#3b82f6",
-    border: "rgba(59,130,246,0.3)",
-    label: "Portal Ciudadano · Zapopan",
-    category: "GovTech",
-    description:
-      "Reporta baches, luminarias o fugas de agua. Rastrea el folio de tu trámite en tiempo real y consulta el directorio de dependencias.",
-    features: ["Reporte de incidencias", "Seguimiento de folio", "Directorio municipal"],
-    stack: ["Next.js", "TypeScript", "Tailwind CSS"],
-  },
 ];
 
 export default function DemosIndex() {
@@ -161,10 +148,10 @@ export default function DemosIndex() {
             }}
           >
             <Zap size={11} />
-            MVPs Funcionales · Listos para explorar
+            Plataformas en Vivo · Demostraciones Interactivas
           </div>
-          <h1 className="text-5xl font-bold text-white mb-4">
-            Proyectos en
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-white mb-4 tracking-tight">
+            Sistemas Empresariales en
             <span
               className="ml-3"
               style={{
@@ -173,15 +160,15 @@ export default function DemosIndex() {
                 WebkitTextFillColor: "transparent",
               }}
             >
-              acción
+              Acción
             </span>
           </h1>
           <p
-            className="text-lg max-w-2xl mx-auto"
-            style={{ color: "rgba(255,255,255,0.55)" }}
+            className="text-base sm:text-lg max-w-2xl mx-auto leading-relaxed"
+            style={{ color: "rgba(255,255,255,0.65)" }}
           >
-            Demos interactivos y funcionales de los sistemas que he construido. Cada uno
-            replica la experiencia real de la aplicación con datos de muestra.
+            Demostraciones interactivas de sistemas desarrollados y llevados a producción. Cada plataforma
+            permite interactuar con los flujos de negocio, reglas fiscales y paneles de control operativos.
           </p>
         </motion.div>
 

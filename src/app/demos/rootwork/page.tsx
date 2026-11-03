@@ -1,340 +1,523 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
+  AlertCircle,
   ArrowLeft,
-  Building2,
+  ArrowRight,
+  BarChart2,
   Calendar,
-  Check,
   CheckCircle2,
+  ChevronDown,
+  ChevronRight,
+  Circle,
   Clock,
+  Code2,
   DollarSign,
-  GripVertical,
+  Filter,
+  Flame,
+  Kanban,
+  Layers,
+  MoreHorizontal,
+  Pause,
+  Play,
   Plus,
+  Search,
+  Sparkles,
+  Square,
+  StopCircle,
+  Tag,
   Timer,
+  User,
   Users,
   X,
   Zap,
 } from "lucide-react";
 import Link from "next/link";
 
-type Column = "backlog" | "progreso" | "revision" | "completada";
-type Tab = "kanban" | "proyectos" | "tiempo" | "facturacion";
+type TaskStatus = "backlog" | "in_progress" | "review" | "done";
 
-interface Task {
-  id: number;
+interface ProjectTask {
+  id: string;
+  code: string;
   title: string;
-  project: string;
-  assignee: string;
-  priority: "alta" | "media" | "baja";
-  hours: number;
-  column: Column;
-  color: string;
-}
-
-interface Project {
-  id: number;
-  name: string;
-  client: string;
-  budget: number;
-  spent: number;
-  tasks: number;
-  done: number;
-  color: string;
-  deadline: string;
-}
-
-const priorityColors = { alta: "#ef4444", media: "#f97316", baja: "#22c55e" };
-
-const initTasks: Task[] = [
-  { id: 1, title: "Diseño del módulo de pagos", project: "Leex SaaS", assignee: "JM", priority: "alta", hours: 8, column: "progreso", color: "#a855f7" },
-  { id: 2, title: "API REST de notificaciones", project: "SysAdmin", assignee: "JM", priority: "alta", hours: 5, column: "revision", color: "#3b82f6" },
-  { id: 3, title: "Testing unitario del CRM", project: "SysAdmin", assignee: "ST", priority: "media", hours: 4, column: "backlog", color: "#3b82f6" },
-  { id: 4, title: "Migración de base de datos", project: "RootWork", assignee: "LR", priority: "alta", hours: 12, column: "backlog", color: "#22c55e" },
-  { id: 5, title: "UI del tablero Kanban", project: "RootWork", assignee: "JM", priority: "media", hours: 6, column: "completada", color: "#22c55e" },
-  { id: 6, title: "Módulo de reportes PDF", project: "Leex SaaS", assignee: "ST", priority: "baja", hours: 3, column: "completada", color: "#a855f7" },
-  { id: 7, title: "Integración Stripe", project: "Leex SaaS", assignee: "JM", priority: "alta", hours: 10, column: "backlog", color: "#a855f7" },
-];
-
-const initProjects: Project[] = [
-  { id: 1, name: "Leex SaaS", client: "Startup PropTech", budget: 85000, spent: 42000, tasks: 12, done: 5, color: "#a855f7", deadline: "15 Dic 2026" },
-  { id: 2, name: "SysAdmin CRM", client: "Distribuidora Norte", budget: 60000, spent: 38000, tasks: 9, done: 6, color: "#3b82f6", deadline: "30 Nov 2026" },
-  { id: 3, name: "RootWork v2", client: "Interno", budget: 40000, spent: 12000, tasks: 8, done: 2, color: "#22c55e", deadline: "28 Feb 2027" },
-];
-
-const timeEntries = [
-  { task: "Diseño del módulo de pagos", project: "Leex SaaS", date: "Hoy", hours: 3.5, rate: 850, total: 2975 },
-  { task: "API REST de notificaciones", project: "SysAdmin", date: "Hoy", hours: 2.0, rate: 850, total: 1700 },
-  { task: "Migración de base de datos", project: "RootWork", date: "Ayer", hours: 4.0, rate: 850, total: 3400 },
-  { task: "Testing unitario del CRM", project: "SysAdmin", date: "Ayer", hours: 1.5, rate: 850, total: 1275 },
-  { task: "UI del tablero Kanban", project: "RootWork", date: "29 Oct", hours: 6.0, rate: 850, total: 5100 },
-];
-
-const cols: { id: Column; label: string; color: string }[] = [
-  { id: "backlog", label: "Backlog", color: "#64748b" },
-  { id: "progreso", label: "En Progreso", color: "#3b82f6" },
-  { id: "revision", label: "Revisión", color: "#f97316" },
-  { id: "completada", label: "Completada", color: "#22c55e" },
-];
-
-function fmt(n: number) { return `$${n.toLocaleString("es-MX")}`; }
-
-export default function RootWorkMvp() {
-  const [tab, setTab] = useState<Tab>("kanban");
-  const [tasks, setTasks] = useState(initTasks);
-  const [dragId, setDragId] = useState<number | null>(null);
-  const [dragOver, setDragOver] = useState<Column | null>(null);
-  const [timerActive, setTimerActive] = useState(false);
-  const [timerTask, setTimerTask] = useState("Diseño del módulo de pagos");
-  const [seconds, setSeconds] = useState(0);
-  const [timerRef, setTimerRef] = useState<ReturnType<typeof setInterval> | null>(null);
-
-  const moveTask = (taskId: number, newCol: Column) => {
-    setTasks(prev => prev.map(t => t.id === taskId ? { ...t, column: newCol } : t));
+  project: "Core API v2" | "Frontend SaaS" | "DevOps & Docker";
+  priority: "urgente" | "alta" | "media";
+  points: number;
+  horasEstimadas: number;
+  horasRegistradas: number;
+  asignado: {
+    nombre: string;
+    avatar: string;
   };
+  status: TaskStatus;
+}
 
-  const startTimer = () => {
-    if (timerActive) {
-      clearInterval(timerRef!);
-      setTimerActive(false);
-    } else {
-      const ref = setInterval(() => setSeconds(s => s + 1), 1000);
-      setTimerRef(ref);
-      setTimerActive(true);
+const initialTasks: ProjectTask[] = [
+  {
+    id: "T-1",
+    code: "RW-101",
+    title: "Optimización de consultas SQL en reporte de facturación",
+    project: "Core API v2",
+    priority: "alta",
+    points: 5,
+    horasEstimadas: 8,
+    horasRegistradas: 5.5,
+    asignado: { nombre: "Federico M.", avatar: "FM" },
+    status: "in_progress",
+  },
+  {
+    id: "T-2",
+    code: "RW-102",
+    title: "Implementación de Webhooks con reintentos exponenciales",
+    project: "Core API v2",
+    priority: "urgente",
+    points: 8,
+    horasEstimadas: 12,
+    horasRegistradas: 12,
+    asignado: { nombre: "José M.", avatar: "JM" },
+    status: "review",
+  },
+  {
+    id: "T-3",
+    code: "RW-103",
+    title: "Rediseño de componentes de tabla con virtual scrolling",
+    project: "Frontend SaaS",
+    priority: "media",
+    points: 3,
+    horasEstimadas: 6,
+    horasRegistradas: 0,
+    asignado: { nombre: "Laura J.", avatar: "LJ" },
+    status: "backlog",
+  },
+  {
+    id: "T-4",
+    code: "RW-104",
+    title: "Pipeline de CI/CD para despliegues automáticos a Vercel",
+    project: "DevOps & Docker",
+    priority: "alta",
+    points: 5,
+    horasEstimadas: 10,
+    horasRegistradas: 10,
+    asignado: { nombre: "Federico M.", avatar: "FM" },
+    status: "done",
+  },
+  {
+    id: "T-5",
+    code: "RW-105",
+    title: "Migración de autenticación a JWT con Refresh Tokens",
+    project: "Core API v2",
+    priority: "urgente",
+    points: 8,
+    horasEstimadas: 14,
+    horasRegistradas: 6.2,
+    asignado: { nombre: "Federico M.", avatar: "FM" },
+    status: "in_progress",
+  },
+  {
+    id: "T-6",
+    code: "RW-106",
+    title: "Integración de métricas con OpenTelemetry y Grafana",
+    project: "DevOps & Docker",
+    priority: "media",
+    points: 5,
+    horasEstimadas: 8,
+    horasRegistradas: 0,
+    asignado: { nombre: "José M.", avatar: "JM" },
+    status: "backlog",
+  },
+];
+
+export default function RootWorkPage() {
+  const [tasks, setTasks] = useState<ProjectTask[]>(initialTasks);
+  const [projectFilter, setProjectFilter] = useState<string>("todos");
+  const [search, setSearch] = useState("");
+
+  // Live Timer State (Toggl Style)
+  const [timerRunning, setTimerRunning] = useState(true);
+  const [timerSeconds, setTimerSeconds] = useState(3845); // 01:04:05
+  const [activeTaskTimer, setActiveTaskTimer] = useState("RW-101: Optimización de consultas SQL");
+  const [hourlyRate, setHourlyRate] = useState(45); // USD / hora
+
+  // Modal Nueva Tarea
+  const [modalNewTask, setModalNewTask] = useState(false);
+  const [newTitle, setNewTitle] = useState("");
+  const [newProject, setNewProject] = useState<ProjectTask["project"]>("Core API v2");
+  const [newPriority, setNewPriority] = useState<ProjectTask["priority"]>("media");
+  const [newHours, setNewHours] = useState(6);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (timerRunning) {
+      interval = setInterval(() => {
+        setTimerSeconds(s => s + 1);
+      }, 1000);
     }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [timerRunning]);
+
+  const formatTimer = (totalSec: number) => {
+    const hrs = Math.floor(totalSec / 3600);
+    const mins = Math.floor((totalSec % 3600) / 60);
+    const secs = totalSec % 60;
+    return `${hrs.toString().padStart(2, "0")}:${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const formatSeconds = (s: number) => {
-    const h = Math.floor(s / 3600);
-    const m = Math.floor((s % 3600) / 60);
-    const sec = s % 60;
-    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+  const moveTask = (taskId: string, targetStatus: TaskStatus) => {
+    setTasks(prev =>
+      prev.map(t => (t.id === taskId ? { ...t, status: targetStatus } : t))
+    );
   };
 
-  const totalHours = timeEntries.reduce((s, e) => s + e.hours, 0);
-  const totalBilled = timeEntries.reduce((s, e) => s + e.total, 0);
+  const handleCreateTask = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTitle) return;
+    const newTask: ProjectTask = {
+      id: `T-${tasks.length + 1}`,
+      code: `RW-${100 + tasks.length + 1}`,
+      title: newTitle,
+      project: newProject,
+      priority: newPriority,
+      points: 5,
+      horasEstimadas: Number(newHours),
+      horasRegistradas: 0,
+      asignado: { nombre: "Federico M.", avatar: "FM" },
+      status: "backlog",
+    };
+    setTasks([newTask, ...tasks]);
+    setModalNewTask(false);
+    setNewTitle("");
+  };
+
+  const totalHorasRegistradas = tasks.reduce((acc, t) => acc + t.horasRegistradas, 0);
+  const totalFacturable = totalHorasRegistradas * hourlyRate;
+
+  const filteredTasks = tasks.filter(t => {
+    const matchProj = projectFilter === "todos" || t.project === projectFilter;
+    const matchText = t.title.toLowerCase().includes(search.toLowerCase()) || t.code.toLowerCase().includes(search.toLowerCase());
+    return matchProj && matchText;
+  });
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "#0d1117" }}>
-      <header className="flex items-center gap-4 px-4 py-3 border-b sticky top-0 z-40" style={{ background: "#161b22", borderColor: "rgba(255,255,255,0.08)" }}>
-        <Link href="/" className="flex items-center gap-2 text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>
-          <ArrowLeft size={14} /> Portafolio
-        </Link>
-        <div className="h-4 w-px" style={{ background: "rgba(255,255,255,0.1)" }} />
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #22c55e, #059669)" }}>
-            <Zap size={14} className="text-white" />
+    <div className="min-h-screen bg-[#090a0f] text-slate-100 flex flex-col font-sans selection:bg-indigo-500/30 selection:text-indigo-200">
+      {/* Top Banner */}
+      <div className="h-11 bg-[#0f1118] border-b border-white/[0.08] px-4 flex items-center justify-between text-xs font-mono">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/demos"
+            className="flex items-center gap-1.5 text-indigo-400 hover:text-indigo-300 font-semibold transition"
+          >
+            <ArrowLeft className="size-3.5" />
+            <span>Portafolio</span>
+          </Link>
+          <span className="text-slate-800">|</span>
+          <div className="flex items-center gap-2">
+            <span className="size-2 rounded-full bg-indigo-500 animate-pulse" />
+            <strong className="text-white font-mono tracking-tight">ROOTWORK</strong>
+            <span className="text-slate-500">· Linear-style Project & Time Tracker</span>
           </div>
-          <span className="text-white font-semibold text-sm">RootWork</span>
         </div>
-        {/* Timer pill */}
-        <div className="ml-4 flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: timerActive ? "rgba(34,197,94,0.15)" : "rgba(255,255,255,0.07)", border: `1px solid ${timerActive ? "rgba(34,197,94,0.4)" : "rgba(255,255,255,0.12)"}` }}>
-          <Timer size={12} style={{ color: timerActive ? "#22c55e" : "rgba(255,255,255,0.4)" }} />
-          <span className="font-mono text-sm" style={{ color: timerActive ? "#22c55e" : "rgba(255,255,255,0.5)" }}>{formatSeconds(seconds)}</span>
-          <button onClick={startTimer} className="text-xs px-2 py-0.5 rounded-full ml-1" style={{ background: timerActive ? "rgba(239,68,68,0.2)" : "rgba(34,197,94,0.2)", color: timerActive ? "#ef4444" : "#22c55e" }}>
-            {timerActive ? "Parar" : "Iniciar"}
-          </button>
-        </div>
-        <span className="ml-auto text-xs px-2 py-1 rounded-full" style={{ background: "rgba(34,197,94,0.12)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.25)" }}>
-          MVP Demo
-        </span>
-      </header>
 
-      {/* Tabs */}
-      <div className="flex gap-1 px-4 py-2 border-b" style={{ background: "#161b22", borderColor: "rgba(255,255,255,0.07)" }}>
-        {([
-          { id: "kanban", label: "Kanban" },
-          { id: "proyectos", label: "Proyectos" },
-          { id: "tiempo", label: "Tiempo" },
-          { id: "facturacion", label: "Facturación" },
-        ] as { id: Tab; label: string }[]).map(t => (
-          <button key={t.id} onClick={() => setTab(t.id)} className="px-4 py-1.5 rounded-lg text-sm transition-all" style={{ background: tab === t.id ? "rgba(34,197,94,0.15)" : "transparent", color: tab === t.id ? "#22c55e" : "rgba(255,255,255,0.5)", border: tab === t.id ? "1px solid rgba(34,197,94,0.3)" : "1px solid transparent" }}>
-            {t.label}
-          </button>
-        ))}
+        <div className="flex items-center gap-4 text-slate-400 text-[11px]">
+          <span className="hidden sm:inline">Stack: Node.js · TypeScript · Angular</span>
+          <span className="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2 py-0.5 rounded font-mono">
+            Sprint Activo #42
+          </span>
+        </div>
       </div>
 
-      <div className="flex-1 overflow-auto p-6">
-        <AnimatePresence mode="wait">
-          {/* KANBAN */}
-          {tab === "kanban" && (
-            <motion.div key="kanban" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <p className="text-sm mb-4" style={{ color: "rgba(255,255,255,0.4)" }}>Arrastra las tarjetas entre columnas para mover tareas</p>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 min-h-[500px]">
-                {cols.map(col => (
-                  <div
-                    key={col.id}
-                    onDragOver={e => { e.preventDefault(); setDragOver(col.id); }}
-                    onDrop={() => { if (dragId) moveTask(dragId, col.id); setDragOver(null); setDragId(null); }}
-                    className="rounded-2xl p-3 flex flex-col gap-2 transition-all"
-                    style={{ background: dragOver === col.id ? `${col.color}12` : "rgba(255,255,255,0.03)", border: `1px solid ${dragOver === col.id ? col.color + "44" : "rgba(255,255,255,0.08)"}`, minHeight: "200px" }}
+      {/* Toggl-Style Live Time Tracker Bar */}
+      <div className="bg-[#12141e] border-b border-white/[0.08] px-4 sm:px-6 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md">
+        <div className="flex items-center gap-3">
+          <div className="size-8 rounded-lg bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+            <Timer className="size-4" />
+          </div>
+          <div>
+            <p className="text-[10px] uppercase font-mono tracking-wider text-slate-500">
+              Timer de Tarea en Vivo (Facturable)
+            </p>
+            <p className="text-xs font-bold text-white truncate max-w-sm">
+              {activeTaskTimer}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-4 self-end sm:self-auto">
+          {/* Digital Timer */}
+          <div className="font-mono text-lg font-bold text-indigo-300 tracking-wider bg-black/40 px-3 py-1 rounded-xl border border-white/[0.06]">
+            {formatTimer(timerSeconds)}
+          </div>
+
+          <button
+            onClick={() => setTimerRunning(!timerRunning)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-mono text-xs font-bold transition ${
+              timerRunning
+                ? "bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30"
+                : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30"
+            }`}
+          >
+            {timerRunning ? <Pause className="size-3.5" /> : <Play className="size-3.5" />}
+            <span>{timerRunning ? "Pausar" : "Reanudar"}</span>
+          </button>
+
+          <div className="hidden lg:flex items-center gap-2 border-l border-white/[0.08] pl-4 font-mono text-xs">
+            <span className="text-slate-500">Total Facturable:</span>
+            <span className="font-bold text-emerald-400">${totalFacturable.toFixed(2)} USD</span>
+            <span className="text-[10px] text-slate-500">({totalHorasRegistradas.toFixed(1)}h a ${hourlyRate}/h)</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Kanban Workspace */}
+      <main className="flex-1 p-4 sm:p-6 max-w-7xl mx-auto w-full space-y-6 overflow-x-auto">
+        {/* Project Filters & Actions */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#11131c] p-3 rounded-2xl border border-white/[0.08]">
+          <div className="flex items-center gap-2 overflow-x-auto text-xs font-mono">
+            <span className="text-slate-500 text-[11px] mr-1 hidden sm:inline">Proyecto:</span>
+            {(["todos", "Core API v2", "Frontend SaaS", "DevOps & Docker"] as const).map(proj => (
+              <button
+                key={proj}
+                onClick={() => setProjectFilter(proj)}
+                className={`px-3 py-1.5 rounded-xl transition whitespace-nowrap ${
+                  projectFilter === proj
+                    ? "bg-indigo-600 text-white font-bold shadow-md shadow-indigo-900/30"
+                    : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
+                }`}
+              >
+                {proj === "todos" ? "Todos los Proyectos" : proj}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <Search className="absolute left-3 top-2 size-3.5 text-slate-500" />
+              <input
+                type="text"
+                placeholder="Buscar ticket..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                className="bg-[#090a0f] border border-white/[0.08] rounded-xl pl-8 pr-3 py-1.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 w-36 sm:w-48"
+              />
+            </div>
+            <button
+              onClick={() => setModalNewTask(true)}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-3.5 py-1.5 text-xs shadow-md transition active:scale-95"
+            >
+              <Plus className="size-3.5" />
+              <span>Nueva Tarea</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Linear 4-Column Board */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-start">
+          {[
+            { id: "backlog", label: "Backlog", dot: "bg-slate-500" },
+            { id: "in_progress", label: "En Progreso", dot: "bg-indigo-400" },
+            { id: "review", label: "En Revisión", dot: "bg-amber-400" },
+            { id: "done", label: "Completado", dot: "bg-emerald-400" },
+          ].map(col => {
+            const colTasks = filteredTasks.filter(t => t.status === col.id);
+            return (
+              <div
+                key={col.id}
+                className="rounded-2xl border border-white/[0.08] bg-[#11131c]/80 p-3.5 flex flex-col min-h-[500px]"
+              >
+                {/* Column Header */}
+                <div className="flex items-center justify-between pb-3 border-b border-white/[0.06] mb-3">
+                  <div className="flex items-center gap-2">
+                    <span className={`size-2 rounded-full ${col.dot}`} />
+                    <span className="font-mono text-xs font-bold text-white">{col.label}</span>
+                  </div>
+                  <span className="font-mono text-[11px] text-slate-500 bg-white/[0.04] px-2 py-0.5 rounded-md">
+                    {colTasks.length}
+                  </span>
+                </div>
+
+                {/* Column Cards */}
+                <div className="space-y-3 flex-1">
+                  {colTasks.map(task => (
+                    <div
+                      key={task.id}
+                      className="p-3.5 rounded-xl border border-white/[0.08] bg-[#161824] hover:border-indigo-500/40 transition group relative"
+                    >
+                      <div className="flex items-center justify-between text-[10px] font-mono mb-1.5">
+                        <span className="text-indigo-400 font-bold">{task.code}</span>
+                        <span
+                          className={`px-1.5 py-0.2 rounded font-semibold uppercase ${
+                            task.priority === "urgente"
+                              ? "bg-rose-500/20 text-rose-400 border border-rose-500/30"
+                              : task.priority === "alta"
+                              ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
+                              : "bg-blue-500/20 text-blue-400 border border-blue-500/30"
+                          }`}
+                        >
+                          {task.priority}
+                        </span>
+                      </div>
+
+                      <h4 className="text-xs font-semibold text-slate-200 group-hover:text-white transition">
+                        {task.title}
+                      </h4>
+
+                      <div className="mt-2.5 flex items-center gap-1.5 text-[10px] font-mono text-slate-400">
+                        <span className="px-1.5 py-0.5 rounded bg-white/[0.04] text-slate-300">
+                          {task.project}
+                        </span>
+                        <span>· {task.points} pts</span>
+                      </div>
+
+                      {/* Hours tracker progress */}
+                      <div className="mt-3 pt-2.5 border-t border-white/[0.06] flex items-center justify-between text-[11px] font-mono">
+                        <div className="flex items-center gap-1.5 text-slate-400">
+                          <Clock className="size-3 text-indigo-400" />
+                          <span>{task.horasRegistradas}h / {task.horasEstimadas}h</span>
+                        </div>
+                        <div className="size-6 rounded-full bg-indigo-900/60 border border-indigo-700/50 flex items-center justify-center font-bold text-[10px] text-indigo-300">
+                          {task.asignado.avatar}
+                        </div>
+                      </div>
+
+                      {/* Move Column Actions */}
+                      <div className="mt-3 pt-2 border-t border-white/[0.04] flex items-center justify-between gap-1 text-[10px] font-mono">
+                        {col.id !== "backlog" && (
+                          <button
+                            onClick={() => {
+                              const prevMap: Record<TaskStatus, TaskStatus> = {
+                                backlog: "backlog",
+                                in_progress: "backlog",
+                                review: "in_progress",
+                                done: "review",
+                              };
+                              moveTask(task.id, prevMap[task.status]);
+                            }}
+                            className="text-slate-500 hover:text-white transition"
+                          >
+                            ← Anterior
+                          </button>
+                        )}
+                        {col.id !== "done" && (
+                          <button
+                            onClick={() => {
+                              const nextMap: Record<TaskStatus, TaskStatus> = {
+                                backlog: "in_progress",
+                                in_progress: "review",
+                                review: "done",
+                                done: "done",
+                              };
+                              moveTask(task.id, nextMap[task.status]);
+                            }}
+                            className="ml-auto text-indigo-400 hover:text-indigo-300 font-bold transition"
+                          >
+                            Avanzar →
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </main>
+
+      {/* MODAL NUEVA TAREA */}
+      <AnimatePresence>
+        {modalNewTask && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-md rounded-3xl border border-white/[0.1] bg-[#12141e] p-6 shadow-2xl relative text-slate-100"
+            >
+              <button
+                onClick={() => setModalNewTask(false)}
+                className="absolute top-5 right-5 text-slate-500 hover:text-white p-1"
+              >
+                <X className="size-5" />
+              </button>
+
+              <h3 className="text-base font-bold text-white mb-1">Crear Ticket en RootWork</h3>
+              <p className="text-xs text-slate-400 mb-4">
+                La tarea se asignará al tablero Kanban para seguimiento de horas.
+              </p>
+
+              <form onSubmit={handleCreateTask} className="space-y-3 text-xs">
+                <div>
+                  <label className="block text-slate-300 mb-1">Título de la Tarea:</label>
+                  <input
+                    type="text"
+                    required
+                    value={newTitle}
+                    onChange={e => setNewTitle(e.target.value)}
+                    placeholder="Ej. Refactorización del controlador de pagos"
+                    className="w-full bg-[#090a0f] border border-white/[0.08] rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-slate-300 mb-1">Proyecto:</label>
+                    <select
+                      value={newProject}
+                      onChange={e => setNewProject(e.target.value as any)}
+                      className="w-full bg-[#090a0f] border border-white/[0.08] rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
+                    >
+                      <option value="Core API v2">Core API v2</option>
+                      <option value="Frontend SaaS">Frontend SaaS</option>
+                      <option value="DevOps & Docker">DevOps & Docker</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-slate-300 mb-1">Prioridad:</label>
+                    <select
+                      value={newPriority}
+                      onChange={e => setNewPriority(e.target.value as any)}
+                      className="w-full bg-[#090a0f] border border-white/[0.08] rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
+                    >
+                      <option value="media">Media</option>
+                      <option value="alta">Alta</option>
+                      <option value="urgente">Urgente</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-slate-300 mb-1">Horas Estimadas:</label>
+                  <input
+                    type="number"
+                    value={newHours}
+                    onChange={e => setNewHours(Number(e.target.value))}
+                    className="w-full bg-[#090a0f] border border-white/[0.08] rounded-xl px-3 py-2 font-mono text-white focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+
+                <div className="mt-5 flex justify-end gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setModalNewTask(false)}
+                    className="px-4 py-2 rounded-xl bg-white/[0.04] text-slate-300 font-semibold hover:bg-white/[0.08] transition"
                   >
-                    <div className="flex items-center gap-2 mb-2 px-1">
-                      <div className="w-2 h-2 rounded-full" style={{ background: col.color }} />
-                      <p className="text-xs font-semibold text-white">{col.label}</p>
-                      <span className="ml-auto text-xs rounded-full px-1.5 py-0.5" style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.5)" }}>
-                        {tasks.filter(t => t.column === col.id).length}
-                      </span>
-                    </div>
-                    {tasks.filter(t => t.column === col.id).map(task => (
-                      <motion.div
-                        key={task.id}
-                        draggable
-                        onDragStart={() => setDragId(task.id)}
-                        onDragEnd={() => { setDragId(null); setDragOver(null); }}
-                        layout
-                        className="p-3 rounded-xl cursor-grab active:cursor-grabbing select-none"
-                        style={{ background: "#1c2128", border: "1px solid rgba(255,255,255,0.1)", opacity: dragId === task.id ? 0.5 : 1 }}
-                      >
-                        <div className="flex items-start justify-between gap-2 mb-2">
-                          <p className="text-white text-xs font-medium leading-tight">{task.title}</p>
-                          <GripVertical size={12} style={{ color: "rgba(255,255,255,0.3)", flexShrink: 0 }} />
-                        </div>
-                        <p className="text-xs mb-2" style={{ color: task.color }}>{task.project}</p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs px-1.5 py-0.5 rounded" style={{ background: `${priorityColors[task.priority]}15`, color: priorityColors[task.priority] }}>
-                            {task.priority}
-                          </span>
-                          <div className="flex items-center gap-1">
-                            <Clock size={10} style={{ color: "rgba(255,255,255,0.35)" }} />
-                            <span className="text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>{task.hours}h</span>
-                            <div className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ml-1" style={{ background: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.6)" }}>{task.assignee}</div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                ))}
-              </div>
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold shadow-md transition"
+                  >
+                    Crear Tarea
+                  </button>
+                </div>
+              </form>
             </motion.div>
-          )}
-
-          {/* PROYECTOS */}
-          {tab === "proyectos" && (
-            <motion.div key="proj" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
-              {initProjects.map(p => {
-                const pct = Math.round((p.spent / p.budget) * 100);
-                const taskPct = Math.round((p.done / p.tasks) * 100);
-                return (
-                  <div key={p.id} className="p-5 rounded-2xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                    <div className="flex items-start justify-between gap-4 mb-4">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <div className="w-3 h-3 rounded-full" style={{ background: p.color }} />
-                          <h3 className="text-white font-bold">{p.name}</h3>
-                        </div>
-                        <p className="text-sm" style={{ color: "rgba(255,255,255,0.45)" }}>{p.client} · Entrega: {p.deadline}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-white font-mono">{fmt(p.spent)}<span className="text-xs ml-1" style={{ color: "rgba(255,255,255,0.35)" }}>/ {fmt(p.budget)}</span></p>
-                        <p className="text-xs" style={{ color: pct > 80 ? "#ef4444" : "rgba(255,255,255,0.35)" }}>{pct}% del presupuesto</p>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <div className="flex justify-between text-xs mb-1.5" style={{ color: "rgba(255,255,255,0.45)" }}>
-                          <span>Presupuesto usado</span><span>{pct}%</span>
-                        </div>
-                        <div className="h-1.5 rounded-full" style={{ background: "rgba(255,255,255,0.1)" }}>
-                          <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 1 }} className="h-full rounded-full" style={{ background: pct > 80 ? "#ef4444" : p.color }} />
-                        </div>
-                      </div>
-                      <div>
-                        <div className="flex justify-between text-xs mb-1.5" style={{ color: "rgba(255,255,255,0.45)" }}>
-                          <span>Tareas completadas</span><span>{p.done}/{p.tasks}</span>
-                        </div>
-                        <div className="h-1.5 rounded-full" style={{ background: "rgba(255,255,255,0.1)" }}>
-                          <motion.div initial={{ width: 0 }} animate={{ width: `${taskPct}%` }} transition={{ duration: 1, delay: 0.2 }} className="h-full rounded-full" style={{ background: p.color }} />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </motion.div>
-          )}
-
-          {/* TIEMPO */}
-          {tab === "tiempo" && (
-            <motion.div key="time" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                {[
-                  { label: "Horas esta semana", value: `${totalHours}h`, color: "#3b82f6" },
-                  { label: "Total facturado", value: fmt(totalBilled), color: "#22c55e" },
-                  { label: "Tarifa promedio", value: "$850/hr", color: "#a855f7" },
-                ].map(s => (
-                  <div key={s.label} className="p-4 rounded-2xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                    <p className="text-xs mb-2" style={{ color: "rgba(255,255,255,0.4)" }}>{s.label}</p>
-                    <p className="text-xl font-bold" style={{ color: s.color }}>{s.value}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr style={{ background: "rgba(255,255,255,0.05)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-                      {["Tarea", "Proyecto", "Fecha", "Horas", "Total"].map(h => (
-                        <th key={h} className="px-4 py-3 text-left text-xs font-semibold" style={{ color: "rgba(255,255,255,0.5)" }}>{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {timeEntries.map((e, i) => (
-                      <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", background: i % 2 === 0 ? "rgba(255,255,255,0.02)" : "transparent" }}>
-                        <td className="px-4 py-3 text-white">{e.task}</td>
-                        <td className="px-4 py-3 text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>{e.project}</td>
-                        <td className="px-4 py-3 text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>{e.date}</td>
-                        <td className="px-4 py-3 font-mono" style={{ color: "#60a5fa" }}>{e.hours}h</td>
-                        <td className="px-4 py-3 font-mono font-bold" style={{ color: "#22c55e" }}>{fmt(e.total)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </motion.div>
-          )}
-
-          {/* FACTURACIÓN */}
-          {tab === "facturacion" && (
-            <motion.div key="fact" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-white">Facturación de Horas</h2>
-                <button className="px-4 py-2 rounded-xl text-sm font-semibold" style={{ background: "rgba(34,197,94,0.15)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.3)" }}>
-                  Generar Factura
-                </button>
-              </div>
-              <div className="space-y-4">
-                {initProjects.map(p => {
-                  const projectTime = timeEntries.filter(e => e.project === p.name);
-                  const hours = projectTime.reduce((s, e) => s + e.hours, 0);
-                  const total = projectTime.reduce((s, e) => s + e.total, 0);
-                  return (
-                    <div key={p.id} className="p-5 rounded-2xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-2">
-                          <div className="w-3 h-3 rounded-full" style={{ background: p.color }} />
-                          <p className="text-white font-semibold">{p.name}</p>
-                        </div>
-                        <p className="font-mono font-bold text-white">{fmt(total)}</p>
-                      </div>
-                      <p className="text-sm" style={{ color: "rgba(255,255,255,0.45)" }}>{hours}h registradas · Tarifa $850/hr</p>
-                      <div className="mt-3 space-y-1">
-                        {projectTime.map((e, i) => (
-                          <div key={i} className="flex items-center justify-between text-xs py-1">
-                            <span style={{ color: "rgba(255,255,255,0.5)" }}>{e.task}</span>
-                            <span className="font-mono" style={{ color: "rgba(255,255,255,0.6)" }}>{e.hours}h = {fmt(e.total)}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

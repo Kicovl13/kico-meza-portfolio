@@ -4,414 +4,850 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
+  ArrowRight,
+  BadgeAlert,
   BarChart3,
-  Building2,
-  CheckCircle2,
+  Bell,
+  Building,
+  Calendar,
+  CheckCircle,
+  CheckSquare,
+  ChevronDown,
   ChevronRight,
+  Clock,
+  Download,
+  Edit2,
+  FileSpreadsheet,
   FileText,
+  Filter,
+  HelpCircle,
+  Layers,
+  Lock,
+  LogOut,
+  Mail,
+  MoreHorizontal,
+  Phone,
   Plus,
+  Printer,
+  RefreshCw,
   Search,
   Settings,
+  Shield,
+  Square,
   Trash2,
   User,
+  UserCheck,
+  UserPlus,
   Users,
   Wallet,
   X,
 } from "lucide-react";
 import Link from "next/link";
 
-type Module = "dashboard" | "clientes" | "empleados" | "nomina" | "facturacion" | "auditoria";
+type ERPModule = "dashboard" | "clientes" | "empleados" | "nomina" | "auditoria";
 
-interface Cliente {
+interface ClienteERP {
   id: number;
+  codigo: string;
   nombre: string;
   empresa: string;
+  rfc: string;
   email: string;
   telefono: string;
-  status: "activo" | "inactivo";
-  saldo: number;
-  ultimaInteraccion: string;
+  creditoLimite: number;
+  saldoPendiente: number;
+  status: "activo" | "suspendido" | "prospecto";
+  sucursal: "GDL Centro" | "Zapopan Norte" | "CDMX";
 }
 
-interface Empleado {
+interface EmpleadoERP {
   id: number;
+  numEmpleado: string;
   nombre: string;
   puesto: string;
-  departamento: string;
-  salario: number;
+  departamento: "Comercial" | "TI" | "Finanzas" | "Operaciones";
+  salarioMensual: number;
   status: "activo" | "baja";
-  ingreso: string;
+  curp: string;
+  nss: string;
+  fechaIngreso: string;
 }
 
-const clientes: Cliente[] = [
-  { id: 1, nombre: "Carlos Rodríguez", empresa: "Distribuidora del Norte S.A.", email: "carlos@norte.com", telefono: "33-1234-5678", status: "activo", saldo: 48500, ultimaInteraccion: "30 Oct 2026" },
-  { id: 2, nombre: "Laura Jiménez", empresa: "Manufacturas Jalisco", email: "laura@mfgjal.mx", telefono: "33-8765-4321", status: "activo", saldo: 0, ultimaInteraccion: "28 Oct 2026" },
-  { id: 3, nombre: "Roberto Sánchez", empresa: "Importadora Occidente", email: "rsanchez@impoc.com", telefono: "33-5555-0000", status: "inactivo", saldo: 12000, ultimaInteraccion: "15 Oct 2026" },
-  { id: 4, nombre: "Ana García", empresa: "Servicios Logísticos GDL", email: "ana@slgdl.mx", telefono: "33-3344-5566", status: "activo", saldo: 29750, ultimaInteraccion: "31 Oct 2026" },
+interface AuditoriaEntry {
+  id: number;
+  fecha: string;
+  usuario: string;
+  ip: string;
+  modulo: string;
+  accion: string;
+  severidad: "info" | "alerta" | "critica";
+}
+
+const clientesData: ClienteERP[] = [
+  { id: 1, codigo: "CLI-0104", nombre: "Ing. Carlos Rodríguez", empresa: "Distribuidora del Norte S.A.", rfc: "DNO190412KJ8", email: "carlos.r@dnor.mx", telefono: "(33) 3648-9921", creditoLimite: 150000, saldoPendiente: 48500, status: "activo", sucursal: "GDL Centro" },
+  { id: 2, codigo: "CLI-0105", nombre: "Lic. Laura Jiménez", empresa: "Manufacturas Jalisco S.A. de C.V.", rfc: "MJA210811TR3", email: "ljimenez@mfgjal.mx", telefono: "(33) 3812-4400", creditoLimite: 200000, saldoPendiente: 0, status: "activo", sucursal: "Zapopan Norte" },
+  { id: 3, codigo: "CLI-0106", nombre: "Roberto Sánchez", empresa: "Importadora Occidente S. de R.L.", rfc: "IOC170519HY2", email: "rsanchez@impoc.com", telefono: "(33) 3122-8800", creditoLimite: 80000, saldoPendiente: 12000, status: "suspendido", sucursal: "GDL Centro" },
+  { id: 4, codigo: "CLI-0107", nombre: "C.P. Ana García", empresa: "Servicios Logísticos GDL", rfc: "SLG200214PL9", email: "ana.garcia@slgdl.mx", telefono: "(33) 3630-1122", creditoLimite: 120000, saldoPendiente: 29750, status: "activo", sucursal: "CDMX" },
+  { id: 5, codigo: "CLI-0108", nombre: "Arq. Mauricio Peña", empresa: "Diseño y Construcción Urbana", rfc: "DCU190930RQ1", email: "mpena@durbana.com", telefono: "(33) 3845-0019", creditoLimite: 300000, saldoPendiente: 0, status: "prospecto", sucursal: "Zapopan Norte" },
 ];
 
-const empleados: Empleado[] = [
-  { id: 1, nombre: "María López", puesto: "Gerente de Ventas", departamento: "Comercial", salario: 28000, status: "activo", ingreso: "Mar 2023" },
-  { id: 2, nombre: "José Martínez", puesto: "Desarrollador Backend", departamento: "TI", salario: 35000, status: "activo", ingreso: "Ene 2024" },
-  { id: 3, nombre: "Sofía Torres", puesto: "Contadora", departamento: "Finanzas", salario: 22000, status: "activo", ingreso: "Jun 2022" },
-  { id: 4, nombre: "Luis Ramírez", puesto: "Soporte Técnico", departamento: "TI", salario: 18000, status: "baja", ingreso: "Sep 2021" },
+const empleadosData: EmpleadoERP[] = [
+  { id: 1, numEmpleado: "EMP-041", nombre: "María López Solís", puesto: "Gerente de Ventas Corporativas", departamento: "Comercial", salarioMensual: 28500, status: "activo", curp: "LOSM890412MJCL02", nss: "3498-12-0941", fechaIngreso: "15/Mar/2023" },
+  { id: 2, numEmpleado: "EMP-042", nombre: "José Martínez Ortega", puesto: "Desarrollador Full Stack Sr", departamento: "TI", salarioMensual: 36000, status: "activo", curp: "MAOJ920815HJCL09", nss: "1289-44-8821", fechaIngreso: "10/Ene/2024" },
+  { id: 3, numEmpleado: "EMP-043", nombre: "Sofía Torres Navarro", puesto: "Coordinadora de Finanzas & SAT", departamento: "Finanzas", salarioMensual: 24000, status: "activo", curp: "TONS940120MJCL04", nss: "7721-09-5512", fechaIngreso: "01/Jun/2022" },
+  { id: 4, numEmpleado: "EMP-044", nombre: "Luis Ramírez Vega", puesto: "Soporte y Mesa de Ayuda", departamento: "TI", salarioMensual: 18000, status: "baja", curp: "RAVL971104HJCL01", nss: "5512-33-0192", fechaIngreso: "20/Sep/2021" },
+  { id: 5, numEmpleado: "EMP-045", nombre: "Claudia Valencia R.", puesto: "Supervisora de Operaciones", departamento: "Operaciones", salarioMensual: 22000, status: "activo", curp: "VARC910608MJCL08", nss: "9012-77-3341", fechaIngreso: "05/May/2024" },
 ];
 
-const nominaBase = empleados.filter(e => e.status === "activo").map(e => {
-  const imss = Math.round(e.salario * 0.0315);
-  const isr = Math.round(e.salario * 0.108);
-  const infonavit = Math.round(e.salario * 0.05);
-  const neto = e.salario - imss - isr - infonavit;
-  return {
-    ...e,
-    imss,
-    isr,
-    infonavit,
-    neto,
-  };
-});
-
-const auditLog = [
-  { user: "Admin", action: "Creó cliente: Distribuidora del Norte S.A.", time: "31 Oct 11:42", tipo: "create" },
-  { user: "María López", action: "Editó empleado: Luis Ramírez → Baja", time: "30 Oct 17:05", tipo: "edit" },
-  { user: "Admin", action: "Generó nómina Octubre 2026", time: "30 Oct 10:00", tipo: "system" },
-  { user: "Sofía Torres", action: "Factura F-2026-0492 emitida: $48,500", time: "29 Oct 14:30", tipo: "create" },
-  { user: "José Martínez", action: "Inicio de sesión exitoso", time: "29 Oct 9:01", tipo: "login" },
-];
-
-const tipoColors: Record<string, string> = {
-  create: "#22c55e", edit: "#f97316", system: "#3b82f6", login: "#a855f7",
-};
-
-const modules: { id: Module; label: string; icon: React.ElementType }[] = [
-  { id: "dashboard", label: "Dashboard", icon: BarChart3 },
-  { id: "clientes", label: "Clientes", icon: Users },
-  { id: "empleados", label: "Empleados", icon: User },
-  { id: "nomina", label: "Nómina", icon: Wallet },
-  { id: "facturacion", label: "Facturación", icon: FileText },
-  { id: "auditoria", label: "Auditoría", icon: Settings },
+const auditoriaData: AuditoriaEntry[] = [
+  { id: 101, fecha: "03 Nov 10:14:22", usuario: "admin_root", ip: "192.168.1.45", modulo: "Clientes", accion: "Actualización de límite de crédito: CLI-0104 ($120k → $150k)", severidad: "info" },
+  { id: 102, fecha: "03 Nov 09:48:10", usuario: "storres_fin", ip: "192.168.1.18", modulo: "Nómina", accion: "Cálculo de dispersión quincenal Quincena 21-2026", severidad: "info" },
+  { id: 103, fecha: "02 Nov 18:22:05", usuario: "mlopez_com", ip: "187.190.22.10", modulo: "Clientes", accion: "Modificación de estado CLI-0106 → 'Suspendido por mora'", severidad: "alerta" },
+  { id: 104, fecha: "02 Nov 14:05:40", usuario: "system_cron", ip: "127.0.0.1", modulo: "Seguridad", accion: "3 intentos fallidos de autenticación desde IP externa 201.144.12.9", severidad: "critica" },
+  { id: 105, fecha: "01 Nov 12:00:00", usuario: "admin_root", ip: "192.168.1.45", modulo: "Nómina", accion: "Cierre contable de mes Octubre 2026", severidad: "info" },
 ];
 
 function fmt(n: number) {
-  return `$${n.toLocaleString("es-MX")}`;
+  return `$${n.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
-export default function SysAdminMvp() {
-  const [module, setModule] = useState<Module>("dashboard");
+export default function SysAdminPage() {
+  const [activeModule, setActiveModule] = useState<ERPModule>("dashboard");
+  const [sucursal, setSucursal] = useState("Todas las Sucursales");
+  const [clientes, setClientes] = useState<ClienteERP[]>(clientesData);
+  const [empleados, setEmpleados] = useState<EmpleadoERP[]>(empleadosData);
   const [search, setSearch] = useState("");
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [newClienteModal, setNewClienteModal] = useState(false);
-  const [clientesList, setClientesList] = useState(clientes);
-  const [form, setForm] = useState({ nombre: "", empresa: "", email: "", telefono: "" });
 
-  const filteredClientes = clientesList.filter(c =>
-    c.nombre.toLowerCase().includes(search.toLowerCase()) ||
-    c.empresa.toLowerCase().includes(search.toLowerCase())
-  );
+  // Modal Recibo de Nómina
+  const [reciboEmpleado, setReciboEmpleado] = useState<EmpleadoERP | null>(null);
 
-  const addCliente = () => {
-    if (!form.nombre || !form.empresa) return;
-    setClientesList(prev => [...prev, {
-      id: prev.length + 1, ...form, status: "activo", saldo: 0, ultimaInteraccion: "Hoy",
-    }]);
-    setForm({ nombre: "", empresa: "", email: "", telefono: "" });
-    setNewClienteModal(false);
+  // Modal Nuevo Cliente
+  const [modalNuevoCliente, setModalNuevoCliente] = useState(false);
+  const [nuevoNombre, setNuevoNombre] = useState("");
+  const [nuevaEmpresa, setNuevaEmpresa] = useState("");
+  const [nuevoRFC, setNuevoRFC] = useState("");
+  const [nuevoCredito, setNuevoCredito] = useState(100000);
+
+  const guardarNuevoCliente = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!nuevoNombre || !nuevaEmpresa) return;
+    const nuevo: ClienteERP = {
+      id: clientes.length + 1,
+      codigo: `CLI-010${clientes.length + 1}`,
+      nombre: nuevoNombre,
+      empresa: nuevaEmpresa,
+      rfc: nuevoRFC || "XAXX010101000",
+      email: `${nuevoNombre.toLowerCase().replace(/\s+/g, ".")}@empresa.mx`,
+      telefono: "(33) 3000-0000",
+      creditoLimite: Number(nuevoCredito),
+      saldoPendiente: 0,
+      status: "activo",
+      sucursal: "GDL Centro",
+    };
+    setClientes([nuevo, ...clientes]);
+    setModalNuevoCliente(false);
+    setNuevoNombre("");
+    setNuevaEmpresa("");
+    setNuevoRFC("");
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "#0d1117" }}>
-      {/* Top bar */}
-      <header className="flex items-center gap-4 px-4 py-3 border-b" style={{ background: "#161b22", borderColor: "rgba(255,255,255,0.08)" }}>
-        <Link href="/" className="flex items-center gap-2 text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>
-          <ArrowLeft size={14} /> Portafolio
-        </Link>
-        <div className="h-4 w-px" style={{ background: "rgba(255,255,255,0.1)" }} />
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #22c55e, #16a34a)" }}>
-            <Building2 size={14} className="text-white" />
-          </div>
-          <span className="text-white font-semibold text-sm">SysAdministrador</span>
+    <div className="min-h-screen bg-[#0f172a] text-slate-200 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
+      {/* Top Bar Banner / Breadcrumb */}
+      <div className="bg-[#1e293b] border-b border-slate-700/80 px-4 py-2 flex items-center justify-between text-xs font-mono">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/demos"
+            className="flex items-center gap-1 text-blue-400 hover:text-blue-300 font-semibold transition"
+          >
+            <ArrowLeft className="size-3.5" />
+            <span>Volver a Portafolio</span>
+          </Link>
+          <span className="text-slate-600">|</span>
+          <span className="flex items-center gap-2">
+            <Shield className="size-3.5 text-blue-400" />
+            <span className="text-slate-300 font-bold">SysAdministrador Enterprise v4.5</span>
+            <span className="bg-blue-900/60 text-blue-300 border border-blue-700/50 px-2 py-0.2 rounded text-[10px]">
+              ERP Empresarial · Laravel & MySQL
+            </span>
+          </span>
         </div>
-        <span className="ml-auto text-xs px-2 py-1 rounded-full" style={{ background: "rgba(34,197,94,0.12)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.25)" }}>
-          CRM · MVP Demo
-        </span>
-      </header>
+        <div className="flex items-center gap-4 text-slate-400 text-[11px]">
+          <span>Licencia: Corporativa</span>
+          <span className="text-emerald-400 font-semibold">● Servidor Activo (Linux)</span>
+        </div>
+      </div>
 
-      <div className="flex flex-1 overflow-hidden" style={{ minHeight: "calc(100vh - 52px)" }}>
-        {/* Sidebar */}
-        <aside className="w-52 flex-shrink-0 border-r flex flex-col" style={{ background: "#161b22", borderColor: "rgba(255,255,255,0.07)" }}>
-          <nav className="flex-1 p-3 space-y-1">
-            {modules.map(m => (
-              <button
-                key={m.id}
-                onClick={() => setModule(m.id)}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all text-left"
-                style={{ background: module === m.id ? "rgba(34,197,94,0.15)" : "transparent", color: module === m.id ? "#22c55e" : "rgba(255,255,255,0.55)", border: module === m.id ? "1px solid rgba(34,197,94,0.3)" : "1px solid transparent" }}
-              >
-                <m.icon size={15} />
-                {m.label}
-              </button>
-            ))}
-          </nav>
-          <div className="p-3 border-t" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
-            <div className="flex items-center gap-2 px-3 py-2">
-              <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ background: "#22c55e" }}>A</div>
-              <div>
-                <p className="text-white text-xs font-medium">Admin</p>
-                <p className="text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>Super Admin</p>
+      <div className="flex-1 flex overflow-hidden">
+        {/* Left Classic ERP Sidebar */}
+        <aside className="w-64 bg-[#111827] border-r border-slate-800 flex flex-col justify-between shrink-0 hidden md:flex">
+          <div>
+            {/* System Info */}
+            <div className="p-4 border-b border-slate-800 bg-[#0d1527]">
+              <div className="flex items-center gap-2.5">
+                <div className="size-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white shadow-md">
+                  SA
+                </div>
+                <div>
+                  <h2 className="text-xs font-bold text-white leading-tight">Panel Administrativo</h2>
+                  <p className="text-[10px] text-slate-400 font-mono">ERP & Gestión Integral</p>
+                </div>
+              </div>
+
+              <div className="mt-3">
+                <label className="text-[10px] uppercase font-mono text-slate-400 block mb-1">
+                  Sucursal Activa:
+                </label>
+                <select
+                  value={sucursal}
+                  onChange={(e) => setSucursal(e.target.value)}
+                  className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-slate-200 focus:outline-none focus:border-blue-500"
+                >
+                  <option value="Todas las Sucursales">Todas las Sucursales</option>
+                  <option value="GDL Centro">GDL Centro</option>
+                  <option value="Zapopan Norte">Zapopan Norte</option>
+                  <option value="CDMX">CDMX</option>
+                </select>
               </div>
             </div>
+
+            {/* Menu Items */}
+            <div className="p-3 space-y-1 text-xs font-medium">
+              {[
+                { id: "dashboard", label: "Dashboard Ejecutivo", icon: BarChart3 },
+                { id: "clientes", label: "Catálogo de Clientes", icon: Users, count: clientes.length },
+                { id: "empleados", label: "Recursos Humanos", icon: UserCheck, count: empleados.length },
+                { id: "nomina", label: "Cálculo de Nómina SAT", icon: Wallet },
+                { id: "auditoria", label: "Bitácora de Auditoría", icon: Shield, count: auditoriaData.length },
+              ].map((m) => {
+                const Icon = m.icon;
+                const active = activeModule === m.id;
+                return (
+                  <button
+                    key={m.id}
+                    onClick={() => setActiveModule(m.id as ERPModule)}
+                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition ${
+                      active
+                        ? "bg-blue-600 text-white font-semibold shadow-md shadow-blue-900/30"
+                        : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Icon className="size-4" />
+                      <span>{m.label}</span>
+                    </div>
+                    {m.count !== undefined && (
+                      <span
+                        className={`font-mono text-[10px] px-1.5 py-0.5 rounded ${
+                          active ? "bg-blue-800 text-blue-100" : "bg-slate-800 text-slate-400"
+                        }`}
+                      >
+                        {m.count}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* User Profile Bar */}
+          <div className="p-3 border-t border-slate-800 bg-[#0d1527] flex items-center justify-between text-xs">
+            <div className="flex items-center gap-2.5">
+              <div className="size-8 rounded-full bg-slate-700 flex items-center justify-center font-bold text-white text-xs">
+                AD
+              </div>
+              <div>
+                <p className="font-semibold text-white leading-tight">Admin Principal</p>
+                <p className="text-[10px] text-emerald-400 font-mono">Rol: SuperAdmin</p>
+              </div>
+            </div>
+            <button className="text-slate-400 hover:text-rose-400 transition" title="Cerrar sesión">
+              <LogOut className="size-4" />
+            </button>
           </div>
         </aside>
 
-        {/* Main */}
-        <main className="flex-1 overflow-auto p-6">
-          <AnimatePresence mode="wait">
-            {/* DASHBOARD */}
-            {module === "dashboard" && (
-              <motion.div key="dash" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                <h1 className="text-2xl font-bold text-white mb-6">Dashboard General</h1>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                  {[
-                    { label: "Clientes Activos", value: "3", sub: "1 inactivo", color: "#22c55e" },
-                    { label: "Empleados", value: "3", sub: "1 de baja", color: "#3b82f6" },
-                    { label: "Facturación Oct", value: fmt(124750), sub: "+12% vs Sep", color: "#a855f7" },
-                    { label: "Saldo Pendiente", value: fmt(90250), sub: "3 facturas", color: "#f97316" },
-                  ].map(s => (
-                    <div key={s.label} className="p-5 rounded-2xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                      <p className="text-xs mb-3" style={{ color: "rgba(255,255,255,0.5)" }}>{s.label}</p>
-                      <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
-                      <p className="text-xs mt-1" style={{ color: "rgba(255,255,255,0.3)" }}>{s.sub}</p>
-                    </div>
-                  ))}
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div className="p-5 rounded-2xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                    <h3 className="text-white font-semibold mb-4 text-sm">Últimas Interacciones</h3>
-                    {clientesList.slice(0, 3).map(c => (
-                      <div key={c.id} className="flex items-center gap-3 py-2 border-b" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
-                        <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ background: "rgba(34,197,94,0.2)" }}>{c.nombre[0]}</div>
-                        <div className="flex-1">
-                          <p className="text-white text-xs font-medium">{c.nombre}</p>
-                          <p className="text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>{c.empresa}</p>
-                        </div>
-                        <p className="text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>{c.ultimaInteraccion}</p>
-                      </div>
-                    ))}
+        {/* Main Content Workspace */}
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
+          {/* Top Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-700">
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                  {activeModule === "dashboard" && "Resumen Operativo & Finanzas"}
+                  {activeModule === "clientes" && "Directorio de Clientes & Límites de Crédito"}
+                  {activeModule === "empleados" && "Plantilla de Personal & Departamentos"}
+                  {activeModule === "nomina" && "Dispersión de Nómina e Impuestos (IMSS / ISR)"}
+                  {activeModule === "auditoria" && "Registro de Seguridad & Eventos del Sistema"}
+                </h1>
+                <span className="rounded bg-slate-800 border border-slate-700 px-2 py-0.5 font-mono text-[10px] text-slate-300">
+                  {sucursal}
+                </span>
+              </div>
+              <p className="text-xs text-slate-400 mt-1">
+                Plataforma Empresarial en PHP: Modelo de datos relacional con integridad referencial y auditoría estricta.
+              </p>
+            </div>
+
+            {activeModule === "clientes" && (
+              <button
+                onClick={() => setModalNuevoCliente(true)}
+                className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 text-xs font-semibold shadow-md transition active:scale-95"
+              >
+                <Plus className="size-4" />
+                <span>Registrar Cliente</span>
+              </button>
+            )}
+
+            {activeModule === "nomina" && (
+              <div className="text-xs font-mono text-slate-300 bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-xl">
+                Periodo: <strong className="text-emerald-400">Quincena 21 (Noviembre 2026)</strong>
+              </div>
+            )}
+          </div>
+
+          {/* DASHBOARD MODULE */}
+          {activeModule === "dashboard" && (
+            <div className="space-y-6">
+              {/* Metric Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="rounded-2xl border border-slate-800 bg-[#1e293b] p-4">
+                  <div className="flex justify-between items-center text-xs text-slate-400">
+                    <span className="font-mono uppercase text-[10px]">Cuentas por Cobrar</span>
+                    <BarChart3 className="size-4 text-blue-400" />
                   </div>
-                  <div className="p-5 rounded-2xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                    <h3 className="text-white font-semibold mb-4 text-sm">Actividad Reciente</h3>
-                    {auditLog.slice(0, 4).map((log, i) => (
-                      <div key={i} className="flex items-start gap-2 py-1.5">
-                        <div className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: tipoColors[log.tipo] }} />
+                  <p className="mt-2 text-2xl font-bold font-mono text-white">
+                    {fmt(clientes.reduce((acc, c) => acc + c.saldoPendiente, 0))}
+                  </p>
+                  <p className="text-[11px] text-slate-400 mt-1">
+                    {clientes.filter((c) => c.saldoPendiente > 0).length} clientes con balance activo
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-slate-800 bg-[#1e293b] p-4">
+                  <div className="flex justify-between items-center text-xs text-slate-400">
+                    <span className="font-mono uppercase text-[10px]">Costo Nómina Quincenal</span>
+                    <Wallet className="size-4 text-emerald-400" />
+                  </div>
+                  <p className="mt-2 text-2xl font-bold font-mono text-emerald-400">
+                    {fmt(empleados.filter((e) => e.status === "activo").reduce((acc, e) => acc + e.salarioMensual, 0) / 2)}
+                  </p>
+                  <p className="text-[11px] text-slate-400 mt-1">
+                    {empleados.filter((e) => e.status === "activo").length} empleados activos
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-slate-800 bg-[#1e293b] p-4">
+                  <div className="flex justify-between items-center text-xs text-slate-400">
+                    <span className="font-mono uppercase text-[10px]">Clientes Registrados</span>
+                    <Users className="size-4 text-indigo-400" />
+                  </div>
+                  <p className="mt-2 text-2xl font-bold font-mono text-white">
+                    {clientes.length}
+                  </p>
+                  <p className="text-[11px] text-emerald-400 mt-1">
+                    {clientes.filter((c) => c.status === "activo").length} con estatus activo
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-slate-800 bg-[#1e293b] p-4">
+                  <div className="flex justify-between items-center text-xs text-slate-400">
+                    <span className="font-mono uppercase text-[10px]">Eventos de Auditoría</span>
+                    <Shield className="size-4 text-amber-400" />
+                  </div>
+                  <p className="mt-2 text-2xl font-bold font-mono text-amber-400">
+                    {auditoriaData.length}
+                  </p>
+                  <p className="text-[11px] text-slate-400 mt-1">
+                    1 evento crítico registrado
+                  </p>
+                </div>
+              </div>
+
+              {/* Quick Actions Panel */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="rounded-2xl border border-slate-800 bg-[#1e293b] p-5">
+                  <h3 className="text-sm font-bold text-white mb-3">Módulos Administrativos Rápidos</h3>
+                  <div className="grid grid-cols-2 gap-3 text-xs">
+                    <button
+                      onClick={() => setActiveModule("clientes")}
+                      className="p-3.5 rounded-xl border border-slate-700 bg-[#0f172a] hover:border-blue-500 hover:bg-blue-950/20 transition text-left"
+                    >
+                      <Users className="size-5 text-blue-400 mb-2" />
+                      <p className="font-bold text-white">Gestión Clientes</p>
+                      <p className="text-[11px] text-slate-400">Límites de crédito & facturación</p>
+                    </button>
+                    <button
+                      onClick={() => setActiveModule("nomina")}
+                      className="p-3.5 rounded-xl border border-slate-700 bg-[#0f172a] hover:border-emerald-500 hover:bg-emerald-950/20 transition text-left"
+                    >
+                      <Wallet className="size-5 text-emerald-400 mb-2" />
+                      <p className="font-bold text-white">Nómina Quincenal</p>
+                      <p className="text-[11px] text-slate-400">Recibos, IMSS, ISR e Infonavit</p>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-slate-800 bg-[#1e293b] p-5">
+                  <h3 className="text-sm font-bold text-white mb-3">Últimas Acciones Registradas</h3>
+                  <div className="space-y-2 text-xs">
+                    {auditoriaData.slice(0, 3).map((item) => (
+                      <div key={item.id} className="p-2.5 rounded-xl bg-[#0f172a] border border-slate-800 flex justify-between items-center">
                         <div>
-                          <p className="text-xs text-white">{log.action}</p>
-                          <p className="text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>{log.user} · {log.time}</p>
+                          <p className="font-semibold text-slate-200">{item.accion}</p>
+                          <p className="text-[10px] text-slate-400 font-mono">{item.usuario} · {item.fecha}</p>
                         </div>
+                        <span className="font-mono text-[10px] uppercase px-2 py-0.5 rounded bg-slate-800 text-slate-300">
+                          {item.modulo}
+                        </span>
                       </div>
                     ))}
                   </div>
                 </div>
-              </motion.div>
-            )}
+              </div>
+            </div>
+          )}
 
-            {/* CLIENTES */}
-            {module === "clientes" && (
-              <motion.div key="clientes" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                <div className="flex items-center justify-between mb-6">
-                  <h1 className="text-2xl font-bold text-white">Clientes</h1>
-                  <button onClick={() => setNewClienteModal(true)} className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white" style={{ background: "linear-gradient(135deg, #22c55e, #16a34a)" }}>
-                    <Plus size={15} /> Nuevo Cliente
-                  </button>
-                </div>
-                <div className="relative mb-4">
-                  <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "rgba(255,255,255,0.35)" }} />
-                  <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar por nombre o empresa..." className="w-full pl-9 pr-4 py-2.5 rounded-xl text-sm outline-none" style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff" }} />
-                </div>
-                <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr style={{ background: "rgba(255,255,255,0.05)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-                        {["Cliente", "Empresa", "Contacto", "Saldo Pendiente", "Status"].map(h => (
-                          <th key={h} className="px-4 py-3 text-left text-xs font-semibold" style={{ color: "rgba(255,255,255,0.5)" }}>{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredClientes.map((c, i) => (
-                        <tr key={c.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", background: i % 2 === 0 ? "rgba(255,255,255,0.02)" : "transparent" }}>
-                          <td className="px-4 py-3">
-                            <div className="flex items-center gap-2">
-                              <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ background: "rgba(34,197,94,0.2)" }}>{c.nombre[0]}</div>
-                              <span className="text-white">{c.nombre}</span>
-                            </div>
-                          </td>
-                          <td className="px-4 py-3 text-sm" style={{ color: "rgba(255,255,255,0.6)" }}>{c.empresa}</td>
-                          <td className="px-4 py-3 text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>{c.email}</td>
-                          <td className="px-4 py-3 font-mono text-sm" style={{ color: c.saldo > 0 ? "#f97316" : "#22c55e" }}>{fmt(c.saldo)}</td>
-                          <td className="px-4 py-3">
-                            <span className="text-xs px-2 py-1 rounded-full" style={{ background: c.status === "activo" ? "rgba(34,197,94,0.12)" : "rgba(255,255,255,0.08)", color: c.status === "activo" ? "#22c55e" : "rgba(255,255,255,0.4)" }}>
-                              {c.status}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <AnimatePresence>
-                  {newClienteModal && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.7)" }}>
-                      <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="w-full max-w-md p-6 rounded-2xl" style={{ background: "#1c2128", border: "1px solid rgba(255,255,255,0.1)" }}>
-                        <div className="flex items-center justify-between mb-5">
-                          <h3 className="text-white font-bold text-lg">Nuevo Cliente</h3>
-                          <button onClick={() => setNewClienteModal(false)}><X size={18} style={{ color: "rgba(255,255,255,0.5)" }} /></button>
-                        </div>
-                        <div className="space-y-3">
-                          {[{ key: "nombre", label: "Nombre completo*" }, { key: "empresa", label: "Empresa*" }, { key: "email", label: "Email" }, { key: "telefono", label: "Teléfono" }].map(f => (
-                            <div key={f.key}>
-                              <label className="text-xs mb-1 block" style={{ color: "rgba(255,255,255,0.6)" }}>{f.label}</label>
-                              <input value={(form as Record<string, string>)[f.key]} onChange={e => setForm(prev => ({ ...prev, [f.key]: e.target.value }))} className="w-full px-3 py-2.5 rounded-xl text-sm outline-none" style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff" }} />
-                            </div>
-                          ))}
-                        </div>
-                        <button onClick={addCliente} className="w-full mt-5 py-3 rounded-xl text-white font-semibold text-sm" style={{ background: "linear-gradient(135deg, #22c55e, #16a34a)" }}>
-                          Guardar Cliente
-                        </button>
-                      </motion.div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            )}
-
-            {/* EMPLEADOS */}
-            {module === "empleados" && (
-              <motion.div key="emp" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                <h1 className="text-2xl font-bold text-white mb-6">Empleados</h1>
-                <div className="grid gap-4">
-                  {empleados.map(e => (
-                    <div key={e.id} className="flex items-center gap-4 p-4 rounded-2xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0" style={{ background: e.status === "activo" ? "rgba(59,130,246,0.25)" : "rgba(255,255,255,0.08)" }}>{e.nombre.split(" ").map(n => n[0]).join("")}</div>
-                      <div className="flex-1">
-                        <p className="text-white font-semibold">{e.nombre}</p>
-                        <p className="text-xs" style={{ color: "rgba(255,255,255,0.45)" }}>{e.puesto} · {e.departamento}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-white font-mono text-sm">{fmt(e.salario)}/mes</p>
-                        <p className="text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>Desde {e.ingreso}</p>
-                      </div>
-                      <span className="text-xs px-2 py-1 rounded-full" style={{ background: e.status === "activo" ? "rgba(59,130,246,0.12)" : "rgba(255,255,255,0.06)", color: e.status === "activo" ? "#60a5fa" : "rgba(255,255,255,0.4)" }}>
-                        {e.status}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-
-            {/* NÓMINA */}
-            {module === "nomina" && (
-              <motion.div key="nom" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h1 className="text-2xl font-bold text-white">Nómina — Octubre 2026</h1>
-                    <p className="text-sm mt-1" style={{ color: "rgba(255,255,255,0.4)" }}>Cálculo automático de deducciones IMSS, ISR e INFONAVIT</p>
+          {/* CLIENTES MODULE */}
+          {activeModule === "clientes" && (
+            <div className="space-y-4">
+              <div className="rounded-2xl border border-slate-800 bg-[#1e293b] overflow-hidden">
+                <div className="p-4 border-b border-slate-800 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                  <div className="relative w-full sm:w-80">
+                    <Search className="absolute left-3.5 top-2.5 size-4 text-slate-400" />
+                    <input
+                      type="text"
+                      placeholder="Buscar por cliente, empresa o RFC..."
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      className="w-full bg-[#0f172a] border border-slate-700 rounded-xl pl-9 pr-3 py-1.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500"
+                    />
                   </div>
-                  <button className="px-4 py-2 rounded-xl text-sm font-semibold" style={{ background: "rgba(34,197,94,0.15)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.3)" }}>
-                    Exportar PDF
-                  </button>
+
+                  <div className="flex items-center gap-2 self-end sm:self-auto text-xs">
+                    <button
+                      onClick={() => alert("Exportando catálogo a CSV/Excel...")}
+                      className="inline-flex items-center gap-1.5 border border-slate-700 bg-slate-800 px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition"
+                    >
+                      <Download className="size-3.5" />
+                      <span>Exportar CSV</span>
+                    </button>
+                  </div>
                 </div>
-                <div className="rounded-2xl overflow-hidden mb-6" style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
-                  <table className="w-full text-sm">
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
                     <thead>
-                      <tr style={{ background: "rgba(255,255,255,0.05)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-                        {["Empleado", "Sueldo Bruto", "IMSS", "ISR", "INFONAVIT", "Neto a Pagar"].map(h => (
-                          <th key={h} className="px-4 py-3 text-left text-xs font-semibold" style={{ color: "rgba(255,255,255,0.5)" }}>{h}</th>
-                        ))}
+                      <tr className="border-b border-slate-800 bg-[#0f172a] font-mono text-[10px] text-slate-400 uppercase">
+                        <th className="py-3 px-4">Código / RFC</th>
+                        <th className="py-3 px-4">Razón Social & Contacto</th>
+                        <th className="py-3 px-4">Sucursal</th>
+                        <th className="py-3 px-4 text-right">Límite Crédito</th>
+                        <th className="py-3 px-4 text-right">Saldo Deudor</th>
+                        <th className="py-3 px-4 text-center">Estado</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      {nominaBase.map((e, i) => (
-                        <tr key={e.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", background: i % 2 === 0 ? "rgba(255,255,255,0.02)" : "transparent" }}>
-                          <td className="px-4 py-3 text-white">{e.nombre}</td>
-                          <td className="px-4 py-3 font-mono" style={{ color: "rgba(255,255,255,0.7)" }}>{fmt(e.salario)}</td>
-                          <td className="px-4 py-3 font-mono text-red-400">-{fmt(e.imss)}</td>
-                          <td className="px-4 py-3 font-mono text-red-400">-{fmt(e.isr)}</td>
-                          <td className="px-4 py-3 font-mono text-red-400">-{fmt(e.infonavit)}</td>
-                          <td className="px-4 py-3 font-mono font-bold" style={{ color: "#22c55e" }}>{fmt(e.neto)}</td>
-                        </tr>
-                      ))}
+                    <tbody className="divide-y divide-slate-800/80">
+                      {clientes
+                        .filter(
+                          (c) =>
+                            c.nombre.toLowerCase().includes(search.toLowerCase()) ||
+                            c.empresa.toLowerCase().includes(search.toLowerCase()) ||
+                            c.rfc.toLowerCase().includes(search.toLowerCase())
+                        )
+                        .map((c) => (
+                          <tr key={c.id} className="hover:bg-slate-800/40 transition">
+                            <td className="py-3 px-4 font-mono">
+                              <span className="font-bold text-white">{c.codigo}</span>
+                              <div className="text-[10px] text-blue-400">{c.rfc}</div>
+                            </td>
+                            <td className="py-3 px-4">
+                              <div className="font-bold text-white">{c.empresa}</div>
+                              <div className="text-[11px] text-slate-400">{c.nombre} · {c.telefono}</div>
+                            </td>
+                            <td className="py-3 px-4 font-mono text-slate-300">
+                              {c.sucursal}
+                            </td>
+                            <td className="py-3 px-4 text-right font-mono text-slate-300">
+                              {fmt(c.creditoLimite)}
+                            </td>
+                            <td className="py-3 px-4 text-right font-mono font-bold">
+                              <span className={c.saldoPendiente > 0 ? "text-amber-400" : "text-emerald-400"}>
+                                {fmt(c.saldoPendiente)}
+                              </span>
+                            </td>
+                            <td className="py-3 px-4 text-center">
+                              <span
+                                className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-mono uppercase font-semibold ${
+                                  c.status === "activo"
+                                    ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
+                                    : c.status === "suspendido"
+                                    ? "bg-rose-500/10 text-rose-400 border border-rose-500/30"
+                                    : "bg-blue-500/10 text-blue-400 border border-blue-500/30"
+                                }`}
+                              >
+                                {c.status}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
-                    <tfoot>
-                      <tr style={{ background: "rgba(34,197,94,0.08)", borderTop: "1px solid rgba(34,197,94,0.2)" }}>
-                        <td className="px-4 py-3 text-white font-bold">Total</td>
-                        <td className="px-4 py-3 font-mono font-bold text-white">{fmt(nominaBase.reduce((s, e) => s + e.salario, 0))}</td>
-                        <td className="px-4 py-3 font-mono text-red-400">-{fmt(nominaBase.reduce((s, e) => s + e.imss, 0))}</td>
-                        <td className="px-4 py-3 font-mono text-red-400">-{fmt(nominaBase.reduce((s, e) => s + e.isr, 0))}</td>
-                        <td className="px-4 py-3 font-mono text-red-400">-{fmt(nominaBase.reduce((s, e) => s + e.infonavit, 0))}</td>
-                        <td className="px-4 py-3 font-mono font-bold" style={{ color: "#22c55e" }}>{fmt(nominaBase.reduce((s, e) => s + e.neto, 0))}</td>
-                      </tr>
-                    </tfoot>
                   </table>
                 </div>
-              </motion.div>
-            )}
+              </div>
+            </div>
+          )}
 
-            {/* FACTURACIÓN */}
-            {module === "facturacion" && (
-              <motion.div key="fact" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                <h1 className="text-2xl font-bold text-white mb-6">Facturación</h1>
-                <div className="space-y-3">
-                  {[
-                    { folio: "F-2026-0494", cliente: "Distribuidora del Norte S.A.", monto: 48500, fecha: "31 Oct 2026", status: "Pendiente", uuid: "f47ac10b-..." },
-                    { folio: "F-2026-0493", cliente: "Servicios Logísticos GDL", monto: 29750, fecha: "30 Oct 2026", status: "Pendiente", uuid: "3c9a12e4-..." },
-                    { folio: "F-2026-0491", cliente: "Manufacturas Jalisco", monto: 46500, fecha: "22 Oct 2026", status: "Pagada", uuid: "7b1c3d5e-..." },
-                    { folio: "F-2026-0490", cliente: "Importadora Occidente", monto: 12000, fecha: "10 Oct 2026", status: "Vencida", uuid: "9d2e4f6a-..." },
-                  ].map((f, i) => (
-                    <div key={i} className="flex items-center gap-4 p-4 rounded-2xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                      <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(168,85,247,0.15)" }}>
-                        <FileText size={16} style={{ color: "#a855f7" }} />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <p className="text-white font-mono text-sm font-semibold">{f.folio}</p>
-                          <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: f.status === "Pagada" ? "rgba(34,197,94,0.12)" : f.status === "Vencida" ? "rgba(239,68,68,0.12)" : "rgba(249,115,22,0.12)", color: f.status === "Pagada" ? "#22c55e" : f.status === "Vencida" ? "#ef4444" : "#f97316" }}>
-                            {f.status}
-                          </span>
+          {/* NOMINA MODULE WITH PAYSLIP GENERATION */}
+          {activeModule === "nomina" && (
+            <div className="space-y-4">
+              <div className="rounded-2xl border border-slate-800 bg-[#1e293b] p-5">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
+                  <div>
+                    <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                      <Wallet className="size-4 text-emerald-400" />
+                      Planilla de Nómina Quincenal & Deducciones de Ley (México)
+                    </h2>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      Cálculo automatizado de cuotas obrero-patronales del IMSS, retención ISR según tablas y aportación Infonavit.
+                    </p>
+                  </div>
+                  <div className="font-mono text-xs text-slate-300">
+                    Haz clic en <strong className="text-blue-400">"Ver Recibo"</strong> para generar el talón oficial de nómina.
+                  </div>
+                </div>
+
+                <div className="mt-4 overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="border-b border-slate-800 bg-[#0f172a] font-mono text-[10px] text-slate-400 uppercase">
+                        <th className="py-3 px-4">Empleado</th>
+                        <th className="py-3 px-4">Depto / Puesto</th>
+                        <th className="py-3 px-4 text-right">Sueldo Quincenal</th>
+                        <th className="py-3 px-4 text-right">IMSS (3.15%)</th>
+                        <th className="py-3 px-4 text-right">ISR Retenido</th>
+                        <th className="py-3 px-4 text-right">Infonavit</th>
+                        <th className="py-3 px-4 text-right">Neto a Pagar</th>
+                        <th className="py-3 px-4 text-center">Talón Fiscal</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800/80">
+                      {empleados.filter(e => e.status === "activo").map((emp) => {
+                        const quincenal = emp.salarioMensual / 2;
+                        const imss = Math.round(quincenal * 0.0315);
+                        const isr = Math.round(quincenal * 0.108);
+                        const infonavit = Math.round(quincenal * 0.05);
+                        const neto = quincenal - imss - isr - infonavit;
+
+                        return (
+                          <tr key={emp.id} className="hover:bg-slate-800/40 transition">
+                            <td className="py-3 px-4">
+                              <div className="font-bold text-white">{emp.nombre}</div>
+                              <div className="font-mono text-[10px] text-slate-400">{emp.numEmpleado}</div>
+                            </td>
+                            <td className="py-3 px-4">
+                              <div className="text-slate-300 font-medium">{emp.puesto}</div>
+                              <div className="text-[10px] text-slate-500 font-mono">{emp.departamento}</div>
+                            </td>
+                            <td className="py-3 px-4 text-right font-mono font-bold text-white">
+                              {fmt(quincenal)}
+                            </td>
+                            <td className="py-3 px-4 text-right font-mono text-rose-400">
+                              -{fmt(imss)}
+                            </td>
+                            <td className="py-3 px-4 text-right font-mono text-rose-400">
+                              -{fmt(isr)}
+                            </td>
+                            <td className="py-3 px-4 text-right font-mono text-rose-400">
+                              -{fmt(infonavit)}
+                            </td>
+                            <td className="py-3 px-4 text-right font-mono font-bold text-emerald-400 text-sm">
+                              {fmt(neto)}
+                            </td>
+                            <td className="py-3 px-4 text-center">
+                              <button
+                                onClick={() => setReciboEmpleado(emp)}
+                                className="inline-flex items-center gap-1.5 rounded-lg border border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 px-2.5 py-1 text-xs font-semibold transition"
+                              >
+                                <Printer className="size-3" />
+                                <span>Ver Recibo</span>
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* AUDITORIA MODULE */}
+          {activeModule === "auditoria" && (
+            <div className="space-y-4">
+              <div className="rounded-2xl border border-slate-800 bg-[#1e293b] p-5">
+                <div className="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
+                  <div>
+                    <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                      <Shield className="size-4 text-amber-400" />
+                      Bitácora de Trazabilidad & Accesos de Usuarios
+                    </h2>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      Registro de todas las mutaciones en base de datos para cumplimiento de auditoría interna y SOX.
+                    </p>
+                  </div>
+                  <span className="font-mono text-xs text-slate-400">
+                    Eventos registrados: <strong>{auditoriaData.length}</strong>
+                  </span>
+                </div>
+
+                <div className="space-y-2.5 font-mono text-xs">
+                  {auditoriaData.map((a) => (
+                    <div
+                      key={a.id}
+                      className="p-3.5 rounded-xl border border-slate-800 bg-[#0f172a] flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+                    >
+                      <div className="flex items-start gap-3">
+                        <span
+                          className={`size-2.5 rounded-full mt-1.5 shrink-0 ${
+                            a.severidad === "critica"
+                              ? "bg-rose-500 shadow-sm shadow-rose-500/50"
+                              : a.severidad === "alerta"
+                              ? "bg-amber-500"
+                              : "bg-blue-500"
+                          }`}
+                        />
+                        <div>
+                          <p className="text-slate-200 font-semibold">{a.accion}</p>
+                          <div className="text-[10px] text-slate-500 mt-0.5 space-x-3">
+                            <span>Usuario: <strong className="text-slate-400">{a.usuario}</strong></span>
+                            <span>IP: {a.ip}</span>
+                            <span>Módulo: {a.modulo}</span>
+                          </div>
                         </div>
-                        <p className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>{f.cliente} · {f.fecha}</p>
                       </div>
-                      <p className="font-mono font-bold text-white">{fmt(f.monto)}</p>
+                      <span className="text-[10px] text-slate-400 self-end sm:self-auto shrink-0">
+                        {a.fecha}
+                      </span>
                     </div>
                   ))}
                 </div>
-              </motion.div>
-            )}
-
-            {/* AUDITORÍA */}
-            {module === "auditoria" && (
-              <motion.div key="aud" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                <h1 className="text-2xl font-bold text-white mb-6">Bitácora de Auditoría</h1>
-                <div className="space-y-2">
-                  {auditLog.map((log, i) => (
-                    <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.07 }} className="flex items-start gap-3 p-4 rounded-xl" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                      <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" style={{ background: tipoColors[log.tipo] }} />
-                      <div className="flex-1">
-                        <p className="text-white text-sm">{log.action}</p>
-                        <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>{log.user} · {log.time}</p>
-                      </div>
-                      <span className="text-xs px-2 py-0.5 rounded-md" style={{ background: `${tipoColors[log.tipo]}15`, color: tipoColors[log.tipo] }}>
-                        {log.tipo}
-                      </span>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              </div>
+            </div>
+          )}
         </main>
       </div>
+
+      {/* MODAL RECIBO DE NÓMINA OFICIAL */}
+      <AnimatePresence>
+        {reciboEmpleado && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-xl rounded-3xl border border-slate-700 bg-white text-slate-900 p-6 shadow-2xl relative font-sans"
+            >
+              <button
+                onClick={() => setReciboEmpleado(null)}
+                className="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-1"
+              >
+                <X className="size-5" />
+              </button>
+
+              <div className="border-b border-slate-200 pb-3 mb-4 flex justify-between items-start">
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900 tracking-tight">
+                    SERVICIOS OPERATIVOS START S.A. DE C.V.
+                  </h3>
+                  <p className="text-xs text-slate-600 font-mono">RFC: SOS190101XYZ · Registro Patronal: Y88-1920-10</p>
+                  <p className="text-xs font-bold text-blue-700 mt-1">RECIBO DE PAGO DE NÓMINA (CFDI NÓMINA 1.2)</p>
+                </div>
+                <div className="text-right text-xs font-mono">
+                  <p className="text-slate-500">Folio: <strong className="text-slate-900">NOM-2026-0819</strong></p>
+                  <p className="text-slate-500">Periodo: Nov 2026</p>
+                </div>
+              </div>
+
+              {/* Employee Information */}
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs mb-4 grid grid-cols-2 gap-2 font-mono">
+                <div>
+                  <span className="text-slate-500 block">Colaborador:</span>
+                  <strong className="text-slate-900">{reciboEmpleado.nombre}</strong>
+                </div>
+                <div>
+                  <span className="text-slate-500 block">No. Empleado:</span>
+                  <strong className="text-slate-900">{reciboEmpleado.numEmpleado}</strong>
+                </div>
+                <div>
+                  <span className="text-slate-500 block">CURP / NSS:</span>
+                  <span className="text-slate-700">{reciboEmpleado.curp}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 block">Puesto / Depto:</span>
+                  <span className="text-slate-700">{reciboEmpleado.puesto} ({reciboEmpleado.departamento})</span>
+                </div>
+              </div>
+
+              {/* Percepciones vs Deducciones Table */}
+              <div className="border border-slate-200 rounded-xl overflow-hidden text-xs mb-4">
+                <div className="grid grid-cols-2 bg-slate-100 font-bold text-slate-700 border-b border-slate-200 text-center py-1.5 font-mono">
+                  <div>PERCEPCIONES</div>
+                  <div className="border-l border-slate-200">DEDUCCIONES</div>
+                </div>
+                <div className="grid grid-cols-2 divide-x divide-slate-200 p-3 font-mono text-[11px]">
+                  <div className="space-y-1.5 pr-2">
+                    <div className="flex justify-between">
+                      <span>001 Sueldo Quincenal:</span>
+                      <strong>{fmt(reciboEmpleado.salarioMensual / 2)}</strong>
+                    </div>
+                    <div className="flex justify-between text-slate-500">
+                      <span>038 Bono Despensa:</span>
+                      <span>$0.00</span>
+                    </div>
+                  </div>
+                  <div className="space-y-1.5 pl-2">
+                    <div className="flex justify-between text-rose-700">
+                      <span>001 IMSS Obrero:</span>
+                      <span>-{fmt((reciboEmpleado.salarioMensual / 2) * 0.0315)}</span>
+                    </div>
+                    <div className="flex justify-between text-rose-700">
+                      <span>002 Retención ISR:</span>
+                      <span>-{fmt((reciboEmpleado.salarioMensual / 2) * 0.108)}</span>
+                    </div>
+                    <div className="flex justify-between text-rose-700">
+                      <span>010 Amortización Infonavit:</span>
+                      <span>-{fmt((reciboEmpleado.salarioMensual / 2) * 0.05)}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-slate-50 border-t border-slate-200 p-3 flex justify-between items-center font-mono">
+                  <span className="font-bold text-slate-700">NETO A DEPOSITAR:</span>
+                  <span className="text-base font-extrabold text-emerald-700">
+                    {fmt(
+                      (reciboEmpleado.salarioMensual / 2) -
+                        ((reciboEmpleado.salarioMensual / 2) * 0.0315) -
+                        ((reciboEmpleado.salarioMensual / 2) * 0.108) -
+                        ((reciboEmpleado.salarioMensual / 2) * 0.05)
+                    )}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center text-xs pt-2">
+                <span className="text-slate-500 font-mono text-[10px]">
+                  Firma Electrónica: SHA-256 Validado SAT
+                </span>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => alert("Imprimiendo recibo oficial...")}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-300 text-slate-700 font-semibold hover:bg-slate-100 transition"
+                  >
+                    <Printer className="size-3.5" />
+                    <span>Imprimir</span>
+                  </button>
+                  <button
+                    onClick={() => setReciboEmpleado(null)}
+                    className="px-4 py-1.5 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
+                  >
+                    Cerrar
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* MODAL NUEVO CLIENTE */}
+      <AnimatePresence>
+        {modalNuevoCliente && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-md rounded-3xl border border-slate-700 bg-[#1e293b] p-6 shadow-2xl relative text-white"
+            >
+              <button
+                onClick={() => setModalNuevoCliente(false)}
+                className="absolute top-5 right-5 text-slate-400 hover:text-white p-1"
+              >
+                <X className="size-5" />
+              </button>
+
+              <h3 className="text-base font-bold text-white mb-1">Registrar Nuevo Cliente en ERP</h3>
+              <p className="text-xs text-slate-400 mb-4">
+                El cliente se integrará a la base de datos de facturación y límite de crédito.
+              </p>
+
+              <form onSubmit={guardarNuevoCliente} className="space-y-3 text-xs">
+                <div>
+                  <label className="block text-slate-300 mb-1">Nombre o Contacto:</label>
+                  <input
+                    type="text"
+                    required
+                    value={nuevoNombre}
+                    onChange={(e) => setNuevoNombre(e.target.value)}
+                    placeholder="Ej. Ing. Miguel Mendoza"
+                    className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-300 mb-1">Razón Social / Empresa:</label>
+                  <input
+                    type="text"
+                    required
+                    value={nuevaEmpresa}
+                    onChange={(e) => setNuevaEmpresa(e.target.value)}
+                    placeholder="Ej. Tecnología y Redes de Jalisco S.A."
+                    className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-slate-300 mb-1">RFC Fiscal:</label>
+                    <input
+                      type="text"
+                      value={nuevoRFC}
+                      onChange={(e) => setNuevoRFC(e.target.value)}
+                      placeholder="TRJ200115PL0"
+                      className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2 font-mono text-white focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-300 mb-1">Límite de Crédito:</label>
+                    <input
+                      type="number"
+                      value={nuevoCredito}
+                      onChange={(e) => setNuevoCredito(Number(e.target.value))}
+                      className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2 font-mono text-white focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-5 flex justify-end gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setModalNuevoCliente(false)}
+                    className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-semibold hover:bg-slate-700 transition"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold shadow-md transition"
+                  >
+                    Guardar Cliente
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

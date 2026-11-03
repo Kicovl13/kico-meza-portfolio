@@ -153,25 +153,6 @@ export function ProjectDemoModal({ project, onClose }: ProjectDemoModalProps) {
     },
   ]);
 
-  // State 5: Municipal Citizen Reports
-  const [citizenReports, setCitizenReports] = useState([
-    {
-      folio: "REP-2026-8941",
-      categoria: "Alumbrado Público",
-      ubicación: "Av. Vallarta esq. Rafael Sanzio",
-      fecha: "01 Nov 2026",
-      estatus: "En Cuadrilla",
-    },
-    {
-      folio: "REP-2026-8910",
-      categoria: "Bacheo y Pavimento",
-      ubicación: "Colonia La Estancia, Calle Beethoven",
-      fecha: "28 Oct 2026",
-      estatus: "Resuelto ✓",
-    },
-  ]);
-  const [newReportCategory, setNewReportCategory] = useState("Bacheo y Pavimento");
-  const [newReportAddress, setNewReportAddress] = useState("");
 
   if (!project) return null;
 
@@ -250,23 +231,6 @@ export function ProjectDemoModal({ project, onClose }: ProjectDemoModalProps) {
     );
   };
 
-  // Handlers for Municipal
-  const handleCreateCitizenReport = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newReportAddress.trim()) return;
-    const nextFolio = `REP-2026-${Math.floor(Math.random() * 8000) + 1000}`;
-    setCitizenReports([
-      {
-        folio: nextFolio,
-        categoria: newReportCategory,
-        ubicación: newReportAddress,
-        fecha: "Hoy",
-        estatus: "Recibido",
-      },
-      ...citizenReports,
-    ]);
-    setNewReportAddress("");
-  };
 
   return (
     <AnimatePresence>
@@ -341,7 +305,7 @@ export function ProjectDemoModal({ project, onClose }: ProjectDemoModalProps) {
             </div>
 
             {/* Tab Selector */}
-            <div className="mt-5 flex gap-2 border-b border-border/50 pb-1">
+            <div className="mt-5 flex gap-2 border-b border-border/50 pb-1 overflow-x-auto no-scrollbar">
               <button
                 type="button"
                 onClick={() => setActiveTab("demo")}
@@ -352,7 +316,7 @@ export function ProjectDemoModal({ project, onClose }: ProjectDemoModalProps) {
                 }`}
               >
                 <Activity className="size-3.5" />
-                Demo Funcional (Alpha/Beta)
+                Simulador Interactivo
               </button>
               <button
                 type="button"
@@ -364,7 +328,7 @@ export function ProjectDemoModal({ project, onClose }: ProjectDemoModalProps) {
                 }`}
               >
                 <Code2 className="size-3.5" />
-                Arquitectura MVC
+                Arquitectura & Dominio
               </button>
               <button
                 type="button"
@@ -739,101 +703,6 @@ export function ProjectDemoModal({ project, onClose }: ProjectDemoModalProps) {
                     </div>
                   </div>
                 )}
-
-                {/* 5. MUNICIPAL DEMO */}
-                {project.demoType === "municipal" && (
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="text-sm font-semibold text-foreground">
-                          Ventanilla Única de Trámites e Incidencias Ciudadanas
-                        </h4>
-                        <p className="text-xs text-muted-foreground">
-                          Genera un reporte público con folio digital para seguimiento en tiempo real.
-                        </p>
-                      </div>
-                    </div>
-
-                    <form
-                      onSubmit={handleCreateCitizenReport}
-                      className="rounded-2xl border border-border/70 bg-background/50 p-4 space-y-3"
-                    >
-                      <div className="grid sm:grid-cols-2 gap-3">
-                        <div>
-                          <label className="text-[11px] font-mono text-muted-foreground">
-                            Categoría del Servicio
-                          </label>
-                          <select
-                            value={newReportCategory}
-                            onChange={(e) => setNewReportCategory(e.target.value)}
-                            className="mt-1 w-full rounded-lg border border-border/80 bg-card px-3 py-1.5 text-xs text-foreground focus:outline-none focus:border-primary"
-                          >
-                            <option>Bacheo y Pavimento</option>
-                            <option>Alumbrado Público</option>
-                            <option>Fuga de Agua Potable</option>
-                            <option>Parques y Jardines</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label className="text-[11px] font-mono text-muted-foreground">
-                            Ubicación de la Incidencia
-                          </label>
-                          <input
-                            type="text"
-                            value={newReportAddress}
-                            onChange={(e) => setNewReportAddress(e.target.value)}
-                            placeholder="Ej. Calle Hidalgo #142, Col. Centro"
-                            required
-                            className="mt-1 w-full rounded-lg border border-border/80 bg-card px-3 py-1.5 text-xs text-foreground focus:outline-none focus:border-primary"
-                          >
-                          </input>
-                        </div>
-                      </div>
-
-                      <div className="flex justify-end">
-                        <button
-                          type="submit"
-                          className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:scale-105 active:scale-95 transition-transform"
-                        >
-                          Generar Folio de Atención
-                        </button>
-                      </div>
-                    </form>
-
-                    {/* Reports List */}
-                    <div className="rounded-xl border border-border/70 bg-card/60 p-3 space-y-2">
-                      <p className="font-mono text-xs font-semibold text-primary">
-                        Folios en Seguimiento Activo:
-                      </p>
-                      <div className="space-y-1.5">
-                        {citizenReports.map((r) => (
-                          <div
-                            key={r.folio}
-                            className="flex items-center justify-between p-2 rounded-lg bg-background/50 text-xs border border-border/50"
-                          >
-                            <div>
-                              <span className="font-mono font-bold text-foreground">
-                                {r.folio}
-                              </span>
-                              <span className="ml-2 text-muted-foreground">
-                                {r.categoria} · {r.ubicación}
-                              </span>
-                            </div>
-                            <span
-                              className={`rounded px-2 py-0.5 font-mono text-[10px] font-semibold ${
-                                r.estatus.includes("Resuelto")
-                                  ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
-                                  : "bg-blue-500/10 text-blue-400 border border-blue-500/30"
-                              }`}
-                            >
-                              {r.estatus}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
             )}
 
@@ -841,7 +710,7 @@ export function ProjectDemoModal({ project, onClose }: ProjectDemoModalProps) {
             {activeTab === "mvc" && (
               <div className="space-y-4">
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Desglose formal del patrón Modelo-Vista-Controlador implementado en el repositorio{" "}
+                  Estructura de arquitectura por capas y modelo de dominio implementado en el repositorio{" "}
                   <code className="text-primary font-mono font-bold">{project.repoName}</code>:
                 </p>
 
@@ -850,7 +719,7 @@ export function ProjectDemoModal({ project, onClose }: ProjectDemoModalProps) {
                   <div className="rounded-2xl border border-primary/25 bg-background/50 p-4">
                     <div className="flex items-center gap-2 text-primary font-mono text-xs font-bold uppercase tracking-wider mb-2">
                       <Database className="size-4" />
-                      Modelo (Model)
+                      Capa de Datos & Dominio
                     </div>
                     <ul className="space-y-2 text-xs text-foreground/85">
                       {project.mvcArchitecture.model.map((m, i) => (
@@ -866,7 +735,7 @@ export function ProjectDemoModal({ project, onClose }: ProjectDemoModalProps) {
                   <div className="rounded-2xl border border-primary/25 bg-background/50 p-4">
                     <div className="flex items-center gap-2 text-primary font-mono text-xs font-bold uppercase tracking-wider mb-2">
                       <Server className="size-4" />
-                      Controlador (Controller)
+                      Lógica de Negocio & Servicios
                     </div>
                     <ul className="space-y-2 text-xs text-foreground/85">
                       {project.mvcArchitecture.controller.map((c, i) => (
@@ -882,7 +751,7 @@ export function ProjectDemoModal({ project, onClose }: ProjectDemoModalProps) {
                   <div className="rounded-2xl border border-primary/25 bg-background/50 p-4">
                     <div className="flex items-center gap-2 text-primary font-mono text-xs font-bold uppercase tracking-wider mb-2">
                       <Layers className="size-4" />
-                      Vista (View)
+                      Presentación & UI
                     </div>
                     <ul className="space-y-2 text-xs text-foreground/85">
                       {project.mvcArchitecture.view.map((v, i) => (

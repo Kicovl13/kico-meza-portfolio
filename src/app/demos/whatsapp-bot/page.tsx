@@ -236,7 +236,7 @@ export default function WhatsAppBotMvp() {
           {/* Demo badge */}
           <div className="px-4 py-2 flex items-center gap-2" style={{ background: "rgba(37,211,102,0.08)", borderBottom: "1px solid rgba(37,211,102,0.15)" }}>
             <Zap size={12} style={{ color: "#25d366" }} />
-            <p className="text-xs" style={{ color: "#25d366" }}>Simulador del Bot de WhatsApp · MVP Demo</p>
+            <p className="text-xs" style={{ color: "#25d366" }}>Simulador del Bot de WhatsApp · Demostración en Vivo</p>
           </div>
 
           {/* Messages */}

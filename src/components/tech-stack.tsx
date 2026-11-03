@@ -1,75 +1,135 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Boxes, Database, LayoutDashboard, Server } from "lucide-react";
-import { skillGroups } from "@/lib/data";
-
-const icons = {
-  server: Server,
-  layout: LayoutDashboard,
-  database: Database,
-  container: Boxes,
-};
+import { Cpu } from "lucide-react";
+import { useLanguage } from "@/context/language-context";
 
 export function TechStack() {
-  return (
-    <section id="stack" className="relative scroll-mt-24 py-20 sm:py-28">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.45 }}
-        >
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-primary">
-            Capacidades
-          </p>
-          <h2
-            className="mt-3 text-3xl tracking-tight text-foreground sm:text-4xl"
-            style={{ fontWeight: 700 }}
-          >
-            Stack tecnológico y habilidades
-          </h2>
-          <p className="mt-3 max-w-xl text-muted-foreground">
-            Lo que uso para construir sistemas de negocio: backend, interfaces,
-            datos y despliegue.
-          </p>
-        </motion.div>
+  const { lang } = useLanguage();
 
-        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {skillGroups.map((group, index) => {
-            const Icon = icons[group.icon];
-            return (
-              <motion.div
-                key={group.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.4, delay: index * 0.06 }}
-                className="glass rounded-2xl p-5"
-              >
-                <div className="mb-4 flex size-10 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
-                  <Icon className="size-5" />
-                </div>
-                <h3
-                  className="text-lg tracking-tight text-foreground"
-                  style={{ fontWeight: 650 }}
-                >
-                  {group.title}
+  const stackCards = [
+    {
+      title: "Backend & Arquitectura",
+      desc:
+        lang === "es"
+          ? "Servicios robustos, microservicios, APIs de alto rendimiento y lógica empresarial."
+          : "Robust services, microservices, high-throughput APIs, and domain logic.",
+      tags: ["Laravel 13", "PHP 8.3+", "Node.js", "Express", "TypeScript", "REST APIs", "Redis"],
+    },
+    {
+      title: "Frontend & Aplicaciones Móvil",
+      desc:
+        lang === "es"
+          ? "Interfaces reactivas, componentes reutilizables y aplicaciones móviles fluidas."
+          : "Reactive web interfaces, reusable component libraries, and fluid mobile applications.",
+      tags: ["Angular 20", "Next.js", "React", "Ionic 8", "Capacitor 7", "Tailwind CSS", "Livewire 4"],
+    },
+    {
+      title: "Bases de Datos & Consistencia",
+      desc:
+        lang === "es"
+          ? "Modelado relacional, optimización de consultas SQL, transacciones ACID e integridad."
+          : "Relational modeling, SQL indexing, ACID transactional integrity, and legacy migrations.",
+      tags: ["MySQL 8.4 LTS", "MariaDB", "Oracle DB", "Optimización SQL", "Transacciones ACID", "Redis"],
+    },
+    {
+      title: "DevOps & Ciberseguridad",
+      desc:
+        lang === "es"
+          ? "Contenedores Docker, administración de servidores Linux y protección de datos."
+          : "Docker containers, Linux administration, CI/CD pipelines, and Google-certified security.",
+      tags: ["Docker", "Linux Servers", "Google Cybersecurity", "OAuth2 / JWT", "CI/CD", "SAT CFDI 4.0"],
+    },
+  ];
+
+  const principles = [
+    {
+      label: lang === "es" ? "Idempotencia Transaccional" : "Transactional Idempotency",
+      desc: lang === "es" ? "Prevención de duplicidad en pagos y timbrados fiscales" : "Preventing duplicate payments and tax operations",
+    },
+    {
+      label: lang === "es" ? "Aislamiento Multi-Tenant" : "Multi-Tenant Isolation",
+      desc: lang === "es" ? "Segregación estricta de datos por empresa a nivel BD" : "Strict database-level tenant data segregation",
+    },
+    {
+      label: lang === "es" ? "Arquitectura Modular" : "Modular Architecture",
+      desc: lang === "es" ? "Desacoplamiento de componentes para mantenimiento a largo plazo" : "Decoupled component design for long-term maintainability",
+    },
+    {
+      label: lang === "es" ? "Cero Caídas en Migraciones" : "Zero-Downtime Migrations",
+      desc: lang === "es" ? "Transición fluida de sistemas legacy a plataformas modernas" : "Seamless transition from legacy systems to modern stacks",
+    },
+  ];
+
+  return (
+    <section id="stack" className="py-16 sm:py-24 lg:py-32 relative zone-light border-t border-white/[0.08]">
+      <div className="wrap">
+        {/* Header estilo danhermes.dev con .center */}
+        <div className="max-w-[840px] mx-auto text-center mb-12 sm:mb-16 md:mb-20">
+          <p className="eyebrow justify-center">Stack</p>
+          <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#f4f4f2] leading-[1.12] sm:leading-[1.08]">
+            {lang === "es"
+              ? "Las herramientas cambian. El criterio no."
+              : "Tools evolve. Engineering judgment remains."}
+          </h2>
+          <p className="mt-4 sm:mt-6 text-sm sm:text-base md:text-lg leading-relaxed text-[#9a9aa2] max-w-[680px] mx-auto">
+            {lang === "es"
+              ? "Trabajo con la tecnología que mejor le queda al proyecto y garantiza escalabilidad a largo plazo, no con la que está de moda."
+              : "I build with technologies that best serve the business problem and guarantee long-term maintainability, not hype."}
+          </p>
+        </div>
+
+        {/* Stack Grid con Glass Cards estilo danhermes.dev */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+          {stackCards.map((card) => (
+            <article
+              key={card.title}
+              className="glass-dh p-6 sm:p-7 lg:p-8 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:border-white/[0.22]"
+            >
+              <div>
+                <span className="w-8 h-0.5 bg-[#99ff99] block mb-3 sm:mb-4" aria-hidden="true" />
+                <h3 className="text-lg sm:text-xl font-bold tracking-tight text-[#f4f4f2] mb-2">
+                  {card.title}
                 </h3>
-                <ul className="mt-4 flex flex-wrap gap-2">
-                  {group.items.map((item) => (
-                    <li
-                      key={item}
-                      className="rounded-md border border-border/70 bg-secondary/50 px-2.5 py-1 font-mono text-xs text-muted-foreground"
-                    >
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            );
-          })}
+                <p className="text-xs sm:text-sm text-[#9a9aa2] leading-relaxed mb-5 sm:mb-6">
+                  {card.desc}
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-4 border-t border-white/[0.06]">
+                {card.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-medium text-[#c6c6ce] border border-white/[0.1] bg-white/[0.03]"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </article>
+          ))}
+        </div>
+
+        {/* Principles Strip */}
+        <div className="mt-8 sm:mt-10 glass-dh p-5 sm:p-7 lg:p-8 rounded-2xl">
+          <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-[#99ff99] mb-4 sm:mb-5 font-semibold">
+            <Cpu size={15} />
+            <span>
+              {lang === "es"
+                ? "Principios de Ingeniería en Producción:"
+                : "Production Engineering Principles:"}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 text-xs">
+            {principles.map((p) => (
+              <div key={p.label} className="border-l border-white/[0.14] pl-3.5">
+                <p className="font-bold text-[#f4f4f2] text-xs sm:text-sm">{p.label}</p>
+                <p className="text-[#9a9aa2] mt-1 text-[11px] sm:text-xs leading-relaxed">
+                  {p.desc}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

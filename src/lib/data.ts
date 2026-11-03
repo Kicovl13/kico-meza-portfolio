@@ -1,18 +1,29 @@
 export const site = {
   name: "Federico Meza",
   brand: "Federico Meza",
-  role: "Ingeniero en Sistemas · Full Stack",
+  role: "Ingeniero de Software Full Stack & Líder Técnico",
   age: 29,
-  location: "Zapopan, Jalisco",
+  yearsExperience: "+7",
+  location: "Zapopan, Jalisco · Remoto / Híbrido",
   email: "federicojmr13@gmail.com",
   phone: "+52 33 2026 8920",
   phoneHref: "tel:+523320268920",
+  whatsappUrl:
+    "https://wa.me/523320268920?text=Hola%20Federico,%20vi%20tu%20portafolio%20y%20me%20gustar%C3%ADa%20conversar%20sobre%20una%20oportunidad%20profesional.",
   linkedin:
     "https://www.linkedin.com/in/federico-de-jes%C3%BAs-meza-ramos-2b829b173",
-  headline: "Hola, soy Federico Meza",
+  github: "https://github.com/Kicovl13",
+  headline: "Arquitectura de software escalable, sistemas críticos y liderazgo técnico.",
   subtitle:
-    "Llevo CRMs, plataformas de negocio y APIs a producción. He construido sistemas con Laravel, Node.js, TypeScript y Angular, y he liderado equipos de desarrollo.",
+    "Ingeniero en Sistemas con +7 años diseñando e implementando ERPs, plataformas de negocio, conciliación fiscal SAT y APIs de alto rendimiento con Laravel, Node.js, TypeScript y Angular. Especialista en migración de sistemas legacy y dirección técnica de equipos.",
 };
+
+export const impactMetrics = [
+  { value: "+7 Años", label: "Experiencia en Producción", sub: "Sistemas continuos en operación" },
+  { value: "5 Sistemas", label: "Plataformas en Vivo", sub: "Soluciones de negocio interactivas" },
+  { value: "SAT 4.0", label: "Cumplimiento Fiscal", sub: "CFDI, PPD/REP, Nómina IMSS/ISR" },
+  { value: "0% Caídas", label: "Migración de Sistemas", sub: "Informix 4GL a Web moderna" },
+] as const;
 
 export const heroStack = [
   "Laravel",
@@ -172,8 +183,12 @@ export interface MvcShowcase {
   };
   keyFeatures: string[];
   dockerStack: string[];
-  demoType: "cobranza" | "arrendamiento" | "whatsapp" | "legal" | "municipal" | "sysadmin" | "leex" | "rootwork";
+  demoType: "cobranza" | "arrendamiento" | "whatsapp" | "legal" | "sysadmin" | "leex" | "rootwork";
   demoUrl: string;
+  challenge?: string;
+  solution?: string;
+  accentColor?: string;
+  filterTag?: "laravel" | "node" | "angular" | "other";
 }
 
 export const mvcShowcases: MvcShowcase[] = [
@@ -226,56 +241,6 @@ export const mvcShowcases: MvcShowcase[] = [
     dockerStack: ["php:8.3-fpm", "mysql:8.4", "redis:7-alpine", "nginx:alpine"],
     demoType: "cobranza",
     demoUrl: "/demos/cobranza",
-  },
-  {
-    id: "gestor-arrendamiento",
-    title: "Gestor de Micro-Arrendamientos de Plazas",
-    repoName: "arrendamiento",
-    githubUrl: "https://github.com/Kicovl13/arrendamiento",
-    isPrivate: true,
-    tagline: "Consola Operativa para Plazas Comerciales con Control de Mora",
-    category: "Real Estate & ERP",
-    stack: [
-      "PHP",
-      "Laravel",
-      "MySQL",
-      "Docker",
-      "REST APIs",
-      "Tailwind CSS",
-    ],
-    description:
-      "Consola operativa diseñada para administradores de plazas comerciales: en segundos permite ver saldos vencidos, contratos por vencer, cálculo automático de moratorios y validación de transferencias bancarias.",
-    metrics: [
-      { label: "Locales/Islas", value: "Multi-Unidad" },
-      { label: "Cálculo Mora", value: "Automático" },
-      { label: "Validación", value: "1-Clic" },
-    ],
-    mvcArchitecture: {
-      model: [
-        "Entidades: CommercialUnit (Local/Isla), LeaseContract, Tenant, PaymentEvidence, PenaltyRule",
-        "Cálculo matemático de mora compuesto diario y periodo de gracia",
-        "Relaciones polimórficas para comprobantes de pago y auditoría",
-      ],
-      controller: [
-        "PlazaDashboardController, LeaseContractController, PaymentValidationController",
-        "Motor de cálculo de penalizaciones por incumplimiento de contrato",
-        "Servicios de notificación automática a arrendatarios vía correo/SMS",
-      ],
-      view: [
-        "Consola visual de la plaza: mapa de ocupación y semáforo de cobranza",
-        "Visor rápido de comprobantes de pago con botones de Aprobación/Rechazo",
-        "Detalle de estado de cuenta mensual por arrendatario",
-      ],
-    },
-    keyFeatures: [
-      "Monitoreo en vivo de saldo vencido vs recuperado en la plaza",
-      "Reglas configurables de penalización y moratorios por día de atraso",
-      "Validación ágil de transferencias con previsualización de comprobantes",
-      "Fichas completas de contratos, depósitos en garantía y vigencias",
-    ],
-    dockerStack: ["php:8.3-fpm", "mariadb:11", "nginx:alpine"],
-    demoType: "arrendamiento",
-    demoUrl: "/demos/leex",
   },
   {
     id: "bot-whatsapp-citas",
@@ -376,55 +341,6 @@ export const mvcShowcases: MvcShowcase[] = [
     demoUrl: "/demos/legalflow",
   },
   {
-    id: "municipal-government",
-    title: "Portal de Trámites & Atención Ciudadana",
-    repoName: "municipal-government-landing-page",
-    githubUrl: "https://github.com/Kicovl13/municipal-government-landing-page",
-    isPrivate: true,
-    tagline: "Ventanilla Única Digital con Next.js, TypeScript y Tailwind CSS",
-    category: "GovTech & Servicios Web",
-    stack: [
-      "Next.js",
-      "TypeScript",
-      "Tailwind CSS",
-      "Shadcn UI",
-      "Lucide React",
-    ],
-    description:
-      "Portal gubernamental para reporte de incidencias en servicios públicos (baches, luminarias, agua), consulta de trámites con folio digital y transparencia municipal.",
-    metrics: [
-      { label: "Trámites Digitales", value: "Ventanilla Única" },
-      { label: "Folios", value: "Rastreo 24/7" },
-      { label: "Diseño", value: "Accesible WCAG" },
-    ],
-    mvcArchitecture: {
-      model: [
-        "Entidades: CitizenReport, ServiceCategory, MunicipalOffice, TrackingStatus",
-        "Esquemas Zod para validación de formularios de reporte e identidades",
-        "Generador de folio hash único no secuencial para privacidad ciudadana",
-      ],
-      controller: [
-        "ReportSubmissionController, StatusLookupHandler, NotificationService",
-        "Ruteo de dependencias automáticas (Obras Públicas, Alumbrado, Parques)",
-        "API REST para consumo desde aplicaciones móviles ciudadanas",
-      ],
-      view: [
-        "Interfaz pública optimizada para accesibilidad móvil y bajo consumo de datos",
-        "Módulo de rastreo en vivo de folio con barra de progreso de atención",
-        "Catálogo interactivo de trámites municipales con requisitos desglosados",
-      ],
-    },
-    keyFeatures: [
-      "Levantamiento de reportes ciudadanos con geolocalización y foto",
-      "Consulta instantánea del estatus de folio de trámite",
-      "Directorio municipal interactivo con dependencias y horarios",
-      "Arquitectura Server Components en Next.js para carga ultra veloz",
-    ],
-    dockerStack: ["node:22-alpine", "standalone nextjs"],
-    demoType: "municipal",
-    demoUrl: "/demos/municipal",
-  },
-  {
     id: "sysadministrador",
     title: "SysAdministrador · CRM & ERP Operativo",
     repoName: "sysadministrador",
@@ -434,7 +350,7 @@ export const mvcShowcases: MvcShowcase[] = [
     category: "CRM & ERP",
     stack: ["PHP", "MySQL", "Bootstrap", "JavaScript", "Laravel"],
     description:
-      "CRM y ERP operativo para gestión de clientes, empleados, facturación, nómina, reportes y auditoría. Construido sobre arquitectura MVC con autenticación por roles y módulos independientes.",
+      "CRM y ERP operativo para gestión de clientes, empleados, facturación, nómina, reportes y auditoría. Diseñado con una arquitectura modular desacoplada, autenticación estricta por roles y módulos independientes.",
     metrics: [
       { label: "Módulos", value: "8+ Activos" },
       { label: "Roles", value: "Multi-Rol" },
